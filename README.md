@@ -178,3 +178,10 @@ Horizontal and verticual pod Autoscaler
 Horizontal Pod AutoScaler: scales the number of replicas of an application </br>
 
 Vertical Pod AutoScaler: VPA scales the resource requests and limits of a pod
+
+<h2>Serverless</h2>
+
+As you prepare for the KCNA exam, the following video will cover crucial topics that require your particular attention -
+
+The definition and rationale behind adopting the Serverless pattern in Cloud Native architectures
+The concept of CloudEvents, including their significance and impact within Cloud Native ecosystems
