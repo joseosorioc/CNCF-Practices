@@ -203,6 +203,18 @@ Cloud Native Serverless tool
 What is Scale to Zero?
 The concept is pretty simple. Your serverless resources are automatically and dynamically scaled to zero when they are not in use. This means that you only pay for the resources you use. And no surprise performance spikes when your resources are scaled up.
 
+Cloud Events especification
+Events are everywhere. However, event producers tend to describe events differently.
+
+The lack of a common way of describing events means developers must constantly re-learn how to consume events. This also limits the potential for libraries, tooling and infrastructure to aide the delivery of event data across environments, like SDKs, event routers or tracing systems. The portability and productivity we can achieve from event data is hindered overall.
+
+CloudEvents is a specification for describing event data in common formats to provide interoperability across services, platforms and systems.
+
+CloudEvents has received a large amount of industry interest, ranging from major cloud providers to popular SaaS companies. CloudEvents is hosted by the Cloud Native Computing Foundation (CNCF) and was approved as a Cloud Native sandbox level project on May 15, 2018, an incubator project on Oct 24, 2019 and a graduated project on Jan 25, 2024 (announcement).
+
+
+
+![image](https://github.com/user-attachments/assets/9e907525-ca4f-4040-8b6e-da4af7291005)
 
 
 What is the scaling model referred to as when using Serverless and its event-driven architecture?
@@ -215,7 +227,7 @@ What is the scaling model referred to as when using Serverless and its event-dri
 It may incur latency during periods where the application is less active
 
 
-Opinion reddit member
+Opinion reddit member (keda vs serverless)
 
 When I discuss "serverless" developers everyone gets very excited by "scale to zero" as a differentiator to running pods on Kubernetes.
 
