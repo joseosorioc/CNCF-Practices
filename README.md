@@ -213,6 +213,7 @@ CloudEvents is a specification for describing event data in common formats to pr
 
 CloudEvents has received a large amount of industry interest, ranging from major cloud providers to popular SaaS companies. CloudEvents is hosted by the Cloud Native Computing Foundation (CNCF) and was approved as a Cloud Native sandbox level project on May 15, 2018, an incubator project on Oct 24, 2019 and a graduated project on Jan 25, 2024 (announcement).
 
+![image](https://github.com/user-attachments/assets/da3c49d1-c4b4-44b4-8b94-97e2580b237f)
 
 
 ![image](https://github.com/user-attachments/assets/9e907525-ca4f-4040-8b6e-da4af7291005)
@@ -226,6 +227,31 @@ What is the scaling model referred to as when using Serverless and its event-dri
 
 - What is a possible disadvantage of using Serverless architecture?
 It may incur latency during periods where the application is less active
+
+How can CloudEvents be used according to the CloudEvents specification?
+Agnostically across various services, platforms, and systems
+
+How does Serverless architecture handle concurrency?
+It typically manages concurrency as part of the offering
+
+Which feature of Serverless offerings helps manage the workload and billing?
+Budget thresholds
+
+Which two aspects of Serverless computing are critical to understand from a cost perspective?
+- code execution and autoscaling
+
+- What is one of the challenges posed by Serverless solutions from a Cloud Native viewpoint?
+- They may lead to vendor lock-in due to lack of standardised APIs
+
+- What is the scaling model referred to as when using Serverless and its event-driven architecture?
+- scale to zero
+
+
+<h2>Knative</h2>
+
+Knative is an Open-Source Enterprise-level solution to build Serverless and Event Driven Applications. Serverless refers to running back-end programs and processes in the cloud. Serverless works on an as-used basis, meaning that companies only use what they pay for. Knative is a platform-agnostic solution for running serverless deployments.
+
+![image](https://github.com/user-attachments/assets/75a92e61-5b17-47da-94a8-0f9c001a1025)
 
 
 Opinion reddit member (keda vs serverless)
@@ -243,3 +269,11 @@ So ideally what we really want is to "scale down to near zero". This comes built
 So my recommendation is embrace autoscaling! Be brave or use tools where its baked in and you don't have to worry about the choice 
 
 
+<h3>Community and Governance</h3>
+
+Community and Governance - Study Tips
+As you embark on your journey to excel in the KCNA exam, the following video will cover topics that require your particular attention -
+
+- How is conflict resolution handled in the various CNCF groups
+- What is the meaning of the different acronyms commonly used
+- What is the core role of the CNCF TOC
