@@ -161,10 +161,14 @@ Predictive autoscaling (Intelligent autoscaling)
 <h3>Kubernetes Autoscaling</h3>
 
 Cluster Autoscaler
+
 ![image](https://github.com/user-attachments/assets/e2a8d755-09c8-400b-a64c-a057d5361380)
 
 Horizontal and verticual pod Autoscaler
+
 ![image](https://github.com/user-attachments/assets/15a49480-c865-4727-a174-19bb36e80e59)
+
+KEDA
 
 ![image](https://github.com/user-attachments/assets/58a4f934-bbbe-4c17-8fc4-a49bc7abc95f)
 
