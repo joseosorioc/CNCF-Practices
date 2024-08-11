@@ -179,9 +179,54 @@ Horizontal Pod AutoScaler: scales the number of replicas of an application </br>
 
 Vertical Pod AutoScaler: VPA scales the resource requests and limits of a pod
 
-<h2>Serverless</h2>
 
 As you prepare for the KCNA exam, the following video will cover crucial topics that require your particular attention -
 
 The definition and rationale behind adopting the Serverless pattern in Cloud Native architectures
 The concept of CloudEvents, including their significance and impact within Cloud Native ecosystems
+
+<h2>Serverless</h2>
+
+Serverless is Event Driven Architecure. 
+![image](https://github.com/user-attachments/assets/eadf21b4-3a50-4b5f-8414-1c8d95b02c0b)
+
+
+Serverless Scale Infinitely
+![image](https://github.com/user-attachments/assets/ea4f77ec-74bd-4ead-9351-78151040a7ca)
+
+
+
+Cloud Native Serverless tool
+
+![image](https://github.com/user-attachments/assets/5b821b3e-004a-4b31-a84a-77fca6523635)
+
+What is Scale to Zero?
+The concept is pretty simple. Your serverless resources are automatically and dynamically scaled to zero when they are not in use. This means that you only pay for the resources you use. And no surprise performance spikes when your resources are scaled up.
+
+
+
+What is the scaling model referred to as when using Serverless and its event-driven architecture?
+- Scale to zero
+
+- What does provisioned concurrency in Serverless offerings refer to?
+- The number of instances that can be run simultaneously
+
+- What is a possible disadvantage of using Serverless architecture?
+It may incur latency during periods where the application is less active
+
+
+Opinion reddit member
+
+When I discuss "serverless" developers everyone gets very excited by "scale to zero" as a differentiator to running pods on Kubernetes.
+
+My take on this is:
+
+Production rarely needs to scale to zero. In fact with Lambda I have seen hacks where period requests are sent to actually prevent it for latency reasons.
+
+Non-production it's really handy to scale down because otherwise such environments are just burning money.
+
+So ideally what we really want is to "scale down to near zero". This comes built in with Kubernetes HPA and newer tools like Keda. But in my experience devs are afraid to enable them....
+
+So my recommendation is embrace autoscaling! Be brave or use tools where its baked in and you don't have to worry about the choice 
+
+
