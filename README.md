@@ -172,6 +172,9 @@ Horizontal and verticual pod Autoscaler
 
 ![image](https://github.com/user-attachments/assets/58a4f934-bbbe-4c17-8fc4-a49bc7abc95f)
 
+
 <h2>Important:</h2>
-Horizontal Pod AutoScaler: scales the number of replicas of an application
+
+Horizontal Pod AutoScaler: scales the number of replicas of an application </br>
+
 Vertical Pod AutoScaler: VPA scales the resource requests and limits of a pod
