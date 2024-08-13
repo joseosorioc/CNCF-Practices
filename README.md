@@ -278,6 +278,11 @@ As you embark on your journey to excel in the KCNA exam, the following video wil
 - What is the meaning of the different acronyms commonly used
 - What is the core role of the CNCF TOC
 
+<h4>CNCF Mission</h4>
+
+Our charter
+“CNCF’s mission is to make cloud native computing ubiquitous…”
+
 Cloud Native terminology
 
 CNCF Chams diagram
