@@ -277,3 +277,25 @@ As you embark on your journey to excel in the KCNA exam, the following video wil
 - How is conflict resolution handled in the various CNCF groups
 - What is the meaning of the different acronyms commonly used
 - What is the core role of the CNCF TOC
+
+Cloud Native terminology
+
+CNCF Chams diagram
+
+![image](https://github.com/user-attachments/assets/d20312d5-a6dc-405d-be17-460f30ce8802)
+
+
+![image](https://github.com/user-attachments/assets/7045624b-e67a-422c-b110-d7086b4c9118)
+
+![image](https://github.com/user-attachments/assets/e52a3048-a3cc-4cf3-92f1-c94f1109b808)
+
+
+Stages Projects CNCF
+
+![image](https://github.com/user-attachments/assets/34451f8b-e507-4e2c-9db9-b1aa2d89a2fe)
+
+
+Project Graduation CNCF
+
+![image](https://github.com/user-attachments/assets/74e01857-6577-4def-bdf5-42fea62ae40a)
+
