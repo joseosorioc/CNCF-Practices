@@ -287,6 +287,36 @@ Cloud Native terminology
 
 CNCF Chams diagram
 
+1. The "Crossing the Chasm" concept in the CNCF project maturity model represents which transition?
+- From Incubated to Graduated
+
+The "Chasm" phase in the CNCF Project Maturity levels represents the bridge to which user category?
+- Early Majority
+
+What is the role of the Technical Oversight Committee (TOC) in the CNCF?
+-  To evaluate the maturity of CNCF projects.
+
+What is the significance of Sandbox, Incubation, and Graduation stages in the CNCF?
+- They signal the level of maturity of a given project to enterprises.
+
+What was the change in CNCF's terminology to avoid confusion with other projects?
+- SIG to TAG
+
+How is conflict resolution generally handled within CNCF governance?
+- Through discussion and voting
+
+What is the significance of the CNCF Landscape page?
+- It provides an overview of the ecosystem of cloud native projects, including those in Sandbox, Incubated, and Graduated stages
+
+Which group, according to the "Crossing the Chasm" model, is most susceptible to risk and will wait for market adoption to increase before utilizing a project themselves?
+Late Majority
+
+Important Study in the context CNCF
+- Early Adopters
+- Early Majority
+- Late Majority
+- Laggards
+
 ![image](https://github.com/user-attachments/assets/d20312d5-a6dc-405d-be17-460f30ce8802)
 
 
