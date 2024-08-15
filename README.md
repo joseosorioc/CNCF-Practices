@@ -334,3 +334,17 @@ Project Graduation CNCF
 
 ![image](https://github.com/user-attachments/assets/74e01857-6577-4def-bdf5-42fea62ae40a)
 
+
+
+
+CNCF Personas
+
+Understand and recognise the acronyms commonly associated with the role of SRE, i.e. SLA, SLO and SLI
+Understand the role of SRE and how this differs to DevOps
+The role of FinOps for financial accountability
+
+
+
+Open Standarsds
+
+
