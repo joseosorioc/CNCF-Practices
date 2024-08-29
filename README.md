@@ -384,4 +384,28 @@ Service Mesh Interface provides:
 - A basic feature set for the most common service mesh use cases.
 - Flexibility to support new service mesh capabilities over time.
 - Space for the ecosystem to innovate with service mesh technology.
+- 
+
+
+<h4>Contenerisation introduction </h4>
+
+Chroot: Chroot, short for "change root," is a Unix command that alters the apparent root directory for a specific process and its children. It creates a confined environment, isolating processes from the rest of the system. This isolation can be handy for various purposes, such as testing and debugging or enhancing security.
+
+What was Docker originally called? 
+- DotCloud
+
+What are the two key ingredients that Docker brought together to create its solution?
+- Linux namespaces and cgroups
+
+Why are Docker containers preferred over virtual machines?
+- They are faster to deploy and consume less system resources
+
+How many namespaces were originally added to the Linux kernel in 2002?
+- 6
+
+What is the network namespace in Linux used for?
+- To provide an isolated networking stack with its own IP addresses and connectivity
+
+What is the purpose of the mount namespace in Linux?
+To allow the use of independent mount points that are visible by processes within the namespace.
 
