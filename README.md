@@ -409,3 +409,40 @@ What is the network namespace in Linux used for?
 What is the purpose of the mount namespace in Linux?
 To allow the use of independent mount points that are visible by processes within the namespace.
 
+
+<h3> Docker Desktop Configuration </h3>
+What does Docker Desktop use to run an isolated instance for Docker?
+- A hidden virtual machine or "subsystem".
+
+What is the purpose of the "i" flag when running the 'docker run' command?
+- To make the container interactive
+
+What is the purpose of the "t" flag when running the 'docker run' command?
+- To create a terminal input/output environment (tty) for interacting with the container
+
+What is one key difference between managing resources in Docker Desktop on a Mac compared to Windows?
+- On a Mac, you can customise shared resources in the Preferences, while on Windows, you cannot
+
+
+<h3> Container Images </h3>
+
+Difference Container vs Images
+
+![image](https://github.com/user-attachments/assets/bba307fd-94a6-4ee4-8141-2925489eb0a4)
+
+
+Container tags
+![image](https://github.com/user-attachments/assets/ba051c69-272e-472a-aff0-876f5869af88)
+
+
+What  the digest?
+![image](https://github.com/user-attachments/assets/fe969881-7597-4df1-9bba-940ae363ad76)
+
+What is the purpose of the "latest" tag in Docker?
+To indicate the newest version of a container image
+
+What is a union filesystem in the context of container images?
+A filesystem that combines individual layers into a single view
+
+What is the difference between a digest and an image ID?
+A digest is a checksum taken from a container registry, while an image ID is a checksum based on the local container image
