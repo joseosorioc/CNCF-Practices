@@ -446,3 +446,30 @@ A filesystem that combines individual layers into a single view
 
 What is the difference between a digest and an image ID?
 A digest is a checksum taken from a container registry, while an image ID is a checksum based on the local container image
+
+<h4>Images containers part #2 </h4>
+
+What is the command used to validate the Docker version and configuration?
+- docker version
+
+** What is the container engine being used by Docker?
+- containerD
+
+** What is the purpose of the -rm option when running a Docker container?
+- To remove the container if exists
+
+What command, in the original Docker command syntax, would display all containers, irrespective of their state, including those that have exited?
+- DOcker ps -a
+
+** How can you override the default command in a Docker container when running it? - ¿Cómo se puede anular el comando predeterminado en un contenedor Docker al ejecutarlo?
+Add the command to the end of the docker run command
+
+** What does the it option do when running a Docker container?
+Runs the container in interactive mode with a terminal
+
+** Which command line option is used to list all the parameters available to the Docker command?
+docker --help
+
+** What is the purpose of running a container as a non-root user?
+To improve security by limiting privileges
+
