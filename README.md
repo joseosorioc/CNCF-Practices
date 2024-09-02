@@ -473,3 +473,5 @@ docker --help
 ** What is the purpose of running a container as a non-root user?
 To improve security by limiting privileges
 
+Importante: Glosario de Terminos en Kubernetes: https://kubernetes.io/es/docs/reference/glossary/?fundamental=true
+
