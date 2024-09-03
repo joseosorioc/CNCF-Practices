@@ -478,3 +478,116 @@ Importante: Glosario de Terminos en Kubernetes: https://kubernetes.io/es/docs/re
 
 Cloud Storage o Almacenamiento en la nube
 
+
+<h3>Container Networking Services and Volumes</h3>
+
+El comando docker <strong>run -d --rm nginx </strong> ejecuta un contenedor de Docker con la imagen de Nginx de la siguiente manera:
+
+docker run: Este es el comando básico para ejecutar un contenedor Docker.
+-d: Esta opción ejecuta el contenedor en modo "desprendido" o "detached", lo que significa que el contenedor se ejecutará en segundo plano y no bloqueará tu terminal.
+--rm: Esta opción indica que el contenedor debe eliminarse automáticamente cuando se detenga. Es útil para mantener limpio tu entorno de Docker, ya que evita la acumulación de contenedores detenidos.
+
+nginx: Es la imagen de Docker que se utilizará para crear el contenedor. En este caso, se está usando la imagen oficial de Nginx, que es un servidor web popular.
+
+docker ps: Este comando muestra una lista de los contenedores que están actualmente en ejecución. Solo muestra aquellos que están activos en ese momento, es decir, aquellos cuyo estado es "Up" (en funcionamiento).
+
+
+docker ps -a: Este comando muestra una lista de todos los contenedores, tanto los que están en ejecución como los que están detenidos. Incluye contenedores que han sido detenidos, terminados o que han fallado.
+
+docker rm:
+
+Propósito: Elimina contenedores Docker.
+Uso: Se utiliza para borrar uno o más contenedores que ya han sido detenidos. No se puede usar para eliminar contenedores que están en ejecución.
+Sintaxis: docker rm [OPTIONS] CONTAINER [CONTAINER...]
+Ejemplo: docker rm my_container elimina el contenedor llamado my_container.
+
+
+docker rmi:
+
+Propósito: Elimina imágenes Docker.
+Uso: Se utiliza para borrar una o más imágenes de Docker del sistema. Las imágenes que están en uso por contenedores en ejecución no se pueden eliminar a menos que se detengan los contenedores que las utilizan.
+Sintaxis: docker rmi [OPTIONS] IMAGE [IMAGE...]
+Ejemplo: docker rmi my_image elimina la imagen llamada my_image.
+
+<img width="967" alt="Captura de pantalla 2024-09-02 a la(s) 11 41 57 p  m" src="https://github.com/user-attachments/assets/70b574b2-fa47-4673-bf61-f19e418d2e80">
+ <i>el comando docker stop se utiliza para detener contenedores en ejecución.</i>
+
+docker stop
+
+Propósito: Detener uno o más contenedores que están en ejecución.
+Uso: Envía una señal de SIGTERM al proceso principal dentro del contenedor, dándole la oportunidad de terminar de manera ordenada. Si el proceso no termina dentro de un tiempo de espera (por defecto, 10 segundos), se envía una señal SIGKILL para forzar la detención del contenedor.
+
+docker exec
+
+Ejecuta un comando en un contenedor en ejecución.
+Ejemplo: docker exec -it my_container /bin/bash
+
+
+-P (En mayuscula)
+
+El comando -P (o --publish-all) se usa con el comando docker run para exponer todos los puertos expuestos de un contenedor a puertos disponibles en el host. Aquí está cómo funciona:
+
+docker run -P
+Propósito: Exponer todos los puertos que la imagen del contenedor ha definido como expuestos (EXPOSE en el Dockerfile) y asignar puertos aleatorios disponibles en el host para cada uno de ellos.
+Uso: Cuando usas -P, Docker asigna automáticamente un puerto en el host para cada puerto expuesto del contenedor. La asignación es automática y no necesitas especificar un puerto específico.
+Ejemplo de Uso: docker run -d -P nginx
+Luego, para hacer mas interesante el ejercicio podemos hacer curl sobre eso: curl http://localhost:55000
+
+
+
+docker exec -it ef1 bash
+
+El comando docker exec -it ef1 bash se utiliza para ejecutar un nuevo proceso dentro de un contenedor Docker en ejecución. Aquí está el desglose del comando:
+
+docker exec: Este es el comando principal para ejecutar un nuevo comando en un contenedor que ya está en ejecución.
+
+-i: Esta opción significa "modo interactivo". Mantiene la entrada estándar (stdin) abierta, lo que permite interactuar con el proceso que se está ejecutando.
+
+-t: Esta opción asigna un pseudo-terminal al proceso, lo que es necesario para una experiencia interactiva adecuada (como tener una terminal de línea de comandos).
+
+ef1: Este es el ID o nombre del contenedor en el que deseas ejecutar el comando. Puedes usar el ID completo del contenedor o su nombre.
+
+bash: Este es el comando que se ejecutará dentro del contenedor. En este caso, se está ejecutando el intérprete de comandos bash, lo que te proporciona una línea de comandos dentro del contenedor.
+
+
+
+El comando docker run -d --rm -p 12345:80 se utiliza para ejecutar un contenedor Docker con las siguientes opciones:
+
+docker run: Este es el comando principal para crear y ejecutar un nuevo contenedor a partir de una imagen Docker.
+
+-d (Deteached): Esta opción ejecuta el contenedor en modo "desprendido" (detached), lo que significa que el contenedor se ejecutará en segundo plano y no bloqueará tu terminal.
+
+--rm: Esta opción indica que el contenedor debe eliminarse automáticamente una vez que se detenga. Esto ayuda a mantener limpio tu entorno Docker al eliminar contenedores que ya no están en uso.
+
+-p 12345:80: Esta opción mapea el puerto 80 del contenedor al puerto 12345 del host. Específicamente:
+
+El primer número (12345) es el puerto en el host.
+El segundo número (80) es el puerto dentro del contenedor.
+
+
+
+
+El comando <strong>docker run -d --rm -p 12345:80 nginx -v my_web_page:/usr/share/nginx/html nginx</strong> 
+
+Análisis del Comando
+docker run -d --rm -p 12345:80 nginx: Esta parte del comando está bien y se utiliza para ejecutar un contenedor Nginx en segundo plano (-d), eliminar el contenedor automáticamente al detenerse (--rm), y mapear el puerto 80 del contenedor al puerto 12345 del host (-p 12345:80).
+
+-v my_web_page:/usr/share/nginx/html: Esta opción se usa para montar un volumen desde el host al contenedor.
+
+nginx: Aparece nuevamente al final del comando, pero debería estar antes de las opciones del contenedor. El nombre de la imagen que vamos a usar.
+
+
+
+
+docker start
+
+El comando docker start se utiliza para iniciar uno o más contenedores que están detenidos. Aquí está un desglose del comando y su uso:
+
+docker start
+Propósito: Inicia uno o más contenedores que están en estado detenido. No crea nuevos contenedores, sino que reinicia contenedores existentes que ya han sido creados anteriormente.
+
+Uso: Este comando es útil cuando necesitas reactivar un contenedor que fue detenido pero aún existe en el sistema.
+
+Sintaxis: docker start [OPTIONS] CONTAINER [CONTAINER...]
+
+CONTAINER: El ID del contenedor o el nombre del contenedor que deseas iniciar. Puedes proporcionar uno o varios IDs o nombres de contenedores.
