@@ -438,6 +438,7 @@ Container tags
 
 What  the digest?
 ![image](https://github.com/user-attachments/assets/fe969881-7597-4df1-9bba-940ae363ad76)
+Digest se refiere a un identificador único que representa de manera inmutable el contenido de una imagen. Es una forma de garantizar la integridad y la exactitud de una imagen a lo largo del tiempo.
 
 What is the purpose of the "latest" tag in Docker?
 To indicate the newest version of a container image
@@ -591,3 +592,98 @@ Uso: Este comando es útil cuando necesitas reactivar un contenedor que fue dete
 Sintaxis: docker start [OPTIONS] CONTAINER [CONTAINER...]
 
 CONTAINER: El ID del contenedor o el nombre del contenedor que deseas iniciar. Puedes proporcionar uno o varios IDs o nombres de contenedores.
+
+
+BUILDING Docker Images
+
+FROM: Especifica la imagen padre de la cual vamos a construir. 
+![image](https://github.com/user-attachments/assets/2113426c-21b8-43d7-8dd1-a35a2e44d6bd)
+
+*** ANTES se USABA MAINTAINER:  MAINTAINER John Doe <john.doe@example.com> Pero quedo descontinuada, ahora se usa LABEL maintainer="John Doe <john.doe@example.com>"
+
+
+APK  (Alpine Package Kepper)
+
+![image](https://github.com/user-attachments/assets/a963b0ff-790f-44cf-965d-3163b811f00d)
+
+Querying the termininfo database
+
+![image](https://github.com/user-attachments/assets/b05f3248-cad1-47fc-bb14-7303e3556f92)
+
+
+RUN
+En Docker, la instrucción RUN en un Dockerfile se utiliza para ejecutar comandos en el contenedor durante el proceso de construcción de la imagen. Es una de las instrucciones más importantes y versátiles en un Dockerfile.
+![image](https://github.com/user-attachments/assets/d42a5253-df62-46ab-972e-6a464e08638c)
+
+
+CMD
+
+La cláusula CMD en un Dockerfile se utiliza para especificar el comando que se ejecutará por defecto cuando se inicie un contenedor a partir de la imagen construida. Es decir, define qué proceso debe ejecutarse cuando el contenedor se ejecuta sin que se especifique un comando diferente en la línea de comandos de docker run.
+![image](https://github.com/user-attachments/assets/c2515880-e5e1-42ac-bdb8-fced920ac5b4)
+
+
+WORKDIR
+
+La cláusula WORKDIR en un Dockerfile se utiliza para establecer el directorio de trabajo para cualquier comando RUN, CMD, ENTRYPOINT, COPY y ADD que aparezca después de esta instrucción. Es una forma de configurar el directorio en el que se ejecutan los comandos dentro del contenedor, proporcionando un entorno organizado y consistente para la construcción de la imagen.
+
+![image](https://github.com/user-attachments/assets/6c7cff32-35d1-4159-aa50-413eed1712b9)
+
+
+COPY
+La cláusula COPY en un Dockerfile se utiliza para copiar archivos y directorios desde el contexto de construcción (el directorio en el que se encuentra el Dockerfile) al sistema de archivos del contenedor en construcción.
+
+
+USER
+
+La cláusula USER en un Dockerfile se utiliza para especificar el usuario y el grupo con el que se ejecutarán los comandos en el contenedor a partir de ese punto en el Dockerfile. Establecer un usuario específico es importante por razones de seguridad y para garantizar que las aplicaciones se ejecuten con los permisos adecuados.
+
+![image](https://github.com/user-attachments/assets/b29c3524-6b76-4451-b31d-11b41be7aa04)
+
+WHOAMI (NO es necesariamente de dockerfile, sino de UNIX)
+whoami, es un comando en sistemas Unix/Linux que muestra el nombre del usuario actual. Sin embargo, en el contexto de Docker, hace referencia a cómo obtener información sobre el usuario que está ejecutando comandos dentro de un contenedor.
+
+
+ENTRYPOINT
+La instrucción ENTRYPOINT en un Dockerfile define el comando que se ejecutará por defecto cuando se inicie un contenedor a partir de la imagen construida. A diferencia de CMD, que proporciona comandos predeterminados que pueden ser sobrescritos, ENTRYPOINT establece UN (uno solo) comando principal que no puede ser sobrescrito fácilmente al iniciar el contenedor, aunque puedes pasarle argumentos adicionales.
+![image](https://github.com/user-attachments/assets/53ecc941-4beb-42e9-b304-9f2412f04292)
+
+Importante: 
+
+La opción --no-cache se utiliza con el comando docker build para evitar el uso de cachés durante la construcción de una imagen. Esto significa que Docker no utilizará capas previamente almacenadas en caché para las instrucciones del Dockerfile, sino que volverá a ejecutar cada comando desde cero.
+
+docker system prune: El comando docker system prune en Docker se utiliza para limpiar recursos no utilizados en tu entorno Docker. Esto incluye imágenes, contenedores, volúmenes y redes que no están en uso, ayudando a liberar espacio en disco y mantener tu sistema Docker ordenado.
+
+
+** What is the difference between the CMD and RUN instructions in a Dockerfile?
+  CMD specifies the command that will be executed when the container runs, while RUN executes commands during the build process.
+** What is the purpose of a multistage build in a Dockerfile?
+ To reduce the size of the final container image
+
+ **In a multistage Dockerfile, how can you copy a binary from one stage to another?
+ By using the COPY directive with the --from flag
+
+ ** What is the function of the Logical AND operator (&&) in a Dockerfile?
+ To run multiple commands in sequence, only if the previous command is successful
+
+
+
+
+
+
+
+Docker Buildx
+
+Docker Buildx es una extensión del comando docker build que proporciona capacidades avanzadas de construcción de imágenes Docker. Está basado en BuildKit, una herramienta de construcción de imágenes de Docker más moderna y poderosa. Docker Buildx permite crear imágenes de manera más eficiente y flexible, y soporta una serie de características avanzadas que no están disponibles con el comando docker build tradicional.
+
+Características Clave de Docker Buildx
+Construcción Multi-Plataforma: Permite construir imágenes para múltiples plataformas (como linux/amd64, linux/arm64, etc.) desde un solo Dockerfile. Esto es útil para crear imágenes que se puedan ejecutar en diferentes arquitecturas de hardware.
+
+Optimización de Caché: Utiliza caché de construcción de forma más eficiente, lo que puede acelerar las construcciones repetidas. Buildx también admite el uso de cachés remotos.
+
+Construcción Paralela: Puede construir múltiples imágenes o etapas de construcción en paralelo, lo que mejora el tiempo de construcción.
+
+Construcción de Imágenes Sin Etiqueta (BuildKit): Permite construir imágenes sin tener que etiquetarlas explícitamente, y manejar construcciones más complejas con mayores niveles de control.
+
+Soporte para Contextos de Construcción: Facilita la construcción de imágenes a partir de diferentes contextos, permitiendo una mayor flexibilidad en la organización de archivos y directorios.
+
+Construcción desde un Dockerfile Multietapa: Maneja construcciones basadas en Dockerfiles que utilizan múltiples etapas, permitiendo una construcción más limpia y modular.
