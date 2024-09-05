@@ -687,3 +687,232 @@ Construcción de Imágenes Sin Etiqueta (BuildKit): Permite construir imágenes 
 Soporte para Contextos de Construcción: Facilita la construcción de imágenes a partir de diferentes contextos, permitiendo una mayor flexibilidad en la organización de archivos y directorios.
 
 Construcción desde un Dockerfile Multietapa: Maneja construcciones basadas en Dockerfiles que utilizan múltiples etapas, permitiendo una construcción más limpia y modular.
+
+
+<h2> Container Orchestration - Study Tips </h2>
+For the KCNA Examination, understand the problems that Container Orchestration resolves.
+
+![image](https://github.com/user-attachments/assets/3807972b-3223-4700-aeee-0e08cdd09c7e)
+
+
+CRD (Custom resource definitions) en Kubernetes
+
+Custom resource definitions (CRDs) in Kubernetes are a way to extend its API, allowing us to add functionality and capabilities beyond the basic features provided out of the box.
+
+🌐 Kubernetes has the potential to do much more than its current capabilities, and further extensions are required to unlock its full potential.
+  Installing third-party solutions in Kubernetes often involves extending the cluster with custom resource definitions, enabling users to define how certain actions or 
+   resources are created and managed.
+
+   En Kubernetes, un CRD, o Custom Resource Definition (Definición de Recurso Personalizado), es una manera de extender el conjunto de recursos que Kubernetes puede manejar de forma nativa. Los recursos personalizados permiten a los usuarios definir sus propios tipos de recursos y objetos en el clúster, además de los recursos predefinidos como Pods, Services y Deployments.
+
+Aquí tienes un desglose básico de cómo funciona un CRD:
+
+Definición del CRD: Primero, defines el CRD en un archivo YAML que describe el nuevo tipo de recurso. Esto incluye especificar el nombre del recurso, su esquema y cómo se debe comportar. Por ejemplo, podrías definir un recurso llamado MyCustomResource con ciertos campos y validaciones.
+
+Creación del CRD: Aplicar este archivo al clúster de Kubernetes crea el CRD, que ahora es reconocido por Kubernetes como un tipo de recurso válido.
+
+Uso del Recurso Personalizado: Una vez que el CRD está en el clúster, puedes crear instancias del nuevo recurso personalizado. Estas instancias son objetos que siguen el esquema definido en el CRD. Puedes interactuar con ellos de la misma manera que con otros recursos de Kubernetes, usando kubectl u otras herramientas.
+
+Controladores: A menudo, se utiliza un controlador para manejar el ciclo de vida de los recursos personalizados. Este controlador es un componente que observa los recursos personalizados y realiza acciones en respuesta a cambios en su estado, similar a cómo los controladores manejan otros recursos en Kubernetes.
+
+Un ejemplo práctico de un CRD podría ser un recurso llamado Database, que tiene campos como databaseName, version, y replicas. Puedes usar este recurso para definir y gestionar instancias de bases de datos en tu clúster.
+
+En resumen, los CRDs permiten a los usuarios de Kubernetes extender la API del clúster para soportar sus propios tipos de datos y aplicaciones personalizadas.
+
+
+Explicado:  Imagina que Kubernetes es como una gran caja de herramientas para manejar aplicaciones. Las herramientas que vienen con Kubernetes son cosas como “cajas” (Pods) y “tablones de madera” (Services).
+
+Un CRD, o Definición de Recurso Personalizado, es como cuando tú quieres usar una herramienta especial que no está en la caja de herramientas original. Entonces, le dices a Kubernetes: “Quiero usar una nueva herramienta que llamaremos ‘SuperCaja’”.
+
+Así que creas una definición de cómo debe ser esta “SuperCaja” y se la das a Kubernetes. Ahora, Kubernetes sabe qué es una “SuperCaja” y puede usarla junto con las herramientas que ya tiene.
+
+Así, con los CRDs, puedes crear tus propias herramientas personalizadas para hacer cosas especiales en tu clúster de Kubernetes.
+
+
+Concepto de Open Shift
+Open Shift esta basado en Kubernetes, puesto que expanding Kubernetes to have functionality outside of core functionality.
+
+Self-Healing
+El término self-healing (autocuración) se refiere a la capacidad del sistema para detectar y corregir problemas automáticamente sin intervención manual.
+
+In the context of Container Orchestration, what is the purpose of 'self-healing'?
+- Automatically fixing or replacing containers when they fail.
+
+
+<h3>Important</h3>
+
+Kubernetes Architecture - Study Tips
+For the KCNA Examination it is important to have a thorough understanding of the Kubernetes Architecture and the roles of specific components. When watching the next video pay particular attention to the following areas.
+
+- The role of the kubelet and how it interacts with the CRI (Container Runtime Interface)
+- The role of the kube-scheduler
+- The role of the kube-proxy
+- The role of the kubeapi-server
+- The role of etcd
+- Container Runtimes and the differences between high level and low level runtimes
+- The hierarchy of Kubernetes components - From Cluster to Node to Pod to Container
+- What is the CCM (Cloud Controller Manager) and where this would reside in a Kubernetes cluster
+
+
+Kubernetes Infraestructure
+
+Container Runtime
+
+A bajo nivel: 
+
+Low Level Container Runtime
+![image](https://github.com/user-attachments/assets/56aa2e14-bccc-4984-a06f-ebbf163f3351)
+
+RUNC
+Open Container Initiative (OCI): runc is the reference implementation of the OCI Runtime Specification, which defines how to run containers on a Linux system.
+Functionality: runc is responsible for the actual process of creating and running containers. It takes a container configuration (specified in a JSON format defined by the OCI) and uses Linux system calls to set up the container's environment and then run the container's main process. This involves configuring namespaces, cgroups, security features, and other isolation mechanisms provided by the Linux kernel.
+
+
+A Alto nivel: 
+![image](https://github.com/user-attachments/assets/54a06a46-f748-474f-836b-e0e6196a28cb)
+
+
+The Kubelet
+
+The kubelet is the primary "node agent" that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.
+
+The kubelet works in terms of a PodSpec. A PodSpec is a YAML or JSON object that describes a pod. The kubelet takes a set of PodSpecs that are provided through various mechanisms (primarily through the apiserver) and ensures that the containers described in those PodSpecs are running and healthy. The kubelet doesn't manage containers which were not created by Kubernetes.
+
+Other than from a PodSpec from the apiserver, there are two ways that a container manifest can be provided to the kubelet.
+
+File: Path passed as a flag on the command line. Files under this path will be monitored periodically for updates. The monitoring period is 20s by default and is configurable via a flag.
+HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint is checked every 20 seconds (also configurable with a flag).
+kubelet [flags]
+
+Respuesta de brayan bautista: Kubelet
+Nos permite interactuar con kubernetes, actua como un demonio o daemond. Habla con los compoenentes del control plane. Habla con containerDI de docker.  Es un agente que se despliega en cada uno de los nodos del cluster y esta en constante comunicacion con el control plane. 
+
+
+*** Cuando pregunten si Kubelet se ejecuta en un solo nodo del cluster, se ejecuta en ambos:
+Respuesta de The Linux Fundation: 
+
+I agree that the documentation's ambiguous description of the kubelet node agent does not quite clarify its purpose.
+Both kubelet and kube-proxy node agents are found on every node of the cluster, that includes control-plane node(s) and worker nodes. One of kubelet's tasks is to coordinate with the container runtime the container lifecycle events: to start, stop, delete... Since the control-plane agents (api server, scheduler, controller-manager, etcd) are in fact containers, it is easy to see the need for a kubelet agent on a control-plane node as well.
+
+
+Statics Pods o pods estaticos
+
+En el contexto de Kubernetes, los "pods estáticos" se refieren a pods que no son gestionados por controladores como Deployments, ReplicaSets o StatefulSets, sino que son gestionados directamente por el plano de control (control plane) de Kubernetes. Estos pods suelen ser utilizados para componentes críticos del sistema, como el servidor API de Kubernetes, el scheduler o el controller manager.
+
+Static Pods are managed directly by the kubelet daemon on a specific node, without the API server observing them. Unlike Pods that are managed by the control plane (for example, a Deployment); instead, the kubelet watches each static Pod (and restarts it if it fails).
+
+Static Pods are always bound to one Kubelet on a specific node.
+The kubelet automatically tries to create a mirror Pod on the Kubernetes API server for each static Pod. This means that the Pods running on a node are visible on the API server, but cannot be controlled from there. The Pod names will be suffixed with the node hostname with a leading hyphen.
+
+ETCD
+Base de datos llave-valor. Es el cerebro critico de Kubernetes, si este elemento se elimina se borra todo el cluster. Guarda todo el estado del cluster.  Todo lo que ocurra en el cluster (si eliminamos un pod, si lo reiniciamos lo va a registrar )
+
+![image](https://github.com/user-attachments/assets/588a323f-1cbc-438f-b7ae-26810fc93638)
+
+KubeAPI Server
+
+kube api-server: kubernetes expone una API para poder hablar con el cluster. Nos podemos conectar por una api o por una libreria o servicios externos etc.
+
+![image](https://github.com/user-attachments/assets/398380a5-9beb-4e62-9b10-9d0afdf7f843)
+
+
+Kubectl
+
+Kubectl se comunica directamente con el api-server.
+
+
+EL SHED o KubeScheduler
+Se encarga de buscar donde los pods pueden correr. Es el responsable de definir donde desplegamos los pods.
+In Kubernetes, scheduling refers to making sure that Pods are matched to Nodes so that Kubelet can run them.
+kube-scheduler is the default scheduler for Kubernetes and runs as part of the control plane. kube-scheduler is designed so that, if you want and need to, you can write your own scheduling component and use that instead.
+
+Kube-scheduler selects an optimal node to run newly created or not yet scheduled (unscheduled) pods. Since containers in pods - and pods themselves - can have different requirements, the scheduler filters out any nodes that don't meet a Pod's specific scheduling needs. Alternatively, the API lets you specify a node for a Pod when you create it, but this is unusual and is only done in special cases.
+
+
+
+![image](https://github.com/user-attachments/assets/06dd14d5-acdd-4614-99e1-9e64e564c0b2)
+
+
+Kube Proxy
+
+Es el encargado de gestionar quien entra y quien sale a nivel de networking. Crea las reglas, quita las reglas etc. Por debajo trabaja con IP tables.
+
+The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.
+
+
+Kube DNS
+Puede correr en el control plane o en los worker nodes. Es un servicio que no es obligatorio para que kubernetes funcione. Kube DNS es un servidor de DNS. Se encarga de hacer una direccion de dominio, ademas que lo hace automatico.
+
+
+
+Core DNS en Kubernetes
+
+CoreDNS es un servidor DNS que actúa como el proveedor de servicios de nombres de dominio (DNS) dentro de un clúster de Kubernetes. Es una parte fundamental del plano de control de Kubernetes y se encarga de resolver nombres de servicio en el clúster a direcciones IP y de proporcionar resolución de nombres para los pods y servicios en el clúster.
+
+Aquí están algunos aspectos clave de CoreDNS en Kubernetes:
+
+Función en Kubernetes:
+
+Resolución de Servicios: CoreDNS se encarga de traducir los nombres de los servicios de Kubernetes (por ejemplo, my-service.default.svc.cluster.local) en direcciones IP de los pods asociados. Esto permite a los pods comunicarse entre sí utilizando nombres de servicio en lugar de direcciones IP, lo que simplifica la configuración y mejora la flexibilidad.
+Resolución de Nombres de Dominio Externos: CoreDNS también puede configurarse para resolver nombres de dominio externos (por ejemplo, sitios web en Internet) mediante la reenvío de solicitudes a servidores DNS externos.
+Configuración:
+
+CoreDNS se ejecuta como un conjunto de pods en el espacio de nombres kube-system y se gestiona mediante un Deployment en Kubernetes.
+La configuración de CoreDNS se realiza a través de un ConfigMap llamado coredns en el espacio de nombres kube-system. Este ConfigMap contiene el archivo de configuración de CoreDNS (generalmente llamado Corefile), que define cómo se deben resolver las solicitudes de DNS.
+Características y Beneficios:
+
+Flexibilidad: CoreDNS es altamente configurable y soporta una variedad de plugins que permiten personalizar cómo se resuelven las consultas DNS.
+Desempeño: Está diseñado para ser ligero y rápido, lo que ayuda a mantener un buen desempeño en la resolución de nombres dentro del clúster.
+Extensibilidad: Ofrece una arquitectura de plugins que permite añadir funcionalidades adicionales como cacheo, balanceo de carga, y más.
+Comparación con kube-dns:
+
+Antes de CoreDNS, Kubernetes usaba kube-dns como el proveedor DNS predeterminado. CoreDNS fue adoptado en versiones más recientes de Kubernetes como el reemplazo de kube-dns debido a su mayor flexibilidad y rendimiento.
+Diagnóstico y Resolución de Problemas:
+
+Si hay problemas con la resolución DNS en un clúster de Kubernetes, es posible que se deban verificar los logs de los pods de CoreDNS, revisar el archivo Corefile para asegurarse de que la configuración es correcta y usar herramientas de diagnóstico como nslookup o dig para probar la resolución de nombres dentro del clúster.
+En resumen, CoreDNS es un componente crítico para la resolución de nombres dentro de un clúster de Kubernetes, facilitando la comunicación entre servicios y proporcionando resolución de nombres tanto para servicios internos como externos.
+
+Core DNS y Kube DNS
+
+CoreDNS y kube-dns son ambos servidores DNS utilizados en Kubernetes, pero no son exactamente lo mismo. Aquí te explico las diferencias clave:
+
+kube-dns
+Componentes:
+
+kube-dns es una solución más antigua que se basa en varios componentes:
+DNSmasq: Un caché de DNS.
+kube-dns: Un componente que se encarga de la resolución de nombres dentro del clúster y de algunos servicios adicionales.
+La arquitectura de kube-dns incluye un kube-dns pod que se comunica con DNSmasq para resolver las consultas de DNS.
+Configuración:
+
+La configuración se realiza a través de un ConfigMap llamado kube-dns en el espacio de nombres kube-system.
+Limitaciones:
+
+kube-dns tiene una arquitectura más compleja debido a la combinación de kube-dns y DNSmasq, y puede ser menos flexible en términos de personalización en comparación con CoreDNS.
+CoreDNS
+Componentes:
+
+![image](https://github.com/user-attachments/assets/82925c0a-0a4a-4582-b5ad-599ae2968d51)
+
+CoreDNS es una solución más moderna y ligera. Se basa en un solo binario y está diseñado con una arquitectura de plugins que permite una configuración más flexible.
+CoreDNS es una implementación de DNS escrita en Go que proporciona características avanzadas y personalizables a través de plugins.
+Configuración:
+
+La configuración se realiza a través de un ConfigMap llamado coredns en el espacio de nombres kube-system, que contiene el archivo Corefile. Este archivo permite una configuración modular y extensible.
+Ventajas:
+
+Simplicidad: CoreDNS tiene una arquitectura más simple y un solo binario, lo que facilita su gestión y despliegue.
+Flexibilidad: CoreDNS ofrece una arquitectura de plugins que permite añadir funcionalidades adicionales como caché, balanceo de carga, y reglas personalizadas.
+Desempeño: Está diseñado para ser rápido y eficiente, lo que ayuda a mantener un buen desempeño en la resolución de nombres.
+Migración de kube-dns a CoreDNS
+Transición: En versiones más recientes de Kubernetes, CoreDNS ha reemplazado a kube-dns como el proveedor de DNS predeterminado. La migración a CoreDNS se realizó debido a su mayor flexibilidad, desempeño y simplicidad en comparación con kube-dns.
+
+Compatibilidad: Aunque CoreDNS es ahora el estándar, Kubernetes sigue soportando kube-dns en clústeres existentes, pero la mayoría de las nuevas instalaciones y actualizaciones prefieren CoreDNS.
+
+Resumen
+kube-dns: Más antiguo, basado en múltiples componentes (kube-dns y DNSmasq), con una configuración menos flexible.
+CoreDNS: Más moderno, basado en una arquitectura de plugins única, con mayor flexibilidad y simplicidad en la configuración.
+
+Kubernetes usa CoreDNS como el servidor DNS predeterminado a partir de Kubernetes 1.11. CoreDNS se ha convertido en el reemplazo recomendado para kube-dns, que era el servidor DNS utilizado anteriormente.
+
+Leer documento: https://coredns.io/2018/11/27/cluster-dns-coredns-vs-kube-dns/
