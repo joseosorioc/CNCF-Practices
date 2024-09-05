@@ -997,3 +997,22 @@ Which of the following is considered a component of the Kubernetes control-plane
 
 How do nodes in a highly available Kubernetes configuration connect to the API server?
 - They connect via the loadbalancer
+
+
+<h3>Kubernetes Pods - Study Tips</h3>
+
+This topic was split into three owing to the many areas that we also need to cover for the KCNA examination as niche questions. When watching these chapters, pay particular attention to the following topics -
+
+What is a pod
+How to create pods (both via the CLI and with YAML)
+How to access documentation related to a pod specification (kubectl explain)
+How to execute a command in a running pod (kubectl exec)
+Pod restart policies (the default value and available options)
+The difference between Declarative and Imperative approaches when using kubectl
+How pods make use of the network namespace for a shared IP address
+How pods are able to communicate without the use of NAT or other complicated network setups
+Running multiple containers in a pod
+Accessing logs from a particular container when running multiple containers in a pod
+Accessing logs from a terminated container in a pod when running multiple containers
+What is a sidecar and how it could be implemented
+What are init containers
