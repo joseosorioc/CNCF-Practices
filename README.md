@@ -986,7 +986,7 @@ How do nodes in a highly available Kubernetes configuration connect to the API s
 Which of the following correctly represents the hierarchy of Kubernetes components, from broadest to most specific?
 - Cluster -> Node -> Pod -> Container
 
-When does the Kubernetes Kube-Scheduler determine the node placement for a pod?
+When does the Kubernetes Kube-Scheduler determine the node placement for a pod? ***
 - After the pod has been created and registered in ETCD
 
 If a Kubernetes cluster hosted on a public cloud provider fails to provision a requested load balancer service, which component might be responsible for this failure?
@@ -994,3 +994,6 @@ If a Kubernetes cluster hosted on a public cloud provider fails to provision a r
 
 Which of the following is considered a component of the Kubernetes control-plane?
 - Cloud-Controller-Manager
+
+How do nodes in a highly available Kubernetes configuration connect to the API server?
+- They connect via the loadbalancer
