@@ -916,3 +916,81 @@ CoreDNS: Más moderno, basado en una arquitectura de plugins única, con mayor f
 Kubernetes usa CoreDNS como el servidor DNS predeterminado a partir de Kubernetes 1.11. CoreDNS se ha convertido en el reemplazo recomendado para kube-dns, que era el servidor DNS utilizado anteriormente.
 
 Leer documento: https://coredns.io/2018/11/27/cluster-dns-coredns-vs-kube-dns/
+
+
+Kube Controller Manager
+
+Es como un robot en kubernetes que se encarga de controlar todo, si necesitamos eliminar un configmap o un secreto, el se encarga de gestionar esa orden, un deployment esta fallando el se encarga de realizar todas las tareas operativas del cluster.
+
+The Kubernetes controller manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
+
+![image](https://github.com/user-attachments/assets/21ae2844-d26c-4bfc-b8b4-320598b4c99a)
+
+
+
+The cloud controller manager
+
+Cloud infrastructure technologies let you run Kubernetes on public, private, and hybrid clouds. Kubernetes believes in automated, API-driven infrastructure without tight coupling between components.
+
+The cloud-controller-manager is a Kubernetes control plane component that embeds cloud-specific control logic. The cloud controller manager lets you link your cluster into your cloud provider's API, and separates out the components that interact with that cloud platform from components that only interact with your cluster.
+By decoupling the interoperability logic between Kubernetes and the underlying cloud infrastructure, the cloud-controller-manager component enables cloud providers to release features at a different pace compared to the main Kubernetes project.
+
+The cloud-controller-manager is structured using a plugin mechanism that allows different cloud providers to integrate their platforms with Kubernetes.
+
+Design Kubernetes components
+
+The cloud controller manager runs in the control plane as a replicated set of processes (usually, these are containers in Pods). Each cloud-controller-manager implements multiple controllers in a single process.
+![image](https://github.com/user-attachments/assets/904de9fb-488c-432e-a95e-8ec92ab95fdb)
+
+
+Diferencia entre kube controller Manager y Cloud Controller Manager
+
+The cloud controller manager would then be responsible for running controllers whose function is specific to cloud provider functionality. The kube controller manager would then be responsible for running all controllers whose function was not related to a cloud provider.
+
+Interesante: ETCD se basa en RAFT Concensus, que es un algoritmo. Para leer mas: https://raft.github.io/
+
+Relación entre etcd y Raft
+etcd y Raft: etcd utiliza el algoritmo Raft para lograr consenso y mantener la consistencia en su base de datos distribuida. Raft garantiza que todas las instancias de etcd en el clúster estén sincronizadas y tengan la misma información.
+
+Operación de etcd: Cuando un cliente realiza una operación en etcd, como una escritura o una actualización de configuración, el líder de etcd usa Raft para coordinar la escritura y replicarla a los seguidores. Esto asegura que los datos se mantengan consistentes en todas las instancias de etcd, incluso si algunos nodos fallan.
+
+
+<h3>Kubernetes Architecture Final</h3>
+![image](https://github.com/user-attachments/assets/782f09e9-41c2-4c38-8cbb-0f9916fbd51b)
+
+![image](https://github.com/user-attachments/assets/cf4cbd5e-eebf-4b1c-b66b-76396ca67c20)
+
+Questions
+
+Which component is responsible for spawning and running containers in a Kubernetes architecture?
+- Low-Level Container Runtime
+
+What is the function of the Kube-Scheduler in the Kubernetes architecture?
+- It determines which Nodes are valid placements for Pods according to constraints and resources
+
+What role does the Kube-Proxy play in the Kubernetes infrastructure?
+- It dynamically configures TCP/UDP and SCT Forwarding on the system that it runs
+
+What is the role of the Controller-Manager in the Kubernetes architecture?
+- It is a control loop that monitors the state of your cluster and makes or requests changes.
+
+Which component bridges functionality of the cloud provider to the Kubernetes server?
+- Cloud-Controller-Manager
+
+What protocol is used by distributed systems to ensure that each node in the cluster agrees on the same state even in the face of failures?
+- RAFT (Es el algoritmo raft)
+
+How do nodes in a highly available Kubernetes configuration connect to the API server?
+- They connect via the loadbalancer
+
+Which of the following correctly represents the hierarchy of Kubernetes components, from broadest to most specific?
+- Cluster -> Node -> Pod -> Container
+
+When does the Kubernetes Kube-Scheduler determine the node placement for a pod?
+- After the pod has been created and registered in ETCD
+
+If a Kubernetes cluster hosted on a public cloud provider fails to provision a requested load balancer service, which component might be responsible for this failure?
+- The Cloud-Controller-Manager
+
+Which of the following is considered a component of the Kubernetes control-plane?
+- Cloud-Controller-Manager
