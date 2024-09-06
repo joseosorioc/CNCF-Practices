@@ -1016,3 +1016,165 @@ Accessing logs from a particular container when running multiple containers in a
 Accessing logs from a terminated container in a pod when running multiple containers
 What is a sidecar and how it could be implemented
 What are init containers
+
+
+PODS
+
+Pods commands
+
+![image](https://github.com/user-attachments/assets/a3d515d3-a0f1-4f46-b9d3-2bc7cbbdc1bd)
+
+
+comand for the see pod structure in yaml
+
+![image](https://github.com/user-attachments/assets/df2f2771-753d-4f05-bca2-8d2c27de72b9)
+
+Esta seria la salida: 
+![image](https://github.com/user-attachments/assets/d03fe625-ae6b-4a38-bfd2-bc4234f86662)
+
+Consultar sobre una politica:
+
+![image](https://github.com/user-attachments/assets/3e8f7cca-4306-479b-91ab-f1b634c248df)
+
+La flag -f 
+![image](https://github.com/user-attachments/assets/9e155a0e-c06e-4898-9554-3ba02e7b5112)
+
+
+Questions
+
+How do you run a command inside a specific container in a running pod?
+- kubect exec -it -c --
+
+What is the command to create a port-forward tunnel in Kubernetes for testing purposes?
+- kubectl port-forward pod/:
+
+How can you see logs of a particular container from a multi-container pod?
+- kubectl logs -c
+
+Which command would you use to view the logs of a container that has crashed and restarted?
+- kubectl logs pod/ -c-p
+
+How do you run a pod with a specific image in Kubernetes?
+- kubectl run nginx --image=nginx
+
+What is the Kubernetes object YAML configuration management command that provides a declarative approach?
+- kubectl apply -f
+
+In Kubernetes, what is the purpose of a sidecar container in a pod?
+- To perform a specific task in tandem with the main container
+
+Importante: Kubernetes network model allows pods to communicate without NAT. True or False?
+True.
+Importatnte El modelo de red de Kubernetes (Kubernetes network model) permite que los pods se comuniquen entre sí sin necesidad de Traducción de Direcciones de Red (NAT). Cada pod en Kubernetes recibe su propia dirección IP, y los pods pueden comunicarse directamente entre sí a través de estas direcciones IP, siempre y cuando estén en la misma red o puedan enrutar los paquetes entre sí. Este modelo de red plana simplifica la configuración de la red y asegura que todos los pods sean accesibles entre sí dentro del clúster.
+
+Which command is used to execute an interactive shell inside a running container in a Kubernetes pod?
+- kubectl exec -it -c -- bash
+
+Which Linux namespace is the default shared in a Kubernetes Pod?
+- Network Namespace
+
+What is a valid container restart policy in Kubernetes?
+Never
+OnFailure
+Always
+correctAll of the above (Correcta!!)
+
+What command allows you to view the YAML declaration specification from the command line?
+- kubectl explain [object]
+Adicional: Si Ejecutamos el comando con el explain podemos ver lo siguiente: 
+![image](https://github.com/user-attachments/assets/36e803bc-7fb3-427f-8ada-2ff3c7151e08)
+
+
+
+
+
+Namespace de Red en Pods de Kubernetes
+
+Namespace de Red o NETWORK NAMESTPACE : Todos los contenedores dentro de un Pod comparten el mismo namespace de red. Esto significa que todos comparten la misma dirección IP y las interfaces de red. Pueden comunicarse entre sí a través de localhost y también acceder a la red usando la misma dirección IP asignada al Pod. Este namespace de red compartido permite que los contenedores sean conscientes de los demás y se comuniquen directamente entre ellos a través de su red local.
+
+Otros Namespaces en Pods de Kubernetes
+Kubernetes también puede manejar otros tipos de namespaces, pero no se comparten entre los contenedores de la misma manera que el namespace de red. Aquí hay un breve resumen de cómo se manejan los diferentes namespaces:
+
+Namespace PID: Por defecto, cada Pod tiene su propio namespace PID, lo que aísla los IDs de proceso de los contenedores dentro del Pod de los de otros Pods. Los contenedores dentro del mismo Pod pueden ver los procesos entre sí y comunicarse usando mecanismos IPC.
+
+Namespace IPC: Cada Pod tiene su propio namespace IPC por defecto, lo que aísla los recursos de comunicación entre procesos como semáforos y memoria compartida. Los contenedores dentro del mismo Pod pueden compartir recursos IPC.
+
+Namespace UTS: Cada Pod tiene su propio namespace UTS (Unix Timesharing System), lo que aísla la información del nombre de host y del dominio. Esto significa que cada Pod puede tener su propio nombre de host, pero los contenedores dentro del mismo Pod comparten el nombre de host.
+
+Namespace de Montaje: Los contenedores dentro de un Pod comparten el mismo namespace de montaje, lo que significa que comparten la misma vista del sistema de archivos y pueden ver los mismos volúmenes montados en el Pod.
+
+
+Si el pod tiene múltiples contenedores, debes especificar el contenedor del cual quieres ver los logs:
+kubectl logs <nombre-del-pod> -c <nombre-del-contenedor>
+
+
+
+
+
+Sidecar Containers
+
+Sidecar containers are the secondary containers that run along with the main application container within the same Pod. These containers are used to enhance or to extend the functionality of the primary app container by providing additional services, or functionality such as logging, monitoring, security, or data synchronization, without directly altering the primary application code.
+
+Typically, you only have one app container in a Pod. For example, if you have a web application that requires a local webserver, the local webserver is a sidecar and the web application itself is the app container.
+
+Leer: https://network-insight.net/2016/03/19/kubernetes-network-namespace/#:~:text=In%20simple%20terms%2C%20a%20network,in%20its%20virtual%20network%20environment.
+
+<h2>kubectl get SC</h2> 
+
+El comando kubectl get sc se utiliza para obtener información sobre los StorageClasses en un clúster de Kubernetes. Las StorageClasses son recursos de Kubernetes que definen diferentes tipos de almacenamiento que se pueden utilizar para los Persistent Volumes (PV) y Persistent Volume Claims (PVC). Cada StorageClass puede tener diferentes parámetros de configuración, como el tipo de almacenamiento (por ejemplo, SSD o HDD), la política de provisión y otros detalles específicos del proveedor de almacenamiento.
+
+Comando
+Para listar las StorageClasses disponibles en tu clúster, usa:
+
+
+Comando: kubectl get sc
+
+
+La salida típica del comando kubectl get sc puede verse así:
+
+Copiar código
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLMODE   AGE
+standard (default)   kubernetes.io/aws-ebs      Delete          WaitForFirstConsumer   Filesystem      10d
+fast                 kubernetes.io/gce-pd       Retain          Immediate             Block           5d
+
+
+Explicación de los Campos
+NAME: El nombre de la StorageClass.
+PROVISIONER: El provisionador que gestiona el almacenamiento. Esto puede variar dependiendo del proveedor de almacenamiento (por ejemplo, kubernetes.io/aws-ebs para AWS EBS).
+RECLAIMPOLICY: La política de reclamación que determina qué hacer con los volúmenes cuando se elimina un PVC. Puede ser Delete (el volumen se elimina) o Retain (el volumen se conserva).
+VOLUMEBINDINGMODE: El modo de enlace del volumen. Puede ser Immediate (el volumen se enlaza inmediatamente al PVC) o WaitForFirstConsumer (el volumen se enlaza cuando un pod consume el PVC).
+ALLOWVOLMODE: El modo de acceso permitido para el volumen. Puede ser Filesystem o Block.
+AGE: El tiempo transcurrido desde que se creó la StorageClass.
+
+
+
+Print the logs for a container in a pod. 
+
+
+If the pod has only one container, the container name is optional.
+
+kubectl logs [-f] [-p] POD [-c CONTAINER]
+Examples
+# Return snapshot logs from pod nginx with only one container
+kubectl logs nginx
+
+# Return snapshot of previous terminated ruby container logs from pod web-1
+kubectl logs -p -c ruby web-1
+
+# Begin streaming the logs of the ruby container in pod web-1
+kubectl logs -f -c ruby web-1
+
+# Display only the most recent 20 lines of output in pod nginx
+kubectl logs --tail=20 nginx
+
+# Show all logs from pod nginx written in the last hour
+kubectl logs --since=1h nginx
+Options
+  -c, --container="": Print the logs of this container
+  -f, --follow[=false]: Specify if the logs should be streamed.
+      --limit-bytes=0: Maximum bytes of logs to return. Defaults to no limit.
+  -p, --previous[=false]: If true, print the logs for the previous instance of the container in a pod if it exists.
+      --since=0: Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs. Only one of since-time / since may be used.
+      --since-time="": Only return logs after a specific date (RFC3339). Defaults to all logs. Only one of since-time / since may be used.
+      --tail=-1: Lines of recent log file to display. Defaults to -1, showing all log lines.
+      --timestamps[=false]: Include timestamps on each line in the log output
