@@ -1180,7 +1180,10 @@ Options
       --timestamps[=false]: Include timestamps on each line in the log output.
 
 
-<h2>Kubernetes Namespaces - Study Tips</h2>
+
+<h2>Kubernetes Namespaces</h2>
+
+<h3>Kubernetes Namespaces - Study Tips</h3>
 
 The upcoming video in our KCNA examination preparation series dives deeply into the topic of namespaces in Kubernetes. This video extends far beyond the basic concepts of creating and utilising a namespace to fully aid you in your preparation for the exam -
 
@@ -1191,4 +1194,9 @@ Kubernetes API Objects and Namespaces: Kubernetes API objects that can operate w
 Role-Based Access Control (RBAC) in Relation to Namespaces: The purpose of RBAC and the relationship with namespaces
 Namespaced vs Non-Namespaced Kubernetes Components: The distinction between namespaced and non-namespaced components in Kubernetes, such as the difference between pods (namespaced) and nodes (non-namespaced)
 Kubernetes resources: How to list resources and how to check if a resource is namespaced or non-namespaced
+
+Namespaces Benefits
+
+![image](https://github.com/user-attachments/assets/3c148f63-3393-488d-8106-d885ad3e930f)
+
 
