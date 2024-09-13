@@ -1177,4 +1177,18 @@ Options
       --since=0: Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs. Only one of since-time / since may be used.
       --since-time="": Only return logs after a specific date (RFC3339). Defaults to all logs. Only one of since-time / since may be used.
       --tail=-1: Lines of recent log file to display. Defaults to -1, showing all log lines.
-      --timestamps[=false]: Include timestamps on each line in the log output
+      --timestamps[=false]: Include timestamps on each line in the log output.
+
+
+<h2>Kubernetes Namespaces - Study Tips</h2>
+
+The upcoming video in our KCNA examination preparation series dives deeply into the topic of namespaces in Kubernetes. This video extends far beyond the basic concepts of creating and utilising a namespace to fully aid you in your preparation for the exam -
+
+Key areas to concentrate on include:
+
+Default Namespaces in Kubernetes: Understand the predefined namespaces that come with a Kubernetes cluster and their specific purposes
+Kubernetes API Objects and Namespaces: Kubernetes API objects that can operate within namespaces. Specific focus should be given to ResourceQuotas and LimitRanges
+Role-Based Access Control (RBAC) in Relation to Namespaces: The purpose of RBAC and the relationship with namespaces
+Namespaced vs Non-Namespaced Kubernetes Components: The distinction between namespaced and non-namespaced components in Kubernetes, such as the difference between pods (namespaced) and nodes (non-namespaced)
+Kubernetes resources: How to list resources and how to check if a resource is namespaced or non-namespaced
+
