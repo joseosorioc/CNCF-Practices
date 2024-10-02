@@ -1200,3 +1200,96 @@ Namespaces Benefits
 ![image](https://github.com/user-attachments/assets/3c148f63-3393-488d-8106-d885ad3e930f)
 
 
+Nameespaces Questions
+
+
+What is a key benefit of using Kubernetes Namespaces?
+- Limitation of Kubernetes functionality
+- Increasing the CPU usage of applications
+- Combining cluster resources
+- Isolating resources and limiting the scope of user privileges (Correct)
+
+
+
+How can you describe a namespace within a Kubernetes cluster?
+- A storage system for the Kubernetes cluster
+- A communication protocol used by the Kubernetes system
+- A type of container orchestrator like Kubernetes itself
+- A virtual cluster within Kubernetes, used for isolating resources (Correct)
+
+Which command is used to view all resources within all namespaces in a Kubernetes cluster?
+- kubectl get all
+- kubectl get all -A (Correct)
+- kubectl get -A
+- kubectl get namespaces
+
+
+What is the purpose of the 'kube-system' namespace in Kubernetes?
+- It is designed for user deployed applications
+- It is for objects created by the Kubernetes system (Correct)
+- It is a namespace that is readable by all users
+- It holds lease objects associated with individual nodes
+
+
+If you run a command without specifying a namespace in Kubernetes, which namespace will it run in?
+- kube-public
+- kube-system
+- kube-node-lease
+- default (Correct)
+
+
+How can a new namespace be created in Kubernetes?
+- kubectl create nsp mynamespace
+- kubectl new namespace mynamespace
+- kubectl create namespace mynamespace (Correct)
+- kubectl add namespace mynamespace
+
+  
+
+How can you run a pod in a specific namespace in Kubernetes?
+- kubectl run pod --nsp=mynamespace
+- kubectl run pod --n=mynamespace
+- correctkubectl -n mynamespace run pod (Correct)
+- kubectl --ns=mynamespace run pod
+
+
+Which namespace is readable by all users, including those who are not authenticated?
+- kube-public (Correct)
+- kube-system
+- mynamespace
+- default
+
+How can you delete a pod named 'nginx' in a specific namespace called mynamespace in Kubernetes?
+- kubectl delete pod/nginx --grace-period=0
+- kubectl -n mynamespace delete pod/nginx (correct)
+- kubectl delete pod/nginx --namespace=all
+- kubectl -namespace mynamespace delete pod/nginx
+
+
+What are the default namespaces provided with a standard Kubernetes installation?
+- default, kube-system, kube-public, kube-node-lease (Correct)
+- kube-system, mynamespace, kube-public, kube-node-lease
+- default, mynamespace, kube-public, kube-node-lease
+- default, kube-system, kube-public
+
+
+If a resource is "Namespaced" in Kubernetes, what does this mean?
+- It exists independently of namespaces
+- correctIt is tied to a particular Namespace and exists within the context of that Namespace (Correct)
+- It is a cluster-level resource
+- It is not affected by namespaces at all
+
+
+
+What command will change the current context to use a specific namespace?
+- kubectl config set-context --current --namespace=mynamespace (Correct)
+- kubectl config set-context --namespace=mynamespace
+- kubectl set-context --current --namespace=mynamespace
+- kubectl context set --current --namespace=mynamespace
+
+
+What will happen to the resources inside a namespace if the namespace is deleted in Kubernetes?
+- The resources will be moved to the default namespace
+- The resources will also be deleted (Correct)
+- The resources will be moved to a new namespace
+- The resources will be left without a namespace
