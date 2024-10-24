@@ -1293,3 +1293,193 @@ What will happen to the resources inside a namespace if the namespace is deleted
 - The resources will also be deleted (Correct)
 - The resources will be moved to a new namespace
 - The resources will be left without a namespace
+
+
+<h2>Kubernetes Deployments and ReplicaSets</h2>
+
+- Replication: Should a pod crash or get deleted, the Deployment makes sure the number of pods is as expected.
+- Updates: Updates are phased out gradually to prevent all instances from being updated simultaneously.
+- Rollbacks: If anything goes wrong during the update or while a new version is running, Deployments allow you to revert to an older version.
+
+![image](https://github.com/user-attachments/assets/778e6aa2-3d29-489b-9f6a-f61602a1fd82)
+
+<h3>Commands Importants</h3>
+
+kubectl rollout history: Manage the rollout of one or many resources.
+- Valid resource types include:
+
+- deployments
+- daemonsets
+- statefulsets
+kubectl rollout SUBCOMMAND
+Examples
+  # Rollback to the previous deployment
+  kubectl rollout undo deployment/abc
+  
+  # Check the rollout status of a daemonset
+  kubectl rollout status daemonset/foo
+  
+  # Restart a deployment
+  kubectl rollout restart deployment/abc
+  
+  # Restart deployments with the 'app=nginx' label
+  kubectl rollout restart deployment --selector=app=nginx
+
+
+Adicional: kubectl rollout es un comando esencial en Kubernetes que nos permite gestionar las actualizaciones de nuestros despliegues de forma controlada y segura. Sirve para:
+
+Iniciar actualizaciones: Cuando modificamos un Deployment (por ejemplo, cambiando la imagen de contenedor, ajustando el número de réplicas o realizando cambios en la configuración), podemos utilizar kubectl rollout para iniciar el proceso de actualización.
+Pausar, reanudar y reiniciar actualizaciones: Si durante una actualización detectamos un problema, podemos pausarla con kubectl rollout pause para investigar y solucionar el inconveniente. Una vez resuelto, podemos reanudarla con kubectl rollout resume o incluso reiniciarla desde el principio con kubectl rollout restart.
+Ver el historial de actualizaciones: Con kubectl rollout history podemos ver todas las revisiones anteriores de un Deployment, lo que nos permite revertir a una versión anterior si es necesario.
+Revertir actualizaciones: Si una actualización causa problemas, podemos utilizar kubectl rollout undo para revertir a una revisión anterior estable.
+Obtener el estado de una actualización: Con kubectl rollout status podemos monitorear el progreso de una actualización y verificar si se ha completado correctamente.
+
+
+¿Por qué es útil kubectl rollout?
+
+Actualizaciones progresivas: Permite realizar actualizaciones de forma gradual, reduciendo el riesgo de interrupciones en el servicio.
+Control y visibilidad: Nos brinda herramientas para controlar el proceso de actualización y monitorear su estado.
+Reversibilidad: Permite revertir fácilmente a una versión anterior en caso de problemas.
+Automatización: Se puede integrar en pipelines de CI/CD para automatizar el proceso de despliegue.
+Ejemplo de uso:
+
+Supongamos que tenemos un Deployment llamado my-app y queremos actualizarlo a una nueva versión de la imagen de contenedor. Podemos ejecutar el siguiente comando:
+
+Bash
+kubectl rollout restart deployment/my-app
+Usa el código con precaución.
+
+Este comando reiniciará el proceso de actualización, aplicando los nuevos cambios al Deployment.
+
+En resumen, kubectl rollout es una herramienta fundamental para gestionar las actualizaciones de nuestros despliegues en Kubernetes de manera segura y eficiente. Nos proporciona un alto grado de control y flexibilidad para realizar cambios en nuestras aplicaciones sin afectar la disponibilidad del servicio.
+
+¿Tienes alguna otra pregunta sobre kubectl rollout o Kubernetes en general? Estaré encantado de ayudarte.
+
+Temas relacionados que podrías encontrar interesantes:
+
+Deployment en Kubernetes: ¿Qué es un Deployment y cómo funciona?
+ReplicaSet en Kubernetes: ¿Cuál es la relación entre Deployment y ReplicaSet?
+Estrategias de actualización en Kubernetes: ¿Cuáles son las diferentes estrategias de actualización disponibles?
+
+
+
+kubectl annotate es otro comando esencial en Kubernetes que nos permite agregar metadatos adicionales a cualquier recurso del clúster. Estos metadatos, llamados anotaciones, son pares clave-valor que se almacenan junto con el recurso y se pueden utilizar para diversas finalidades.
+
+¿Para qué sirve kubectl annotate?
+
+Marcar recursos: Podemos utilizar anotaciones para marcar recursos con información relevante, como etiquetas de entorno, información de propiedad, o cualquier otro dato que queramos asociar a un recurso.
+Controlar políticas: Algunas herramientas o políticas pueden basarse en las anotaciones de los recursos para tomar decisiones. Por ejemplo, un controlador de políticas podría permitir o bloquear ciertas operaciones basadas en el valor de una anotación específica.
+Integración con herramientas externas: Las anotaciones se pueden utilizar para integrar Kubernetes con herramientas externas. Por ejemplo, una herramienta de monitoreo podría usar anotaciones para identificar recursos específicos o una herramienta de backup podría utilizarlas para filtrar los recursos que se deben incluir en las copias de seguridad.
+Personalización: Las anotaciones nos permiten personalizar los recursos según nuestras necesidades y requisitos.
+Ejemplo de uso:
+
+Supongamos que tenemos un Deployment llamado my-app y queremos agregar una anotación para indicar que pertenece al entorno de producción:
+
+Bash
+kubectl annotate deployment/my-app environment=production
+Usa el código con precaución.
+
+Esto agregará la anotación environment=production al Deployment my-app.
+
+Para ver las anotaciones de un recurso:
+
+Bash
+kubectl describe deployment/my-app
+
+
+En resumen, kubectl annotate es una herramienta versátil que nos permite agregar metadatos personalizados a los recursos de Kubernetes. 
+Estos metadatos pueden ser útiles para una variedad de propósitos, desde la organización y clasificación de recursos hasta la integración con herramientas externas.
+
+
+<h4>Properties in deployments</h4>
+
+MaxSurge (Porcent): This allows Kubernetes to increase the number of Pods by  % (porcent) above the desired amount during an update, maintaining application availability.
+
+MaxUnavailable (Porcent): Up to (Porcent) % of the Pods can be unavailable during the update process, ensuring availability whilst limiting resource usage.
+
+![image](https://github.com/user-attachments/assets/d3dc88b7-06d3-43a2-9072-49e0dbd71eee)
+
+<h2>Questions</h2>
+
+What is the function of Kubernetes Deployment?
+- It offers a non-declarative way to manage applications
+- It decreases the number of Pod Replicas
+- It provides an object that delivers declarative updates for applications (correct)
+- It serves to manually manage Pods
+
+What feature of Deployments ensures the number of Pods is as expected in case of a Pod crash or deletion?
+- Updates
+- Rollbacks
+- Replication (correct)
+- Deployment Strategies
+
+Which Kubernetes feature allows you to revert to an older version of an application during a problematic update?
+- Replication
+- Updates
+- Rollbacks (correct)
+- Deployment Strategies
+
+When scaling the number of Deployment replicas, which command is used?
+- kubectl get
+- kubectl annotate
+- kubectl rollout
+- kubectl scale (correct)
+  
+
+What does the maxSurge: 25% setting in the deployment strategy signify?
+- It allows Kubernetes to reduce the number of Pods by 25% below the desired amount during an update
+- It allows Kubernetes to increase the number of Pods by 25% above the desired amount during an update
+- It makes up to 25% of the Pods unavailable during the update process (correct)
+- It makes up to 25% of the Pods surge beyond their capacity during an update
+
+
+What does the maxUnavailable: 25% setting in a Kubernetes Deployment strategy signify?
+- Up to 25% of the Pods can be unavailable during the update process (correct)
+- Up to 25% of the Pods can surge beyond their capacity during an update
+- It allows Kubernetes to increase the number of Pods by 25% above the desired amount during an update
+- It allows Kubernetes to reduce the number of Pods by 25% below the desired amount during an update
+
+What is the effect of changing the image of a Deployment?
+- It creates a new Deployment
+- It removes the current ReplicaSet
+- It creates a new ReplicaSet (correct)
+- It has no significant effect
+
+
+How can you monitor a Kubernetes Deployment's update in real time?
+- Using the command 'kubectl rollout status deployment/' (correct)
+- Using the command 'kubectl describe deployment'
+- Using the command 'kubectl get replicaset -o wide'
+- Using the command 'kubectl get pods'
+
+
+In case of a Deployment failure, which Kubernetes command can be used to revert to a functioning version?
+- kubectl get pods
+- kubectl set image
+- kubectl rollout undo deployment/ (correct)
+- kubectl describe deployment
+
+What happens when you roll back to a specific revision of a Deployment?
+- It erases the entire rollout history
+- It creates a new ReplicaSet
+- It reuses the original ReplicaSet and becomes the latest revision (correct)
+- It results in a Deployment failure
+
+What is the purpose of 'kubectl annotate' command in Kubernetes?
+- To modify the configuration of an existing object
+- To add annotations to an object (correct)
+- To create a new object
+- To delete an existing object
+
+What happens when you delete a Kubernetes Deployment?
+- The Deployment is deleted, but the linked ReplicaSets remain
+- The linked ReplicaSets are deleted, but the Deployment remains
+- Both the Deployment and the linked ReplicaSets are deleted (correct)
+- Neither the Deployment nor the linked ReplicaSets are deleted
+
+What is the recommended object for running applications in a Kubernetes cluster?
+- Nodes
+- Pods
+- Services
+- Deployments
+  
