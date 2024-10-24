@@ -1481,5 +1481,5 @@ What is the recommended object for running applications in a Kubernetes cluster?
 - Nodes
 - Pods
 - Services
-- Deployments
+- Deployments (correct)
   
