@@ -1482,4 +1482,28 @@ What is the recommended object for running applications in a Kubernetes cluster?
 - Pods
 - Services
 - Deployments (correct)
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>Minikube Commands</h2>
+
+<ul>
+    <li><code>minikube start --profile [profile-name]</code>: create new cluster and start.</li>
+    <li><code>minikube delete --profile [profile-name]</code>: delete minikube profile.</li>
+    <li><code>minikube profile [profile-name]</code>: choose profile in minikube.</li>
+    <li><code>minikube-help</code>: see all commands and how works with minikube.</li>
+    <li><code>minikube profile list</code>: see list of profiles in minikube.</li>
+</ul>
+
+
+
   
