@@ -1502,8 +1502,22 @@ What is the recommended object for running applications in a Kubernetes cluster?
     <li><code>minikube profile [profile-name]</code>: choose profile in minikube.</li>
     <li><code>minikube-help</code>: see all commands and how works with minikube.</li>
     <li><code>minikube profile list</code>: see list of profiles in minikube.</li>
+    <li>minikube start -p [profile-name]</li>
+    <li>minikube status</li>
+    <li>minikube logs</li>
+    <li>minikube service [service-name]  —url: nos permite hacer un tunning de un servicio que queramos en macOS. Para exponerlo publicamente. </li>
 </ul>
 
 
+
+
+
+
+* minikube start --driver=docker -p cluster-development --nodes=2 (Crea un cluster a partir de la cantidad de nodos que le indiquemos)
+
+Para ver mas comandos de minikube: https://minikube.sigs.k8s.io/docs/commands/
+ minikube profile cluster-testing: cambiarnos de cluster
+
+- minikube profile [cluster-name]: cambiar de cluster
 
   
