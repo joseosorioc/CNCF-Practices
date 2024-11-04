@@ -1515,14 +1515,9 @@ Que es un servicio?
 
 Son los componentes que nos van a permitir conectarnos con el mundo exterior. Es un componente intermedio que lo unico que hace   es actuar entre el cliente y nuestro deployment.El servicio detecta cuando un pod se cae, estados, si se esta levantando etc. Lo hace mediante Selectors. y apartir de los labels que tengan los pods.
 
-Tipos de Servicio.
+Los tipos de servicios se describen mas abajo, dejamos una imagen representativa (Pendiente)
 
-Cluster IP: Accesible solo desde dentro del cluster. Es un servicio privado. 
-NodePort: Accesible desde afuera del cluster.
-Load Balancer: Accesible desde afuera del cluster. 
-
-![image](https://github.com/user-attachments/assets/2cb65e13-0d05-4de5-824f-aa33126b9108)
-
+![image](https://github.com/user-attachments/assets/410b323c-4c56-4bfc-9740-ad1eef4b6ba0)
 
 
 
@@ -1688,6 +1683,10 @@ En Kubernetes, hay varios tipos de servicios que se pueden utilizar para exponer
 > ExternalName: Permite crear un servicio que apunta a un nombre de dominio externo. No asigna una IP, sino que actúa como un alias para un nombre DNS externo.
 
 > Headless: Aunque no es un tipo de servicio en el sentido tradicional, se refiere a un servicio ClusterIP configurado con clusterIP: None, lo que permite la resolución de nombres DNS a las IPs de los pods directamente, sin balanceo de carga.
+
+
+![image](https://github.com/user-attachments/assets/a2b5f368-c073-441f-a6da-879f74836fd2)
+
 
 
 
