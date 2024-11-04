@@ -1485,15 +1485,6 @@ What is the recommended object for running applications in a Kubernetes cluster?
 
 
 
-
-
-
-
-
-
-
-
-
 <h2>Minikube Commands</h2>
 
 <ul>
@@ -1506,18 +1497,222 @@ What is the recommended object for running applications in a Kubernetes cluster?
     <li>minikube status</li>
     <li>minikube logs</li>
     <li>minikube service [service-name]  —url: nos permite hacer un tunning de un servicio que queramos en macOS. Para exponerlo publicamente. </li>
+    <li>minikube start --driver=docker -p cluster-development --nodes=2 (Crea un cluster a partir de la cantidad de nodos que le indiquemos)</li>
 </ul>
-
-
-
-
-
-
-* minikube start --driver=docker -p cluster-development --nodes=2 (Crea un cluster a partir de la cantidad de nodos que le indiquemos)
-
 Para ver mas comandos de minikube: https://minikube.sigs.k8s.io/docs/commands/
- minikube profile cluster-testing: cambiarnos de cluster
 
-- minikube profile [cluster-name]: cambiar de cluster
 
-  
+
+<h2>Services</h2>
+
+Servicios:
+
+Un servicio es un componente de Kubernetes que tiene como proposito principal exponer un recurso fuera del cluster.
+
+![image](https://github.com/user-attachments/assets/eea19e39-cdda-4def-b3d8-e35813c54c3b)
+
+Que es un servicio?
+
+Son los componentes que nos van a permitir conectarnos con el mundo exterior. Es un componente intermedio que lo unico que hace   es actuar entre el cliente y nuestro deployment.El servicio detecta cuando un pod se cae, estados, si se esta levantando etc. Lo hace mediante Selectors. y apartir de los labels que tengan los pods.
+
+Tipos de Servicio.
+
+Cluster IP: Accesible solo desde dentro del cluster. Es un servicio privado. 
+NodePort: Accesible desde afuera del cluster.
+Load Balancer: Accesible desde afuera del cluster. 
+
+![image](https://github.com/user-attachments/assets/2cb65e13-0d05-4de5-824f-aa33126b9108)
+
+
+
+
+Crear un Servicio de tipo NodePort:
+
+kubectl expose deploy [deploy-name] —port=[port-number] —type=[type-port]: le decimos que nos cree un servicio de tipo nodeport especificando el puerto y el nombre del deploy. Ejemplo: kubectl expose deploy apache --port=80 --type=NodePort 
+
+
+
+
+Cluster IP
+![image](https://github.com/user-attachments/assets/20e4b8a4-b50e-4f19-87cc-cdadf490ba5f)
+
+
+
+* Importante (a tener en cuenta):
+
+Esto lo podremos visualizar que se usa junto a algunos comandos <strong>—dry-run=client</strong>: Esta opción permite simular la creación del deployment sin que se aplique realmente al clúster. Es útil para verificar que el comando funciona correctamente antes de ejecutarlo de forma real.
+
+
+<h3>Commands</h3>
+
+kubectl get svc: get services
+kubectl expose [service-name]: expose service
+kubectl expose deployment/nginx -type=[type-service] —port 8080 -target-port 80: expose service by types and after add the port entry and port listener.
+
+
+
+<h3>Questions</h3>
+
+Which Kubernetes component provides a way to expose an application running on a set of Pods as a network service?
+- ConfigMap
+- Namespace
+- Deployment
+- Service (correct)
+
+
+Which of the following is NOT one of the primary service types available in Kubernetes to expose services?
+- ClusterIP
+- NodePort
+- LoadBalancer
+- SwitchBalancer (correct)
+
+What is the default service in Kubernetes that establishes a service with an internal IP address, reachable only within the cluster?
+- NodePort
+- LoadBalancer
+- ClusterIP (correct)
+- ExternalName
+
+
+Which Kubernetes service type allows services to be technically available outside of the cluster, if your nodes IP address are externally accessible?
+- Headless
+- ClusterIP 
+- NodePort (correct)
+- ExternalName
+
+What is the service type in Kubernetes that creates what would be in DNS terms, a CNAME, i.e. an alias of another domain?
+- LoadBalancer
+- ExternalName (correct)
+- NodePort
+- ClusterIP
+
+What is a "Headless" service in Kubernetes?
+- A service that does not use any of the 4 main types of services
+- A ClusterIP service that has no IP (correct)
+- A service that cannot be accessed via DNS
+- A NodePort service that does not have any nodes assigned
+
+
+<strong>Por que de esto? Explicacion</strong>
+
+Un servicio "Headless" en Kubernetes se define como un servicio ClusterIP que no tiene IP.
+Cuando creas un servicio headless, configuras el campo clusterIP en None. Esto permite que el servicio omita el mecanismo de balanceo de carga estándar y devuelva directamente los puntos finales (pods) individuales cuando se consulta. Esto es útil para aplicaciones que necesitan descubrir las IPs de los pods directamente, como los StatefulSets.
+
+
+
+
+Which Kubernetes service type is dependent on your Kubernetes offering and may vary significantly between On-Prem and Cloud?
+- NodePort
+- LoadBalancer (correct)
+- ClusterIP 
+- ExternalName
+
+<strong>Por que de esto? Explicacion</strong>
+El tipo de servicio de Kubernetes que es particularmente dependiente de la oferta de Kubernetes y puede variar significativamente entre entornos on-premises y en la nube es LoadBalancer.
+
+En entornos en la nube, el tipo de servicio LoadBalancer suele provisionar un balanceador de carga de la nube que expone el servicio externamente. Sin embargo, en entornos on-premises, puede que no tengas un servicio de balanceo de carga integrado, lo que significa que tendrías que configurar un balanceador de carga externo manualmente o usar otro enfoque.
+En cambio, los tipos de servicio NodePort, ClusterIP y ExternalName son más consistentes en su comportamiento a través de diferentes entornos.
+
+
+
+
+Which Kubernetes service is only accessible within the cluster?
+- NodePort
+- ClusterIP (correct)
+- LoadBalancer
+- ExternalName
+
+
+What do EndPoints in Kubernetes represent?
+- The IP addresses assigned to the nodes that the service points to
+- The IP addresses assigned to the pods that the service points to (correct)
+- The storage volumes assigned to the pods
+- The routes assigned to the services in the Kubernetes cluster
+
+
+What does the command 'kubectl expose' do in Kubernetes?
+- It exposes a Kubernetes node to the external network
+- It exposes a Kubernetes deployment as a service (correct)
+- It exposes the Docker runtime on a Kubernetes node
+- It exposes a Kubernetes pod to other pods in the same namespace
+
+
+What is the primary use case of a ClusterIP service in Kubernetes?
+- To expose applications to the external world
+- To establish a service with an internal IP address, reachable only within the cluster (correct)
+- To load balance requests to multiple pods
+- To create an alias for another domain
+
+
+What is the function of a LoadBalancer service type in Kubernetes?
+- To create an internal service reachable only within the cluster
+- To provide a mechanism for automatic load distribution across multiple nodes and pods (correct)
+- To provide a mechanism to access services using friendly names
+- To create a DNS alias for another domain
+
+
+What is the distinguishing feature of a Headless service in Kubernetes?
+- It exposes a service with an internal IP address
+- It provides a DNS implementation with no proxy, so each pod handles its own traffic (correct)
+- It provides an alias for another domain
+- It assigns a specific port on each node to the service
+
+<strong>Por que de esto? Explicacion</strong>
+
+La característica distintiva de un servicio headless en Kubernetes es que proporciona una implementación de DNS sin proxy, de modo que cada pod maneja su propio tráfico.Esto significa que cuando consultas el servicio headless, obtienes las direcciones IP individuales de los pods directamente, en lugar de pasar por un balanceador de carga o proxy. Esto permite la comunicación directa con cada pod, lo cual es especialmente útil en escenarios como aplicaciones con estado.
+
+
+
+How would you specifically define a Headless Service in a Kubernetes YAML specification?
+- By setting spec.clusterIP: None in the Service YAML specification (correct)
+- By setting spec.headless: True in the Service YAML specification
+- By setting spec.type: Headless in the Service YAML specification
+- By setting spec.selector: None in the Service YAML specification
+
+
+In terms of core abstractions provided by Kubernetes for service networking, how many types of services are primarily defined?
+- Three
+- Four (correct)
+- Five
+- Six
+
+<strong>Por que de esto? Explicacion</strong>
+Quizas es un poco confusa la respuesta a la pregunta de arriba pero existen 4 tipos de servicios, pero Es la correcta porque dice "In terms of core abstractions provided by Kubernetes for service networking", y hay 4 tipos que hacen parte del core los cuales son: ClusterIP, NodePort, Loadbalancer y ExternalName, el headless no hace parte pero se le considera un tipo que no pertenece al core abstactions.
+En Kubernetes, hay varios tipos de servicios que se pueden utilizar para exponer aplicaciones. Los principales tipos son:
+
+> ClusterIP: Este es el tipo de servicio por defecto. Proporciona una dirección IP interna accesible solo dentro del clúster. Es útil para la comunicación entre pods.
+
+> NodePort: Expone el servicio en un puerto específico de cada nodo del clúster. Esto permite acceder al servicio desde fuera del clúster a través de la dirección IP del nodo y el puerto asignado.
+
+> LoadBalancer: Este tipo de servicio se utiliza en entornos de nube. Crea un balanceador de carga externo que distribuye el tráfico entre los pods. Proporciona una dirección IP pública para acceder al servicio desde fuera del clúster.
+
+> ExternalName: Permite crear un servicio que apunta a un nombre de dominio externo. No asigna una IP, sino que actúa como un alias para un nombre DNS externo.
+
+> Headless: Aunque no es un tipo de servicio en el sentido tradicional, se refiere a un servicio ClusterIP configurado con clusterIP: None, lo que permite la resolución de nombres DNS a las IPs de los pods directamente, sin balanceo de carga.
+
+
+
+<h4>Sobre el Headlees Service del libro Kubernetes in Action</h4>
+
+Well, I think you need some theory. There are many explanations (including the official docs) across the whole internet, but I think Marco Luksa did it the best:
+
+Each connection to the service is forwarded to one randomly selected backing pod. But what if the client needs to connect to all of those pods? What if the backing pods themselves need to each connect to all the other backing pods. Connecting through the service clearly isn’t the way to do this. What is?
+
+For a client to connect to all pods, it needs to figure out the IP of each individual pod. One option is to have the client call the Kubernetes API server and get the list of pods and their IP addresses through an API call, but because you should always strive to keep your apps Kubernetes-agnostic, using the API server isn’t ideal
+
+Luckily, Kubernetes allows clients to discover pod IPs through DNS lookups. Usually, when you perform a DNS lookup for a service, the DNS server returns a single IP — the service’s cluster IP. But if you tell Kubernetes you don’t need a cluster IP for your service (you do this by setting the clusterIP field to None in the service specification ), the DNS server will return the pod IPs instead of the single service IP. Instead of returning a single DNS A record, the DNS server will return multiple A records for the service, each pointing to the IP of an individual pod backing the service at that moment. Clients can therefore do a simple DNS A record lookup and get the IPs of all the pods that are part of the service. The client can then use that information to connect to one, many, or all of them.
+
+Setting the clusterIP field in a service spec to None makes the service headless, as Kubernetes won’t assign it a cluster IP through which clients could connect to the pods backing it.
+
+"Kubernetes in Action" by Marco Luksa
+
+
+Importante leer articulo: https://cloud.google.com/kubernetes-engine/docs/concepts/service?hl=es-419
+
+
+<h2>Jobs</h2>
+
+Kubernetes Jobs - Study Tips
+For the KCNA examination it is important to have an understanding of both Jobs and CronJobs, please pay particular attention to the following in the next video -
+
+A Job vs a CronJob
+Completions and Parallelism
