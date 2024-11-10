@@ -1715,3 +1715,132 @@ For the KCNA examination it is important to have an understanding of both Jobs a
 
 A Job vs a CronJob
 Completions and Parallelism
+
+
+Jobs
+
+Jobs represent one-off tasks that run to completion and then stop.
+A Job creates one or more Pods and will continue to retry execution of the Pods until a specified number of them successfully terminate. As pods successfully complete, the Job tracks the successful completions. When a specified number of successful completions is reached, the task (ie, Job) is complete. Deleting a Job will clean up the Pods it created. Suspending a Job will delete its active Pods until the Job is resumed again.
+
+A simple case is to create one Job object in order to reliably run one Pod to completion. The Job object will start a new Pod if the first Pod fails or is deleted (for example due to a node hardware failure or a node reboot).
+
+You can also use a Job to run multiple Pods in parallel.
+
+![image](https://github.com/user-attachments/assets/2ccb3080-b16f-4165-b838-5b37121c1204)
+
+Obtener un Job: kubectl get jobs
+Crear un job: kubectl run mi-job --image=alpine --restart=Never --command -- echo "Hola Kubernetes"
+
+
+
+CronJob
+
+A CronJob starts one-time Jobs on a repeating schedule.
+A CronJob creates Jobs on a repeating schedule.
+
+CronJob is meant for performing regular scheduled actions such as backups, report generation, and so on. One CronJob object is like one line of a crontab (cron table) file on a Unix system. It runs a Job periodically on a given schedule, written in Cron format.
+
+CronJobs have limitations and idiosyncrasies. For example, in certain circumstances, a single CronJob can create multiple concurrent Jobs. See the limitations below.
+
+When the control plane creates new Jobs and (indirectly) Pods for a CronJob, the .metadata.name of the CronJob is part of the basis for naming those Pods. The name of a CronJob must be a valid DNS subdomain value, but this can produce unexpected results for the Pod hostnames. For best compatibility, the name should follow the more restrictive rules for a DNS label. Even when the name is a DNS subdomain, the name must be no longer than 52 characters. This is because the CronJob controller will automatically append 11 characters to the name you provide and there is a constraint that the length of a Job name is no more than 63 characters.
+
+- Obtener los Cronjobs: kubectl get cronjobs
+- Crear un Cronjob kubectl create cronjob mi-cronjob --image=alpine --schedule="0 3 * * *" -- echo "Hola, Kubernetes CronJob"
+
+![image](https://github.com/user-attachments/assets/4e345e64-d7e5-4224-93f7-58170ed96385)
+
+¿Qué son Job y CronJob en Kubernetes?
+Las herramientas de Job y CronJob en Kubernetes se refieren a opciones que contribuyen a realizar labores de manera automatizada y programada, sin que sea necesaria la intervención del usuario.
+
+Job en Kubernetes se utiliza con el objetivo de desarrollar recursos de pods de tipo transitorio, que se encargan de tareas determinadas a las que se encuentran asignados.
+
+Por otro lado, la opción de CronJob en Kubernetes también contribuye a esas acciones, pero tiene la tarea adicional de llevar a cabo la ejecución de labores de acuerdo con un cronograma establecido por el cliente.
+
+Questions:
+
+What is the primary function of a Job in Kubernetes?
+- To create a single pod and ensure it runs continuously
+- To create one or more pods and ensure a specified number of them successfully terminate (correcta)
+- To create multiple nodes and ensure they work together in a cluster
+- To manage the scaling of pods within a node
+
+
+Which command is used to create a Kubernetes job named "calculatepi"?
+- kubectl start job calculatepi
+- kubectl run job calculatepi
+- kubectl initiate job calculatepi
+- kubectl create job calculatepi (correcta)
+
+In a Kubernetes Job, what does the parameter completions: 20 signify?
+- It specifies the maximum number of retries if the job fails
+- It indicates that the job will create 20 pods overall to do the task (correcta)
+- It denotes the total number of pods running at any given point in time
+- It refers to the total number of nodes on which the job will run
+
+
+What does the parameter parallelism: 5 signify in a Kubernetes Job specification?
+- It represents the number of attempts a failed job will be retried
+- It defines the maximum number of pods that should be running in parallel (correcta)
+- It signifies the total number of nodes where the job will be parallelized
+- It specifies the number of pods to be created for a job
+
+
+What does the kubectl explain job.spec command do?
+- It modifies the existing job specification
+- It provides detailed documentation for the structure and fields of a job specification (correcta)
+- It creates a new job using the given specification
+- It starts the execution of the specified job
+
+What are CronJobs in Kubernetes?
+- They are time-based job schedulers (correcta)
+- They are random job schedulers
+- They are priority-based job schedulers
+- They are on-demand job schedulers
+
+What does a CronJob create according to the schedule?
+- Pods
+- Services
+- Deployments 
+- Job objects (correcta)
+
+
+How many completed and failed jobs are kept by default according to the successfulJobsHistoryLimit field in a CronJob?
+- 1
+- 3 (correcta)
+- 5
+- 10
+
+Explicacion (Eso aplica para los cronjobs): En Kubernetes, cuando trabajas con un CronJob, el campo successfulJobsHistoryLimit se utiliza para determinar cuántos Jobs exitosos se deben mantener después de que se completen.
+
+De manera predeterminada, el valor de este campo es 3. Esto significa que Kubernetes mantendrá los 3 últimos Jobs exitosos, y eliminará los anteriores. Lo mismo aplica para los Jobs fallidos, pero usando el campo failedJobsHistoryLimit, cuyo valor predeterminado es también 3.
+
+
+
+When a CronJob is deleted, what happens to the associated jobs and pods?
+- They continue to run
+- Only the jobs are deleted, pods continue to run
+- Only the pods are deleted, jobs continue to run
+- They are deleted along with the CronJob (correcta)
+
+
+
+
+
+Kubernetes ConfigMaps - Study Tips
+For the KCNA examination as well as having an understanding of the use of ConfigMaps, it’s also important to know how to make use of immutable ConfigMaps, a topic we cover in the next video.
+
+
+<h2>Configmaps</h2>
+
+
+
+  
+
+
+
+
+
+
+
+
+
