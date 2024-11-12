@@ -1832,9 +1832,137 @@ For the KCNA examination as well as having an understanding of the use of Config
 
 <h2>Configmaps</h2>
 
+![image](https://github.com/user-attachments/assets/9b9b8c68-d776-4cbc-b231-9ee3d0579d96)
 
+CONFIGMAPS
 
+Son ficheros que nos van a permitir incorporar un conjunto de propiedades-valor, de una forma muy sencilla, que podamos usarlo automaticamente.
+
+Crear un config map desde la bash:  kubectl create configmap [configmap-name] --from-file=datos_mysql.properties
+
+Info del website oficial
+
+ConfigMaps
+A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.
+
+Caution:
+
+ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a Secret rather than a ConfigMap, or use additional (third party) tools to keep your data private.
+Motivation
+
+Use a ConfigMap for setting configuration data separately from application code.
+
+For example, imagine that you are developing an application that you can run on your own computer (for development) and in the cloud (to handle real traffic). You write the code to look in an environment variable named DATABASE_HOST. Locally, you set that variable to localhost. In the cloud, you set it to refer to a Kubernetes Service that exposes the database component to your cluster. This lets you fetch a container image running in the cloud and debug the exact same code locally if needed.
+
+Note:
+A ConfigMap is not designed to hold large chunks of data. The data stored in a ConfigMap cannot exceed 1 MiB. If you need to store settings that are larger than this limit, you may want to consider mounting a volume or use a separate database or file service.
+ConfigMap object
+
+A ConfigMap is an API object that lets you store configuration for other objects to use. Unlike most Kubernetes objects that have a spec, a ConfigMap has data and binaryData fields. These fields accept key-value pairs as their values. Both the data field and the binaryData are optional. The data field is designed to contain UTF-8 strings while the binaryData field is designed to contain binary data as base64-encoded strings.
+
+The name of a ConfigMap must be a valid DNS subdomain name.
+
+Each key under the data or the binaryData field must consist of alphanumeric characters, -, _ or .. The keys stored in data must not overlap with the keys in the binaryData field.
+
+Starting from v1.19, you can add an immutable field to a ConfigMap definition to create an immutable ConfigMap.
+
+ConfigMaps and Pods
+
+You can write a Pod spec that refers to a ConfigMap and configures the container(s) in that Pod based on the data in the ConfigMap. The Pod and the ConfigMap must be in the same namespace.
+
+Note:
+The spec of a static Pod cannot refer to a ConfigMap or any other API objects.
+Here's an example ConfigMap that has some keys with single values, and other keys where the value looks like a fragment of a configuration format.
+
+Example:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true    
+
+   
+Crear confirmar directamente desde la bash
+kubectl create configmap [configmap-name] --from-literal=usuario=usu1 --from-literal=password=pass1
   
+
+<h2>Questions</h2>
+
+
+Which of the following commands can be used to create a Kubernetes ConfigMap with specific values using the command line interface?
+- kubectl make configmap colour-configmap --from-literal=COLOUR=red --from-literal=KEY=value
+- kubectl put configmap colour-configmap --from-literal=COLOUR=red --from-literal=KEY=value
+- kubectl add configmap colour-configmap --from-literal=COLOUR=red --from-literal=KEY=value
+- kubectl create configmap colour-configmap --from-literal=COLOUR=red --from-literal=KEY=value (correcta)
+
+
+How can you check a Kubernetes ConfigMap’s values?
+- kubectl explain configmap/colour-configmap
+- kubectl review configmap/colour-configmap
+- kubectl describe configmap/colour-configmap (correcta)
+- kubectl read configmap/colour-configmap
+
+
+Which of the following commands is used to create a ConfigMap in Kubernetes from a file containing key-value entries?
+- kubectl create configmap colour-configmap --from-env-file=configmap-colour.properties (correcta)
+- kubectl create configmap colour-configmap --from-file=configmap-colour.properties
+- kubectl add configmap colour-configmap --from-env-file=configmap-colour.properties
+- kubectl update configmap colour-configmap --from-env-file=configmap-colour.properties
+
+
+
+How can a pod be configured to use a ConfigMap's values?
+- By using the 'envFrom' field in the pod's yaml specification (correcta)
+- By manually entering the ConfigMap's values into the pod's environment variables
+- By linking the pod to the ConfigMap's location
+- By copying the ConfigMap's file into the pod's file system
+
+
+
+How can a pod be configured to use a ConfigMap's values?
+- By using the 'envFrom' field in the pod's yaml specification (correcta)
+- By manually entering the ConfigMap's values into the pod's environment variables
+- By linking the pod to the ConfigMap's location
+- By copying the ConfigMap's file into the pod's file system
+
+
+What happens when you set a Kubernetes ConfigMap as 'immutable'?
+- It can't be deleted
+- It can't be changed once set (correcta)
+- It can't be used by pods
+- It can't be listed by kubectl
+
+
+What is a significant advantage of using ConfigMaps in Kubernetes?
+- They provide a centralised location for configuration data on the cluster (correcta)
+- They increase the speed of pod creation
+- They secure the cluster from external threats
+- They automate the deployment process
+
+
+
+What Kubernetes version provided a feature as stable that allows a ConfigMap to be immutable?
+- Kubernetes 1.19
+- Kubernetes 1.20
+- Kubernetes 1.21 (correcta)
+- Kubernetes 1.22
+
+
 
 
 
