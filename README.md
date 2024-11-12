@@ -1963,12 +1963,119 @@ What Kubernetes version provided a feature as stable that allows a ConfigMap to 
 - Kubernetes 1.22
 
 
+Secrets
+
+![image](https://github.com/user-attachments/assets/57e1f494-dffe-4c36-a19d-35d685f2e5f7)
+
+
+
+*** SECRETS ***
+
+•Un secret es un recurso dentro de Kubernetes permite guardar información confidencial dentro de kubernetes, Por ejemplo contraseñas tokens de autorización, claves SSH, etcétera. Los Secrets estan codificados en base64. Debemos saber cual es la diferencia entre encriptacion y codificación. Los secrets no sirven para encriptar, solo codifican en base64.
+
+
+Normalmente nos sirven como método de autentificación para acceder a distintos recursos protegidos dentro de kubernetes, desde los componentes internos hasta nuestras propias aplicaciones. 
+Disponemos de distintos tipos de Secrets orientados a distintos recursos dentro de la infraestructura.
+La forma más directa de utilizar estos Secrets dentro de kubernetes es asociándolos a un POD. 
+
+
+Tipos de Secrets (*** Importante ***)
+
+Opaque: Tipo por defecto que contiene cualquier información que queramos incluir y proteger. 
+  • Service account token: Almacena un token que identifica un Service Account. Veremos posteriormente este recurso cuando hablemos del tema de seguridad Pero básicamente representan una identidad para los procesos que se ejecutan dentro de un POD.
+  • Docker config: Almacena las credenciales necesarias para poder acceder a un registro privado de Docker. 
+  • Basic authentication: Credenciales que se utilizan para la autenticación básica contiene realmente dos propiedades obligatorias: username y password.
+
+SSH: Almacenan las credenciales para poder autenticarnos a través de SSH. vamos a necesitar una propiedad denominada 'ssh-privatekey' que en realidad es un par de clave valor.
+
+TLS: almacenan un certificado y su clave asociada que se utilizan habitualmente para TLS. su caso más habitual es usarlo con un recurso de tipo ingres, es decir para acceder desde el exterior del clúster. en este caso deberemos de tener estos dos valores: 'tls.key' y ‘tls.crt’.
+
+Bootstrap: Estos tokens son bastante especiales y se utiliza para el proceso bootstrap del nodo.
+
+
+
+Comando para obtener los secrets
+
+kubectl get secrets
+
+Comando para crear un Secret:
+
+kubectl create secret generic [secret-name] --from-literal=[key]=[value] --from-literal=[key]=[value]
+
+
+Comando para crear un Secret a partir de un archivo:
+
+kubectl create secret generic datos --from-file=datos.txt
+
+Comando de Linux que nos permite decodificar lo que tenemos codificado entre comillas del comando:
+
+echo "dXN1MQ==" | base64 --decode; echo;
 
 
 
 
 
 
+Diferencia entre un Secret y un Configmap
+
+![image](https://github.com/user-attachments/assets/1ec7d01c-ca3b-48ab-9ae0-6fe261046f2e)
 
 
 
+<h2>Questions</h2>
+
+
+What is the purpose of using Kubernetes Secrets?
+- To store and manage sensitive information like passwords, tokens, keys, etc. (correct)
+- To store and manage public configuration data
+- To store and manage an application's code
+- To store and manage the application's log data
+
+
+What is the difference between a Secret and a ConfigMap in Kubernetes?
+- ConfigMaps store sensitive data while Secrets store non-sensitive data
+- Secrets are for storing confidential information while ConfigMaps are for non-secret configuration data (correct)
+- Secrets and ConfigMaps serve the same purpose and have no differences
+- Secrets are used for storing an application's code while ConfigMaps are used for storing sensitive data
+
+
+How is the sensitive data stored in Kubernetes Secrets?
+- It is encrypted
+- It is hashed
+- It is encoded (correct)
+- It is stored in plain text
+
+
+What is the encoding mechanism used in Kubernetes Secrets?
+- MD5
+- SHA-256
+- RSA
+- Base64 (correct)
+
+
+
+What is the potential risk when using secrets in Kubernetes?
+- If someone gains access to etcd or retrieves the secret as yaml, they could potentially get the value 
+- The secrets can be easily hacked (correct)
+- The secrets can be lost if the cluster crashes
+- The secrets cannot be backed up
+
+
+What command is used to create a secret in Kubernetes?
+- kubectl create secret (correct)
+- kubectl apply secret
+- kubectl update secret
+- kubectl secret create
+
+
+What type is assigned when creating a generic secret in Kubernetes?
+- TypeGeneric
+- Generic
+- TypeSecret
+- Opaque (correct)
+
+
+
+
+<h2>Kubernetes Labels - Study Tips</h2>
+For the KCNA examination, general knowledge of labels and scenarios in which they could be utilised is required.
