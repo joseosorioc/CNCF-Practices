@@ -2079,3 +2079,91 @@ What type is assigned when creating a generic secret in Kubernetes?
 
 <h2>Kubernetes Labels - Study Tips</h2>
 For the KCNA examination, general knowledge of labels and scenarios in which they could be utilised is required.
+
+![image](https://github.com/user-attachments/assets/e8f177f0-d27b-4d8b-96ea-ef8f9a97af64)
+
+
+Label Selectors and Annotations
+
+Labels: las labels son etiquetas que les ponemos a los objetos. Identifican a nuestros componentes y Nos permite mejorar la metadata.
+
+Ejemplos:
+
+kubectl get pod [pod-name] --show-labels: Nos permite ver las etiquetas de un determinado objeto, en este caso de un determinado pod.
+
+kubectl label pod [pod-name] [tag-name]=[value-tag] : Añadir una etiqueta
+
+kubectl label --overwrite pod [pod-name] [tag-name]= [new-value-tag]: Actualizar una etiqueta.
+
+kubectl label pod [pod-name] [tag-name]- : tal cual y con el guion, nos permite eliminar una etiqueta de nuestro pod.
+
+
+Selectores: son como condiciones, condiciones que yo utilizo para localizar objetos que tengan determinadas etiquetas. Es decir, pongo etiquetas a las labels y posteriormente mediante los selectores intento localizar ese tipo de objetos.
+-l : para buescar un determinado label, ejemplo: kubectl get pods --show-labels -l [tag-name]=[tag-value]
+Selector con condicion (las condiciones siempre son del tipo AND): kubectl get pods --show-labels -l [conditions]
+ejemplo: kubectl get pods --show-labels -l ambiente=desarrollo,responsable=jose-osorio, otro ejemplo: kubectl get pods --show-labels -l ambiente!=desarrollo.
+
+* Condiciones mediante conjuntos: kubectl get pods —show-labels -l ‘ambiente in(desarrollo)’, otro ejemplo: kubectl get pods —show-labels -l ‘ambiente in(desarrollo, testing)’; kubectl get pods —show-labels -l ‘ambiente in(desarrollo)’, otro ejemplo: kubectl get pods —show-labels -l ‘ambiente notin(desarrollo, testing)’
+
+Lo mejor es que se puede con todos los comandos, por ejemplo para el delete: kubectl delete pods -l ambiente=desarrollo
+
+
+Anotaciones: son descriptivas, tambien se basan en el standar clave valor. Sirven para describir y documentar nuestros componentes.
+
+Ejemplo: kubectl get pod [pod-name] -o [format]=[busqueda por] - kubectl get pod nginx -o jsonpath={.metadata.annotations}, nos va a entregar algo como esto: {
+   "adjunto":"ejemplo de anotacion",
+   "doc":"se debe cumplir con el empaquetado en jar",
+   "kubectl.kubernetes.io/last-applied-configuration":"{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{\"adjunto\":\"ejemplo de anotacion\",\"doc\":\"se debe cumplir con el empaquetado en jar\"},\"labels\":{\"tag-nickname\":\"jcosorio-environment\",\"version\":\"v1\",\"zone\":\"prod\"},\"name\":\"nginx\",\"namespace\":\"default\"},\"spec\":{\"containers\":[{\"image\":\"apasoft/nginx:v1\",\"name\":\"nginx\"}]}}\n"
+}
+
+![image](https://github.com/user-attachments/assets/eb2ddf02-e862-45ee-b0de-134af6bb1865)
+
+
+Questions
+
+How does Kubernetes use labels for resource selection?
+- Kubernetes labels have no role in resource selection
+- Kubernetes uses labels to select resources for deletion
+- Many Kubernetes components use labels to select the resources they should operate on (correct)
+- Kubernetes uses labels to select the resources for updating Kubernetes itself
+
+
+In Kubernetes, how does a service identify which pods it should route traffic to?
+- Services use the pod's name to identify them
+- Services use the pod's IP address to route traffic
+- Services use labels to select the pods they should route traffic to (correct)
+- Services use the pod's unique UID to route traffic
+
+What does the "--selector" option do in a "kubectl get" command?
+- It selectively renames the resources based on the provided label
+- It selectively deletes resources based on the provided label
+- It filters and displays resources based on the provided label (correct)
+- It selectively changes the status of resources based on the provided label
+  
+
+What is the difference between the "-l" and "--selector" options in Kubernetes commands?
+- "-l" is used to filter resources based on labels, while "--selector" is used to specify selectors in the command
+- "-l" and "--selector" have completely different functionalities in Kubernetes commands
+- "-l" and "--selector" both are used to filter resources based on labels and are interchangeable (correct)
+- "-l" is used to set labels, while "--selector" is used to filter resources based on labels
+
+
+How can labels be used to create 'scopes' or 'environments' within a Kubernetes cluster?
+- Labels cannot be used to create 'scopes' or 'environments'
+- Labels can be used to designate resources as belonging to groups such as 'development', 'testing', or 'production' (correct)
+- Labels can be used to isolate resources in different namespaces
+- Labels can be used to enforce resource limits on different environments
+
+
+What operational benefits can be derived from the effective use of labels in a Kubernetes environment?
+- They expedite the process of resource creation
+- They facilitate Kubernetes upgrades to newer versions
+- They enable the development of a strategic approach, improving overall efficiency and effectiveness for operations (correct)
+- They provide a user-friendly, graphical interface for managing Kubernetes
+
+
+How could effective use of Kubernetes labels contribute to better cloud cost management?
+- Labels can automatically downscale resources during off-peak times
+- Labels can be used to identify and delete unused or idle resources, thus saving costs (correct)
+- Labels can negotiate better pricing deals with cloud providers
+- Labels can switch cloud providers based on current pricing
