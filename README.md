@@ -2167,3 +2167,120 @@ How could effective use of Kubernetes labels contribute to better cloud cost man
 - Labels can be used to identify and delete unused or idle resources, thus saving costs (correct)
 - Labels can negotiate better pricing deals with cloud providers
 - Labels can switch cloud providers based on current pricing
+
+
+
+<h2>Kubernetes API</h2>
+
+Kubernetes API - Study Tips
+The video for this section is split into two parts, from a KCNA examination viewpoint it is essential that Part 1 is completed, Part 2 is optional.
+
+The KCNA Examination focusses on the theory of the API and particular attention should be made for the following areas -
+
+How CRD's can be used to extend the Kubernetes API
+How to list resource types in a cluster
+The use of --authorization-mode
+The main three stages a request will pass through on its journey via the API server
+
+
+Kubernetes API - the kubernetes core
+
+Importante para: 
+
+- Primary Interface for Users and System Components
+- RESTful API
+- There are many forms of interaction with the Kubernetes API
+
+![image](https://github.com/user-attachments/assets/237b0d12-1b7f-45a7-97f9-9e832a7052a5)
+
+
+![image](https://github.com/user-attachments/assets/8177df6c-fbe4-4b40-a650-ff18b187e3da)
+
+![image](https://github.com/user-attachments/assets/a7e2a6a5-45f6-43d8-a83d-b3b2899509ca)
+
+
+Admission Controller Rol
+
+![image](https://github.com/user-attachments/assets/ee066a4e-7c57-4b2e-9a60-9b7c9ede35d2)
+
+
+
+API Routing
+1. Request Arrival
+2. Route Matching (Based on URL and Method, i.e. GET POST PUT DELETE)
+3. Authentication: Such as an API Key or Token
+4. Authorization: Are these permissions allowed (relates to the --authorization-mode api-server parameter) if the parameter is not set, it will default to AlwaysAllow
+5. Admission Controller
+6. Validation
+7. Request Handling
+8. Response Generation
+9. Response Sending
+
+
+How work the authentication?
+![image](https://github.com/user-attachments/assets/2ef222ba-5fbf-4910-bee8-13eacceadc1e)
+
+
+Custom Resource Definition
+
+In the Kubernetes API a resource is an endpoint that stores a collection of API objects of a certain kind. For example, the built-in pods resource contains a collection of Pod objects. A custom resource is an object that extends the Kubernetes API or allows you to introduce your own API into a project or a cluster.
+
+
+kube api-server: kubernetes expone una API para poder hablar con el cluster. Nos podemos conectar por una api o por una libreria o servicios externos etc.
+La API REST es la parte fundamental de Kubernetes que enlaza sus componentes. 
+Todas las operaciones y comunicaciones entre componentes y comandos de usuarios externos son llamadas al API REST que maneja el servidor API. En consecuencia, todo en la plataforma Kubernetes se trata como un objeto API y tiene una entrada correspondiente en la API. Lo que basicamente quiere decir eso es que todo lo que tenemos en kubernetes: pods, services, deployments, ingress, nodos, el cluster en si se traduce hacia un objeto de k8s. Todo lo que nosotros desarrollamos o creamos corresponde hacia una entrada de su API. Nos ofrece una interfaz para podernos comunicar con el, editarlos, extenderlos, escalarlos, extraer informacion, hacer querys etc. 
+![image](https://github.com/user-attachments/assets/75c7351d-6228-4390-b9af-be0f60806c47)
+
+
+Importante, resvisar este video: https://www.youtube.com/watch?v=_65Md2qar14&t=2171s
+
+
+![image](https://github.com/user-attachments/assets/69a0ceb9-d309-457d-a09b-a6c9e74bd2bb)
+
+
+
+
+
+**** Contextualicemonos Importante ****
+
+- ETCD: base de datos llave-valor. Es el cerebro critico de Kubernetes, si este elemento se elimina se borra todo el cluster. Guarda todo el estado del cluster.  Todo lo que ocurra en el cluster (si eliminamos un pod, si lo reiniciamos lo va a registrar ) Por ejemplo el status de un objeto se guardar en etcd, si una aplicacion estaba ejecutandose y paso a estado terminando ese cambio de estado se va al etcd. Todo esto pues obviamente se conecta con el api server. 
+
+- Kube controller (o Controller Manager): es como un robot en kubernetes que se encarga de controlar todo, si necesitamos eliminar un configmap o un secreto, el se encarga de gestionar esa orden, un deployment esta fallando el se encarga de realizar todas las tareas operativas del cluster. Es basicamente donde se encuentra toda la logica de kubernetes, que hace un deployment, que hace un estafullset, que hacen todos esos componentes, que es lo que pasa detras, cada vez que yo creo un objeto o una aplicacion.  
+  
+- API Server (REST API): es el servidor principal, el que engloba todos los demas componentes y se encarga de su conexion y de mantener todo el cluster funcionando. Ya que el es el punto de entrada para obtener la informacion y realizar acciones. Es una API para poder hablar con el cluster. Nos podemos conectar por una api o por una libreria o servicios externos etc. Kubernetes para este API usa Open API 2.0 y 3.0 (La version actual) .
+
+- Kube-scheduler: Es el encargado de verificar en cada uno de los nodos y saber que nodos hay disponibles (si yo tengo dos nodos disponibles, tres nodos disponibles, tengo N cantidad de nodos disponibles), identificar la cantidad especifica de pods (porque cada nodo tiene una cantidad especifica de pods desployados en el) e identificar la cantidad especifica de recursos libres que puedo utilizar y el se encarga de decidir en donde va a ir una aplicacion, si lo voy a destinar  al nodo uno que tiene un 20% de recursos utilizados o al nodo dos que tiene un 60% de recursos utilizados, obviamente tambien se encarga de buscar donde los pods pueden correr. Es el responsable de definir donde desplegamos los pods.
+
+![image](https://github.com/user-attachments/assets/30485930-4c1e-4879-9126-ba10ee6b39ca)
+
+
+Kubernetes API - Tipos
+
+![image](https://github.com/user-attachments/assets/c89b0014-9cc6-461a-b694-a3d38cdb9b18)
+
+
+
+Versionamiento
+
+- No se recomienda usar alpha en PDN.
+- Tampoco se recomienda usar Beta en PDN.
+- Stable si es recomendable, ya fue probada y paso los diferentes fases. 
+
+
+![image](https://github.com/user-attachments/assets/61fff4da-04cc-487d-bcc7-3a1c7ef757cb)
+
+
+K8s API Objetos
+
+![image](https://github.com/user-attachments/assets/4a8392cc-87d8-401d-8037-11060282229a)
+
+
+K8s API Groups
+
+![image](https://github.com/user-attachments/assets/f937854f-3148-43fd-aa39-6616ffe14ae9)
+
+K8s Names UID
+
+(Todos los objetos tienen nobre y toos los objetos tienen un UID)
+![image](https://github.com/user-attachments/assets/d0c5e589-cd56-4cd6-87da-733d6c21bd30)
+
