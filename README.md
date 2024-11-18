@@ -2284,3 +2284,128 @@ K8s Names UID
 (Todos los objetos tienen nobre y toos los objetos tienen un UID)
 ![image](https://github.com/user-attachments/assets/d0c5e589-cd56-4cd6-87da-733d6c21bd30)
 
+
+
+
+Importante y estudiar sobre el admission controller
+
+Aqui estan los pasos en un request y como el Access the Kubernetes API trabaja: 
+
+![image](https://github.com/user-attachments/assets/261c981b-3470-4ce3-98b9-c638bb07fba8)
+
+
+
+
+<h2>Questions</h2>
+
+What is the main purpose of the Kubernetes API?
+- It allows Kubernetes to integrate with external systems
+- It provides operations to create, read, update, and delete resources (Correct)
+- It is used to install and update Kubernetes
+- It's used for automated testing of Kubernetes
+
+
+How do users typically interact with the Kubernetes API?
+- Using command-line tools like kubectl and Helm (Correct)
+- Directly through the API endpoints using HTTP requests
+- Through the Kubernetes GUI interface
+- Using third-party monitoring tools
+
+Which component of Kubernetes uses the API to track the state of pods and nodes, and to schedule pods onto nodes?
+- kube-controller-manager
+- kubelet
+- kube-scheduler (Correct)
+- kube-apiserver
+
+What is the role of Admission Controllers in Kubernetes API?
+- They perform load balancing for the API requests
+- They enforce policies and modify resources as part of processing requests (Correct)
+- They handle error handling and request retrying
+- They ensure the integrity of the data stored in the API
+
+Which step does not belong in the path a request to the Kubernetes API follows?
+- Response Generation
+- Route Matching
+- Admission Control
+- Network Optimization (Correct)
+
+
+If the --authorization-mode flag is not specified when starting the API server, what default mode does the Kubernetes API server use?
+- RBAC
+- ABAC
+- Node
+- AlwaysAllow (Correct)
+
+
+
+What feature allows you to extend the Kubernetes API by defining new resource types?
+- API Extensions
+- Custom Resource Definitions (CRD) (Correct)
+- Kubernetes Plugins
+- API Modules
+
+
+In the path a request to the Kubernetes API follows, which step occurs immediately after Authorization?
+- Admission Control (Correct) (eso lo vemos en la imagen que esta arriba, donde dice Importante y estudiar sobre el admission controller )
+- Route Matching
+- Request Handling
+- Validation
+
+
+What would be a potential use case for an Admission Controller in a Kubernetes cluster?
+- Enforcing a policy that a certain namespace doesn't exceed a given memory threshold (Correct)
+- Allocating pods to nodes based on resource availability
+- Managing the lifecycle of a pod
+- Directly interacting with the underlying etcd database
+
+If you want to quickly list all available API resources in your current Kubernetes cluster from the command line, which command would you use?
+- kubectl api-resources (Correct)
+- kubectl describe api-resources
+- kubectl get api-versions
+- kubectl list api-resources
+
+
+The Kubernetes API is often described as a CRUD interface. What does CRUD stand for in this context?
+- Create, Run, Update, Delete
+- Call, Read, Update, Deploy
+- Create, Read, Update, Delete (Correct)
+- Copy, Read, Update, Download
+
+
+What are the three crucial stages that a request to the Kubernetes API goes through in the context of security and policy enforcement?
+- Authentication, Authorisation, Admission Control (Correct, de hecho podemos verlo en la misma imagen)
+- Route Matching, Validation, Response Sending
+- Request Arrival, Request Handling, Response Generation
+- Route Matching, Authorisation, Response Sending
+
+
+How does the kubectl proxy command in Kubernetes handle API server authentication?
+- It bypasses the need for API server authentication
+- It manually prompts the user for authentication each time
+- It automatically handles authentication with the API server (Correct)
+- It offloads authentication to a third-party service
+
+For how long is the Kubernetes API guaranteed to be backward compatible following a release?
+- 6 months
+- 1 year (Correct)
+- 2 years
+- 3 years
+
+
+
+<h2>Kubernetes RBAC</h2>
+
+Kubernetes RBAC - Study Tips
+
+From a KCNA examination viewpoint, only a high level knowledge of RBAC is required, for example what is the role and purpose of RBAC and how would you implement granular control. You should also be aware of Service Accounts which are covered in the Further Study section.
+
+At a minimum, the 1st video and the Further Study guide should be reviewed.
+
+Personally, I don't agree with skipping content and providing the bare minimum to pass an exam. RBAC is typically deemed as one of the most challenging topics to learn in Kubernetes and it is a favourite with interviewees in most Kubernetes job interviews.
+
+A lot of content on RBAC is fragmented and doesn't cover the specifics or mechanics of how RBAC is actually working on a newly installed Cluster.
+
+This 3 part video series is an extensive look at RBAC from the ground up and by the end of it, you'll be able confidently use and support RBAC. You'll also gain knowledge of advanced usage with Service Accounts in the Further Study section.
+
+If your focus in the KCNA examination then use these videos and further study sections accordingly and where required, treat them as available resources for consumption later.
+
