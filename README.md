@@ -2542,7 +2542,12 @@ One option for mitigation of this issue would be to use resource quotas to limit
 
 ***** Importante ****
 Leer el siguiente post: https://medium.com/@muppedaanvesh/a-hand-on-guide-to-kubernetes-rbac-with-a-user-creation-%EF%B8%8F-1ad9aa3cafb1
+El RBAC tambien lo explican en este video: https://www.youtube.com/watch?v=iE9Qb8dHqWI
+Charla importante: https://www.youtube.com/watch?v=yFSlK_7Atco
+https://www.youtube.com/watch?v=MGCF6slXG0w
 
+Secuence Diagram
+![image](https://github.com/user-attachments/assets/6ee36259-cd95-4a52-bdb6-b5ee0ee79995)
 
 
 
