@@ -2550,6 +2550,114 @@ Secuence Diagram
 ![image](https://github.com/user-attachments/assets/6ee36259-cd95-4a52-bdb6-b5ee0ee79995)
 
 
+<h3>ClusterRole y ClusterRoleBinding</h3>
 
+- ClusterRole: A ClusterRole is a non-namespaced resource, meaning it applies to the entire cluster and it allows us to set permissions on resources across all namespaces. Remember, a ClusterRole is Non Namespaced
+
+Crear un cluster role: <code>kubectl create clusterrole cluster-superhero --verb='*' --resource='*'</code>
+
+kubectl: Esta es la herramienta de línea de comandos de Kubernetes. Es como el "mando a distancia" que utilizamos para interactuar con nuestros clústeres de Kubernetes.
+create: Este verbo le indica a kubectl que queremos crear un nuevo recurso.
+clusterrole: El tipo de recurso que vamos a crear es un "ClusterRole". Un ClusterRole define un conjunto de permisos que se pueden aplicar a cualquier espacio de nombres o a todo el clúster.
+cluster-superhero: Este es el nombre que le hemos dado a nuestro nuevo ClusterRole. Puedes elegir cualquier nombre que quieras, pero es recomendable que sea descriptivo.
+--verb='*': Esto significa que el ClusterRole tendrá permiso para realizar cualquier acción (verbo) sobre los recursos. El asterisco (*) es un comodín que representa todas las posibles acciones.
+--resource='*': Similar al anterior, esto significa que el ClusterRole tendrá permiso sobre todos los recursos (nombres de objetos) del clúster.
+
+
+
+
+
+
+- ClusterRoleBinding: Binds a ClusterRole to a Service Account, Group and/or Users
+
+Crear un ClusterRoleBinding: <code>kubectl create clusterrolebinding cluster-superhero --clusterrole=cluster-superhero --group=cluster-superheroes</code>
+
+
+kubectl create: This part tells Kubernetes to create a new resource.
+clusterrolebinding cluster-superhero: This specifies that we're creating a ClusterRoleBinding named "cluster-superhero".
+--clusterrole=cluster-superhero: This argument links the ClusterRoleBinding to the ClusterRole named "cluster-superhero". This ClusterRole must already exist.
+--group=cluster-superheroes: This argument specifies that the permissions defined in the "cluster-superhero" ClusterRole will be granted to the group "cluster-superheroes". This group must be defined in your Kubernetes configuration, often in a RBAC ConfigMap or a ServiceAccount.
+
+
+
+Luego hacemos esto: <code>kubectl auth can-i '*' '*'</code>
+<code>kubectl auth can-i '*' '*' --as-group="cluster-superheroes" --as="batman"</code>
+<code>kubectl auth can-i '*' '*' --as-group="cluster-superheroes" --as="batman"</code>
+
+El comando kubectl auth can-i '*' '*' es una herramienta poderosa para verificar los permisos en Kubernetes, pero debe utilizarse con precaución. Recuerda que otorgar permisos excesivos puede comprometer la seguridad de tu clúster.
+
+
+y en realidad hacemos algo como esto:
+
+![image](https://github.com/user-attachments/assets/af356c4b-3bfa-45e8-95ef-66b0926f03e4)
+
+
+
+<h3>ClusterRole y ClusterRoleBinding en Kubernetes</h3>
+
+<p>En Kubernetes, el control de acceso basado en roles (RBAC) es fundamental para gestionar los permisos de los usuarios y servicios. Los ClusterRoles y ClusterRoleBindings son dos de los componentes clave de este sistema.</p>
+
+  <h3>ClusterRole</h3>
+    <p>Un ClusterRole define un conjunto de permisos que se pueden aplicar a cualquier espacio de nombres o a todo el clúster.</p>
+    <ul>
+        <li><strong>Alcance:</strong> Cluster-wide</li>
+        <li><strong>Funcionalidad:</strong> Define qué acciones (verbos) se pueden realizar sobre qué tipos de recursos (kinds).</li>
+        <li><strong>Ejemplo:</strong> Un ClusterRole podría otorgar permiso para crear, listar y eliminar pods en todos los espacios de nombres.</li>
+    </ul>
+
+   <h3>ClusterRoleBinding</h3>
+    <p>Un ClusterRoleBinding vincula un ClusterRole específico a un usuario o grupo de servicio.</p>
+    <ul>
+        <li><strong>Función:</strong> Establece quién puede utilizar los permisos definidos en un ClusterRole.</li>
+        <li><strong>Alcance:</strong> También es un recurso de alcance cluster-wide.</li>
+        <li><strong>Ejemplo:</strong> Un ClusterRoleBinding podría asignar el ClusterRole mencionado anteriormente a un usuario llamado "admin", otorgándole los permisos para gestionar pods en todo el clúster.</li>
+    </ul>
+
+   <h3>Tabla Comparativa</h3>
+    <table>
+        <tr>
+            <th>Característica</th>
+            <th>ClusterRole</th>
+            <th>ClusterRoleBinding</th>
+        </tr>
+        <tr>
+            <td>Definición</td>
+            <td>Conjunto de permisos</td>
+            <td>Vincula un ClusterRole a un sujeto</td>
+        </tr>
+        <tr>
+            <td>Alcance</td>
+            <td>Cluster-wide</td>
+            <td>Cluster-wide</td>
+        </tr>
+        <tr>
+            <td>Función</td>
+            <td>Define qué se puede hacer</td>
+            <td>Asigna permisos a usuarios o grupos</td>
+        </tr>
+        <tr>
+            <td>Ejemplo</td>
+            <td>Permitir crear pods en todos los namespaces</td>
+            <td>Otorgar el permiso de crear pods a un usuario específico</td>
+        </tr>
+    </table>
+
+   <h3>¿Cuándo usar cada uno?</h3>
+    <ul>
+        <li><strong>ClusterRole:</strong>
+            <ul>
+                <li>Cuando necesitas definir permisos que se aplicarán a múltiples espacios de nombres o a todo el clúster.</li>
+                <li>Para crear roles reutilizables que puedan ser asignados a diferentes sujetos.</li>
+            </ul>
+        </li>
+        <li><strong>ClusterRoleBinding:</strong>
+            <ul>
+                <li>Para asignar los permisos definidos en un ClusterRole a usuarios o grupos específicos.</li>
+                <li>Cuando quieres otorgar acceso a nivel de clúster a ciertos recursos.</li>
+            </ul>
+        </li>
+    </ul>
+
+   <p><strong>En resumen:</strong> Los ClusterRoles definen los permisos, mientras que los ClusterRoleBindings asignan esos permisos a los usuarios o grupos. Ambos son esenciales para implementar una estrategia de seguridad sólida en Kubernetes.</p>
 
 
