@@ -2959,3 +2959,15 @@ What is the role of the nodeSelector field in a pod's specification?
 - To define node-specific environment variables
 - To specify labels that must match a node's labels for the pod to be scheduled on that node (Correct)
 - To create a new node for the pod
+
+
+
+<h2>Kubernetes Storage</h2>
+
+Kubernetes Storage - Study Tips
+For the KCNA Examination, as well as having top level knowledge there is a heavy emphasis on the internals and specifics of the Kubernetes Storage subsystem. Please pay attention to the following areas -
+
+What is Ephemeral Storage
+What is Persistent Storage
+Examples of CNCF Graduated Storage Solution(s)
+Retain Policies
