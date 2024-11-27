@@ -2799,6 +2799,12 @@ Which of the following statements accurately describes the difference between Ro
 Explanation: ahi esta en la tabla.
 
 
+In Kubernetes, if a Pod is deployed without an explicitly assigned Service Account, which Service Account is automatically assigned?
+- admin
+- kube-system
+- default (Correct)
+- node
 
-
+Explanation: En Kubernetes, si un Pod es desplegado sin un Service Account explícitamente asignado, Kubernetes le asigna automáticamente el Service Account llamado default.
+Cada namespace en Kubernetes tiene un Service Account llamado default, y si no se especifica uno al crear un pod, Kubernetes utiliza este default para las operaciones de autenticación dentro del clúster.
 
