@@ -2808,3 +2808,154 @@ In Kubernetes, if a Pod is deployed without an explicitly assigned Service Accou
 Explanation: En Kubernetes, si un Pod es desplegado sin un Service Account explícitamente asignado, Kubernetes le asigna automáticamente el Service Account llamado default.
 Cada namespace en Kubernetes tiene un Service Account llamado default, y si no se especifica uno al crear un pod, Kubernetes utiliza este default para las operaciones de autenticación dentro del clúster.
 
+
+<h2>Kubernetes Scheduler and NodeName</h2>
+
+Kubernetes Scheduler and NodeName - Study Tips
+For the KCNA qualification, a basic knowledge and understanding of the role of the scheduler is required. Particular attention should be applied to the use of nodeName as well as nodeSelector and the mechanism of labels that the nodeSelector makes us of (nodeSelector is an addition covered in the Further Study addendum).
+
+
+Kube Scheduler
+Schedule Applications in the form of Pods to run on various nodes.
+
+![image](https://github.com/user-attachments/assets/f064be04-f4a0-4083-bfad-34cc063d1f82)
+
+![image](https://github.com/user-attachments/assets/64a0b377-a7cb-47a6-bd97-98ca58b198d4)
+
+
+Interaction and processes
+
+1. Pod is Created - Kube-Scheduler will take this on as a task to complete
+2. Checks available resources and identifies the best node to run on
+3. Pod Placement - Assigns the Pod to a Node
+4. Kubelet running on a chosen node starts the Pod
+
+
+
+***Importante***
+Averiguar sobre el objeto binding en kubernetes. (esta inquietud se resuelve a continuacion)
+
+![image](https://github.com/user-attachments/assets/f040a4fe-6bff-4d5f-88db-e5f8b0e69df9)
+
+En Kubernetes, el Binding Object es un recurso utilizado para vincular un Pod a un Nodo específico. Este objeto se usa principalmente en el contexto de la programación de Pods, donde el Scheduler asigna un Pod a un Nodo y luego se crea el Binding para que el Pod se ejecute en ese Nodo determinado.
+
+El Binding Object no se usa directamente por los usuarios en la mayoría de los casos, ya que es gestionado internamente por Kubernetes, pero se puede utilizar en situaciones donde se necesite asignar un Pod a un Nodo específico de manera explícita.
+
+
+
+3 Main Sets of operation
+
+- Filtering: If a Pod requires more memory than a certain node has available, that node would be filtered out
+- Scoring: The Scheduler scores the individual nodes to find the most appropriate node
+- Binding: A Pod is bound to a Node using the Binding Object
+
+![image](https://github.com/user-attachments/assets/a3ff7469-b087-4d7e-9d63-c5fb3f4ae7e1)
+
+
+SchedulerName
+
+
+En Kubernetes, el SchedulerName es un atributo que se utiliza para especificar qué Scheduler se encargará de asignar un Pod a un nodo específico dentro de un clúster.
+
+Selección del programador: Al especificar un SchedulerName en una definición de Pod, estás indicando a Kubernetes que utilice un programador específico para ese Pod en lugar del programador predeterminado (kube-scheduler).
+Personalización de la programación: Esto te permite crear programas personalizados que se adapten a las necesidades específicas de tu aplicación. Por ejemplo, puedes crear un programador que priorice los Pods de una aplicación crítica o que evite colocar ciertos Pods en nodos específicos. Esto quiere decir que podemos crear nuestro Scheduler custom propio y usarlo en nuestro archivo .yaml para las operaciones. 
+
+Ejemplo de uso:
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-pod
+    spec:
+      schedulerName: my-custom-scheduler
+      containers:
+      - name: my-container
+        image: my-image
+
+![image](https://github.com/user-attachments/assets/e3f25c0f-f8b7-4cf2-9ab6-1c172e7a9441)
+
+Kubernetes Scheduler and NodeName - Further Study
+It is also possible to use a more targeted approach than NodeName through the use of NodeSelectors, the approach is similar but, instead of a direct node we will make use of Kubernetes labels to identify our desired target.
+
+For awareness as a comparison. View the available node labels as follows -
+
+kubectl describe node/worker-1 | more
+
+Name:               worker-1
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=arm64
+                    beta.kubernetes.io/instance-type=k3s
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=arm64
+                    kubernetes.io/hostname=worker-1
+                    kubernetes.io/os=linux
+                    node.kubernetes.io/instance-type=k3s
+And then, you can use the nodeSelector option to select specific nodes through the use of labels -
+
+  nginx_scheduler.yaml
+  
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       creationTimestamp: null
+       labels:
+         run: nginx
+       name: nginx
+     spec:
+       nodeSelector:
+         kubernetes.io/hostname: worker-1
+       containers:
+       - image: nginx
+         name: nginx
+         resources: {}
+       dnsPolicy: ClusterFirst
+       restartPolicy: Always
+     status: {}
+
+
+<h2>Questions Scheduler </h2>
+
+What is the primary function of the kube-scheduler in Kubernetes?
+- To manage the lifecycle of containers
+- To schedule applications to run on various nodes (Correct)
+- To monitor the health of pods
+- To allocate storage resources to pods
+
+
+Which of the following is NOT one of the main operations employed by the Kube-Scheduler?
+- Filtering
+- Scoring
+- Binding
+- Replicating (Correct)
+
+
+What happens during the "Filtering" stage of the Kube-Scheduler's process?
+- It assigns the pod to the chosen node
+- It restarts pods that have failed
+- It finds nodes that meet the scheduling requirements (Correct)
+- It calculates the resource usage of each node
+
+What is the purpose of the schedulerName field in a pod’s specification
+- To name the pod
+- To assign the pod to a specific namespace
+- To specify which scheduler should dispatch the pod (Correct)
+- To define the restart policy of the pod
+
+
+Which language is most typically used for creating a custom scheduler in Kubernetes?
+- Python
+- JavaScript
+- Golang  (Correct)
+- Ruby
+
+What does the nodeName field in a pod specification indicate?
+- The name of the pod
+- The specific node to schedule the pod onto (Correct)
+- The name of the node where the pod is currently running
+- The label of the node
+
+What is the role of the nodeSelector field in a pod's specification?
+- To automatically select the best node for the pod
+- To define node-specific environment variables
+- To specify labels that must match a node's labels for the pod to be scheduled on that node (Correct)
+- To create a new node for the pod
