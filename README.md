@@ -2660,4 +2660,145 @@ y en realidad hacemos algo como esto:
 
    <p><strong>En resumen:</strong> Los ClusterRoles definen los permisos, mientras que los ClusterRoleBindings asignan esos permisos a los usuarios o grupos. Ambos son esenciales para implementar una estrategia de seguridad sólida en Kubernetes.</p>
 
+Proceso de RBAC
+
+![image](https://github.com/user-attachments/assets/9dad7bab-b752-44ef-bf41-6a8f203a8a81)
+
+
+<h3>ClusterRole/Binding vs Role/Binding</h3>
+
+![image](https://github.com/user-attachments/assets/246a8e76-b656-40e7-a4be-b7acc8ddbc40)
+
+
+Revisemos esto, por ejemplo:
+
+![image](https://github.com/user-attachments/assets/601e3a25-7633-4174-8b92-9a4401a7f177)
+
+
+<h2>Questions RBAC</h2>
+
+What is the purpose of Role Based Access Control (RBAC) in Kubernetes?
+- Managing User Interface
+- Assigning specific roles to users and groups (correct)
+- Creating new Kubernetes Clusters
+- Configuring Network Policies
+
+
+What does the kubeconfig file contain?
+- Cluster details and user information (correct)
+- Only cluster details
+- Only user information
+- RBAC configurations
+
+
+What is the purpose of Certificate Authority (CA) in Kubernetes?
+- To verify user identity
+- To create and verify certificates in the cluster (correct)
+- To encode and decode base64 data
+- To configure RBAC
+
+Explanation: El Certificate Authority (CA) en Kubernetes se encarga de la creación, gestión y verificación de certificados digitales dentro del clúster. Estos certificados son utilizados para establecer una comunicación segura, autenticada y cifrada entre los componentes del clúster, como el servidor API y los nodos, así como para autenticar a los usuarios y servicios.
+
+
+How are Users and Groups typically managed in Kubernetes?
+- Managed by Kubernetes directly
+- Managed externally  (correct)
+- Managed by ServiceAccounts
+- Managed by the kubeconfig file
+
+Explanation: En Kubernetes, los usuarios y grupos no son gestionados directamente por Kubernetes. En lugar de ello, la gestión de usuarios y grupos suele ser realizada externamente, por ejemplo, a través de un sistema de identidad como LDAP, Active Directory, o proveedores de identidad basados en OAuth, OpenID Connect (OIDC) o incluso certificados. Kubernetes en sí no tiene un sistema de gestión de usuarios incorporado; más bien, se integra con sistemas de autenticación externos para verificar la identidad de los usuarios.
+
+
+What does a ClusterRole in Kubernetes define?
+- Permissions on resources within a namespace
+- Permissions on resources across cluster resources (correct)
+- The role of a cluster administrator
+- The configurations for a Kubernetes Cluster
+
+
+Explanation: Mirar en la tablita de comparaciones.
+
+
+What does the command kubectl auth can-i * * check?
+- If Kubernetes is properly installed
+- If the user has permissions to perform any action on any resource (correct)
+- If RBAC is enabled
+- If the user is part of a specific group
+
+
+
+How are permissions assigned to a user in Kubernetes using RBAC?
+- Directly assigning permissions to the user
+- Through the user’s membership or group membership assigned by a ClusterRoleBinding (correct)
+- Via the kubeconfig file
+- By modifying the Kubernetes API server
+
+
+Explanation: En Kubernetes, la gestión de permisos a través de RBAC (Role-Based Access Control) no implica asignar permisos directamente a un usuario. En su lugar, se asignan roles a los usuarios mediante bindings (vinculaciones). Los usuarios y grupos no son gestionados directamente dentro de Kubernetes, sino que se les asignan permisos a través de un RoleBinding o ClusterRoleBinding que asocia un Role o ClusterRole a un usuario o un grupo de usuarios.
+
+
+Which command is used to create an RSA private key?
+- openssl genrsa -out user.key 4096 (correct)
+- openssl rsa -in user.key -outform PEM
+- kubectl create rsa user.key
+- openssl create -rsa user.key 4096
+
+Explanation: El comando openssl genrsa se utiliza para generar una clave privada RSA. Este comando genera una clave privada en formato PEM, que luego se puede usar para crear certificados o autenticarse en sistemas que requieran RSA. El número 4096 especifica el tamaño de la clave en bits (en este caso, una clave de 4096 bits).
+
+Me pregunte por que de ese numero? es obligatorio, pero es el tamaño en bits, esta es la respuesta: Sí, el número 4096 puede cambiar. Este número representa el tamaño de la clave RSA en bits. En general, cuanto mayor es el tamaño de la clave, más segura es, pero también más costosa es en términos de tiempo de procesamiento. Los tamaños comunes para las claves RSA son 2048 bits, 3072 bits y 4096 bits, aunque también es posible usar otros tamaños según las necesidades de seguridad y el rendimiento.
+
+
+What does the "O" stand for in the subject line of a Kubernetes certificate?
+- Origin
+- Organization (Correct)
+- Operator
+- Owner
+
+
+How is a new user, such as "batman", associated with a group in Kubernetes RBAC?
+- By adding the user to a Group object in Kubernetes
+- Through the "O" field in the certificate subject (Correct)
+- By listing the user under the group in KUBECONFIG
+- Through a User-Group Binding in Kubernetes
+
+Explanation: En Kubernetes RBAC (Role-Based Access Control), los usuarios no se gestionan directamente dentro del clúster de Kubernetes. Sin embargo, cuando un usuario se autentica en el clúster (por ejemplo, mediante certificados, tokens o proveedores de identidad como OIDC), puede ser asociado a un grupo o rol. Esta asociación a menudo se realiza mediante el campo "O" (Organizational Unit) dentro del subject de un certificado, que puede ser interpretado como un grupo en el contexto de RBAC.
+
+
+What does the "CN" stand for in the subject line of a Kubernetes certificate?
+- Common Node
+- Certificate Number
+- Common Name  (Correct)
+- Connection Node
+
+Explanation: El "CN" en la línea de asunto de un certificado X.509 (como los que se utilizan en Kubernetes para la autenticación) significa "Common Name" (Nombre Común). El "Common Name" es un campo que generalmente se usa para identificar de manera única al sujeto del certificado, y es comúnmente utilizado para especificar el nombre de la entidad o el servicio al que pertenece el certificado.
+
+openssl req -new -newkey rsa:2048 -days 365 -nodes -keyout batman.key -out batman.crt -subj "/CN=batman/O=Kubernetes/L=Gotham"
+
+Desglose del comando:
+openssl req: Comando para generar una solicitud de certificado (CSR) y un certificado auto-firmado.
+-new: Indica que estamos generando una nueva solicitud de certificado.
+-newkey rsa:2048: Genera una nueva clave privada con el algoritmo RSA y un tamaño de 2048 bits.
+-days 365: El certificado será válido por 365 días.
+-nodes: Significa que la clave privada no estará cifrada (sin passphrase).
+-keyout batman.key: Especifica el archivo donde se guardará la clave privada (en este caso, batman.key).
+-out batman.crt: Especifica el archivo donde se guardará el certificado (en este caso, batman.crt).
+-subj "/CN=batman/O=Kubernetes/L=Gotham": Define el DN (Distinguished Name) del certificado, especificando:
+CN=batman: El "Common Name" es batman (es el nombre del usuario o entidad).
+O=Kubernetes: La organización es Kubernetes.
+L=Gotham: La localidad es Gotham.
+¿Qué hace este comando?
+Este comando genera un certificado auto-firmado con una clave privada RSA de 2048 bits y lo guarda en los archivos batman.key (clave privada) y batman.crt (certificado). El CN del certificado será batman, lo que indica que este certificado está asociado con el usuario "batman". Este certificado podría ser utilizado, por ejemplo, para autenticarse en un clúster de Kubernetes si la autenticación está basada en certificados.
+
+
+Which of the following statements accurately describes the difference between Roles and ClusterRoles in Kubernetes?
+- Roles can only be applied at the cluster level, whereas ClusterRoles can be applied at both the cluster and namespace levels
+- ClusterRoles are used to define permissions at the cluster level, while Roles are used to define permissions at the namespace level (Correct)
+- Roles and ClusterRoles are interchangeable, and there is no significant difference between them
+- ClusterRoles can only be applied to nodes, while Roles can be applied to pods and services
+
+Explanation: ahi esta en la tabla.
+
+
+
+
 
