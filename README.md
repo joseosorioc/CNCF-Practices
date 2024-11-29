@@ -2971,3 +2971,527 @@ What is Ephemeral Storage
 What is Persistent Storage
 Examples of CNCF Graduated Storage Solution(s)
 Retain Policies
+
+
+
+Ephemeral Storage
+
+Imagina el almacenamiento efímero como un borrador que se borra al final de una clase. Es un espacio de almacenamiento temporal que se asigna a un pod (un grupo de contenedores) en Kubernetes. Una vez que el pod se detiene o se elimina, los datos almacenados en este tipo de volumen se pierden.
+
+Características Clave:
+
+Temporal: Los datos no persisten más allá del ciclo de vida del pod.
+Local: El almacenamiento suele estar ligado al nodo donde se ejecuta el pod.
+Rápido: Generalmente ofrece un alto rendimiento debido a su naturaleza local.
+Ideal para:
+Datos de estado que no necesitan ser persistentes, como logs temporales o archivos de configuración que se regeneran.
+Aplicaciones que generan datos de forma constante pero no requieren archivarlos.
+Cachés locales para mejorar el rendimiento de las aplicaciones.
+¿Por qué usar almacenamiento efímero?
+
+Simplicidad: No requiere configuración compleja de volúmenes persistentes.
+Costo: Puede ser más económico que el almacenamiento persistente, especialmente para cargas de trabajo que no requieren alta durabilidad.
+Rendimiento: El acceso local suele ser más rápido que el acceso a almacenamiento remoto.
+¿Cuándo no usar almacenamiento efímero?
+
+Datos persistentes: Si tus datos necesitan ser retenidos más allá del ciclo de vida del pod, debes usar volúmenes persistentes.
+Alta disponibilidad: Si requieres que tus datos estén disponibles en múltiples nodos, el almacenamiento efímero no es la mejor opción.
+Ejemplo de uso:
+
+Imagina una aplicación web que procesa archivos de registro. Los archivos de registro se generan constantemente y se almacenan en un volumen efímero. Si el pod se reinicia, los nuevos archivos de registro se sobrescribirán en el volumen vacío.
+
+En resumen:
+
+El almacenamiento efímero es una herramienta útil en Kubernetes para manejar datos temporales y mejorar el rendimiento de las aplicaciones. Sin embargo, es esencial comprender sus limitaciones y elegir el tipo de almacenamiento adecuado para cada caso de uso.
+
+Sobre los pods: pods use ephemeral local storage for scratch space, caching, and logs. Pods can be evicted due to other pods filling the local storage, after which new pods are not admitted until sufficient storage has been reclaimed.
+
+![image](https://github.com/user-attachments/assets/126a42e4-81e4-43bf-8a7e-1faa86b27844)
+
+
+<h3>EmptyDir</h3>
+
+An emptyDir volume is first created when a Pod is assigned to a node, and exists as long as that Pod is running on that node. As the name says, the emptyDir volume is initially empty. All containers in the Pod can read and write the same files in the emptyDir volume, though that volume can be mounted at the same or different paths in each container. When a Pod is removed from a node for any reason, the data in the emptyDir is deleted permanently.
+Note: A container crashing does not remove a Pod from a node. The data in an emptyDir volume is safe across container crashes.
+Some uses for an emptyDir are:
+• scratch space, such as for a disk-based merge sort
+• checkpointing a long computation for recovery from crashes
+• holding files that a content-manager container fetches while a webserver container serves the data
+The emptyDir.medium field controls where emptyDir volumes are stored. By default emptyDir volumes are stored on whatever medium that backs the node such as disk, SSD, or network storage, depending on your environment. If you set the emptyDir.medium field to "Memory", Kubernetes mounts a tmpfs (RAM-backed filesystem) for you instead. While tmpfs is very fast, be aware that unlike disks, tmpfs is cleared on node reboot and any files you write count against your container's memory limit.
+
+emptyDir configuration example
+
+    apiVersion: v1
+    kind: Pod
+    metadata: null
+    name: test-pd
+    spec: null
+    containers:
+      - image: registry.k8s.io/test-webserver
+        name: test-container
+        volumeMounts:
+          - mountPath: /cache
+            name: cache-volume
+            volumes:
+              - name: cache-volume
+                emptyDir: null
+                sizeLimit: 500Mi
+
+
+Otro ejemplo: 
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: ubuntu
+      name: ubuntu-test
+    spec:
+      containers:
+      - command:
+          - sleep
+          - infinity
+        image: ubuntu
+        name: ubuntu
+        resources: {}
+        volumeMounts:
+        - mountPath: /cache
+          name: cache-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - name: cache-volume
+        emptyDir: {
+          medium: Memory
+        }   
+    status: {}
+
+
+![image](https://github.com/user-attachments/assets/18b302c4-08e3-43ba-a58f-2dd5f4727c9e)
+
+
+Persistence Storage
+
+Persistent Volumes (PV)
+Definition: Persistent Volumes are storage resources provisioned in a Kubernetes cluster, managed by the cluster administrator. They provide an abstraction layer over physical storage devices, allowing users to access storage without needing to know the underlying infrastructure details.
+
+Available Options:
+Capacity: Specifies the size of the volume.
+Access Modes: Defines how the volume can be accessed. Below are the available options.
+1. ReadWriteOnce: Can be mounted as read-write by a single node.
+2. ReadOnlyMany: Can be mounted as read-only by multiple nodes.
+3. ReadWriteMany: Can be mounted as read-write by multiple nodes.
+Storage Class Name: Associates the PV with a specific Storage Class.
+Volume Mode: Determines whether the volume is mounted as a filesystem or block device.
+Persistent Volume Reclaim Policy: Determines what happens to the PV’s resources when released.
+Mount Options: Additional options to be passed to the mount command.
+Example: Manual PV Creation
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Retain
+
+
+![image](https://github.com/user-attachments/assets/633c5297-3a8a-4ef3-be52-7e7cc42f985b)
+
+
+***Importante y Obligatorio*** 
+Leer el siguiente articulo:  https://medium.com/@muppedaanvesh/a-hand-on-guide-to-kubernetes-volumes-%EF%B8%8F-b59d4d4e347f
+
+
+****Importante Tambien (Que no se nos olvide)***
+
+Hay una herramienta Open-Source, que fue concebida en la Cloud Native Computing Foundation para el Cloud-Native Storage for Kubernetes Production ready management for File, Block and Object Storage Llamada <strong>Rook</strong>
+
+
+What is Rook?
+
+Storage Operators for Kubernetes
+Rook turns distributed storage systems into self-managing, self-scaling, self-healing storage services. It automates the tasks of a storage administrator: deployment, bootstrapping, configuration, provisioning, scaling, upgrading, migration, disaster recovery, monitoring, and resource management.
+
+Rook uses the power of the Kubernetes platform to deliver its services via a Kubernetes Operator for Ceph.
+
+
+Commands
+
+- kubectl get storageclass: El comando kubectl get storageclass se utiliza en Kubernetes para listar las StorageClasses disponibles en el clúster. Las StorageClasses definen los diferentes tipos de almacenamiento que pueden ser utilizados para aprovisionar volúmenes persistentes (PVs) en Kubernetes.
+
+¿Qué es una StorageClass?
+En Kubernetes, una StorageClass es un recurso que describe los diferentes tipos de almacenamiento que un clúster puede utilizar. Una StorageClass define la manera en que los volúmenes persistentes (PVs) son creados y gestionados. Esto incluye detalles como el tipo de almacenamiento (por ejemplo, SSD, HDD, almacenamiento en la nube), políticas de aprovisionamiento, y parámetros específicos relacionados con el proveedor de almacenamiento.
+
+En otras palabras, las StorageClasses permiten a los usuarios especificar cómo deben ser aprovisionados los volúmenes persistentes cuando crean un PersistentVolumeClaim (PVC). De esta forma, Kubernetes puede crear automáticamente el almacenamiento adecuado según las necesidades del usuario y las configuraciones del clúster.
+
+¿Qué hace kubectl get storageclass?
+Cuando ejecutas el comando kubectl get storageclass, Kubernetes te muestra una lista de las clases de almacenamiento definidas en el clúster, junto con sus propiedades y configuraciones principales. Esto es útil para ver qué tipos de almacenamiento están disponibles y qué parámetros se utilizan para crear los volúmenes persistentes.
+
+
+- kubectl get pv: obtenemos los persistence volumes. obtienes una lista de los volúmenes persistentes disponibles, mostrando detalles básicos sobre cada volumen, como su nombre, capacidad, estado, acceso y la StorageClass asociada.
+
+- kubectl get pvc: se utiliza para listar los PersistentVolumeClaims (PVCs) en un clúster de Kubernetes. Los PersistentVolumeClaims (PVCs) son solicitudes de almacenamiento realizadas por los usuarios, que definen el tamaño y las características del almacenamiento que necesitan para un pod.
+
+<h3>Storage Options in Kubernetes</h3>
+
+StorageClass: Defines the type and characteristics of storage provided by the cluster. It allows administrators to describe the "classes" of storage they offer. 
+
+PersistentVolume (PV): Represents a piece of storage in the cluster that has been provisioned by an administrator or dynamically using a StorageClass. It's a resource in the cluster that persists beyond pod lifecycles.
+
+PersistentVolumeClaim (PVC): A request for storage by a user. It specifies the amount and characteristics of storage needed by a pod. Once bound to a PV, the PVC can be used by a pod to access the storage.
+
+Manually: We create the Persistent Volume (PV) and the Persistent Volume Claim (PVC)
+
+Dynamically: We create the Persistent Volume Claim (PVC) against the named StorageClass.
+
+This then creates the Persistent Volume (PV) for us
+
+
+
+Explicacion a eso: 
+
+Los términos **StorageClass**, **PersistentVolume (PV)** y **PersistentVolumeClaim (PVC)** son fundamentales en Kubernetes para manejar el almacenamiento persistente y dinámico dentro de un clúster. Vamos a desglosarlos con más detalle:
+
+### 1. **StorageClass** (Clase de Almacenamiento)
+
+- **Definición**: La **StorageClass** es un recurso de Kubernetes que define un conjunto de características de almacenamiento que el clúster puede ofrecer. Es una especie de "plantilla" o "clase" que permite a los administradores del clúster describir las capacidades y características del almacenamiento disponible, como el tipo de almacenamiento (por ejemplo, SSD, HDD, almacenamiento en la nube), la política de aprovisionamiento, y otros parámetros específicos de los proveedores de almacenamiento.
+  
+- **¿Qué hace?**: La StorageClass permite definir diferentes "tipos" de almacenamiento que pueden ser utilizados por los usuarios al crear **PersistentVolumeClaims (PVCs)**. Esto facilita la administración de diferentes clases de almacenamiento (por ejemplo, de alto rendimiento o de bajo costo) en un solo clúster.
+
+- **Ejemplo de StorageClass**:
+
+    ```yaml
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: standard
+    provisioner: kubernetes.io/aws-ebs
+    parameters:
+      type: gp2
+    ```
+
+    En este ejemplo, `standard` es una StorageClass que utiliza el provisionador `kubernetes.io/aws-ebs` para crear volúmenes de tipo `gp2` en AWS (Elastic Block Store).
+
+### 2. **PersistentVolume (PV)** (Volumen Persistente)
+
+- **Definición**: Un **PersistentVolume (PV)** es una unidad de almacenamiento dentro del clúster de Kubernetes que ha sido provisionada por un administrador o de manera dinámica utilizando una StorageClass. Representa una pieza de almacenamiento físico o lógico dentro del clúster que persiste más allá del ciclo de vida de un pod.
+
+- **¿Qué hace?**: El PV es la representación del almacenamiento real disponible para los pods. Puede ser una unidad de almacenamiento local, un disco en la nube (como AWS EBS, Google Persistent Disk, Azure Disk), o cualquier otro tipo de almacenamiento respaldado que Kubernetes pueda gestionar. Los administradores del clúster pueden provisionar estos volúmenes manualmente o permitir que se creen dinámicamente a partir de una StorageClass.
+
+- **Ejemplo de PersistentVolume**:
+
+    ```yaml
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: pv-example
+    spec:
+      capacity:
+        storage: 5Gi
+      volumeMode: Filesystem
+      accessModes:
+        - ReadWriteOnce
+      persistentVolumeReclaimPolicy: Retain
+      storageClassName: standard
+      csi:
+        driver: ebs.csi.aws.com
+        volumeHandle: vol-0f5e52a3d9c8ab2b3
+    ```
+
+    Este **PersistentVolume** tiene una capacidad de 5Gi, es accesible con el modo `ReadWriteOnce`, y está asociado a la **StorageClass** `standard`. Está provisionado por el controlador CSI de AWS para un volumen de tipo EBS.
+
+### 3. **PersistentVolumeClaim (PVC)** (Reclamación de Volumen Persistente)
+
+- **Definición**: Un **PersistentVolumeClaim (PVC)** es una solicitud de almacenamiento hecha por un usuario o aplicación que ejecuta un pod. Los usuarios crean PVCs para reclamar volúmenes con las características específicas que necesitan, como tamaño, modo de acceso, y almacenamiento de respaldo (por ejemplo, SSD o HDD).
+
+- **¿Qué hace?**: El PVC describe el tipo de almacenamiento que una aplicación necesita. Cuando un PVC se crea, Kubernetes buscará un **PersistentVolume** (PV) que satisfaga esa solicitud (tamaño, características de acceso, etc.). Una vez que se encuentra un PV que coincida con los requisitos del PVC, el PV se vincula al PVC, y el pod puede usar ese volumen para almacenar datos.
+
+- **Ejemplo de PersistentVolumeClaim**:
+
+    ```yaml
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: pvc-example
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: standard
+    ```
+
+    Este **PersistentVolumeClaim** solicita un volumen de 5Gi de almacenamiento con el modo de acceso `ReadWriteOnce`, y utiliza la **StorageClass** `standard`.
+
+### Tipos de Aprovisionamiento de Volúmenes:
+
+Existen dos formas principales de manejar el aprovisionamiento de **PersistentVolumes (PVs)**:
+
+#### 1. **Aprovisionamiento Manual**:
+
+En este enfoque, los administradores de Kubernetes crean los **PersistentVolumes (PVs)** manualmente antes de que los usuarios creen los **PersistentVolumeClaims (PVCs)**. Una vez que el PV está disponible, los usuarios pueden crear un PVC que se vincule con un PV específico.
+
+- **Proceso**:
+    - El administrador crea un **PersistentVolume (PV)** manualmente.
+    - El usuario crea un **PersistentVolumeClaim (PVC)**.
+    - El PVC se vincula con un PV disponible que satisfaga la solicitud.
+
+**Ejemplo**:
+
+- El administrador crea un **PV** con un volumen de 10Gi.
+- El usuario crea un **PVC** solicitando 5Gi, que se vincula con el **PV** de 10Gi.
+
+#### 2. **Aprovisionamiento Dinámico**:
+
+En este caso, no es necesario que el administrador cree manualmente un **PersistentVolume (PV)**. Cuando un usuario crea un **PersistentVolumeClaim (PVC)** y especifica una **StorageClass**, Kubernetes puede aprovisionar dinámicamente un **PV** que satisfaga esa solicitud utilizando la StorageClass especificada. Esto es más eficiente porque automatiza el aprovisionamiento del almacenamiento según las necesidades del usuario sin intervención manual.
+
+- **Proceso**:
+    - El usuario crea un **PersistentVolumeClaim (PVC)** que especifica una **StorageClass**.
+    - Kubernetes, a través del provisionador configurado para esa **StorageClass**, crea automáticamente un **PersistentVolume (PV)** que cumple con las especificaciones del PVC.
+
+**Ejemplo**:
+
+- El usuario crea un **PVC** que solicita 10Gi con una **StorageClass** `fast`.
+- Kubernetes aprovisiona automáticamente un **PV** de 10Gi utilizando el proveedor de almacenamiento especificado por la **StorageClass** `fast` (por ejemplo, un volumen SSD de alto rendimiento).
+
+### Resumen:
+
+- **StorageClass**: Define las características del almacenamiento disponible en el clúster (como el tipo de disco, el proveedor de almacenamiento, etc.).
+- **PersistentVolume (PV)**: Representa el almacenamiento real en el clúster, que puede ser provisionado manualmente o dinámicamente.
+- **PersistentVolumeClaim (PVC)**: Es una solicitud de almacenamiento hecha por un usuario o pod. Una vez que el PVC se vincula a un PV, el pod puede utilizarlo para almacenar datos.
+
+- storageClassName es un campo clave que vincula un PersistentVolume (PV) y un PersistentVolumeClaim (PVC) con una StorageClass específica. Al usar storageClassName en un PV o un PVC, el usuario puede elegir qué tipo de almacenamiento desea, y Kubernetes se encargará de gestionar el volumen de acuerdo con esa especificación.
+  
+
+
+Y dependiendo de si prefieres un enfoque **manual** o **dinámico**, puedes gestionar cómo se aprovisiona el almacenamiento en tu clúster Kubernetes.
+
+
+
+El valor DirectoryOrCreate es un tipo específico de volumen en Kubernetes que se utiliza dentro de una configuración de un volumeMount o un volume. Es parte del tipo de volumen emptyDir, que crea un directorio temporal dentro del pod, pero con la peculiaridad de que garantiza que dicho directorio se creará si no existe.
+
+    apiVersion: v1              #Creamos un Volumen (Almacenamiento o Storage Persistente)
+    kind: PersistentVolume
+    metadata:
+      name: manual-pv001
+    spec:
+      storageClassName: local-path
+      capacity:
+       storage: 10Gi
+      accessModes:
+        - ReadWriteOnce
+      hostPath:
+        path: "/var/lib/rancher/k3s/storage/manual-pv001"
+        type: DirectoryOrCreate
+
+
+Me Ocurrio este error: 
+
+Understanding the Error: Immutable PersistentVolume
+
+The error message you're seeing indicates that you're trying to modify an existing PersistentVolume (PV) in a way that Kubernetes doesn't allow. Specifically, you're attempting to change the Type field of the HostPath volume source, which is immutable after the PV is created.
+
+Why is it Immutable?
+
+Kubernetes enforces immutability on certain fields of a PV to ensure consistency and prevent accidental modifications that could lead to data loss or corruption. Once a PV is created, its underlying storage and configuration are fixed to ensure reliable data operations.
+
+Fue porque le agregamos lo siguiente:
+
+![image](https://github.com/user-attachments/assets/dbd59fed-c814-43e5-8b7f-aae99a0b0272)
+
+
+
+<h3>Crear un PersistenceVolumeClaim</h3>
+
+The next step is to create a PersistentVolumeClaim. Pods use PersistentVolumeClaims to request physical storage. In this exercise, you create a PersistentVolumeClaim that requests a volume of at least three gibibytes that can provide read-write access for at most one Node at a time.
+
+    apiVersion: v1
+    kind: PersistentVolumeClaim   # Creamos un persistenceVolumeClaim (Persistence Storage)
+    metadata:
+      name: task-pv-claim
+    spec:
+      storageClassName: manual
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 3Gi
+
+
+
+
+<h3>Claims As Volumes</h3>
+Pods access storage by using the claim as a volume. Claims must exist in the same namespace as the Pod using the claim. The cluster finds the claim in the Pod's namespace and uses it to get the PersistentVolume backing the claim. The volume is then mounted to the host and into the Pod.
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: mypod
+    spec:
+      containers:
+        - name: myfrontend
+          image: nginx
+          volumeMounts:
+          - mountPath: "/var/www/html"
+            name: mypd
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: myclaim
+
+
+
+Kubernetes Storage - Further Study
+
+Although Rook is a Cloud Native solution on the CNCF Landscape, for the KCNA examination you should also be aware of Ceph, an offering from RedHat that provides object, block and file storage in one solution.
+
+Given the commercial nature of Ceph's relationship with RedHat, it is sometimes used as a storage solution in the OpenShift distribution of Kubernetes. From a KCNA viewpoint you should be aware of the project and it being a unified object/block and file solution.
+
+
+If this project is of interest, see the following resources -
+
+https://www.redhat.com/en/technologies/storage/ceph
+
+https://docs.openshift.com/container-platform/3.11/install_config/storage_examples/ceph_example.html
+
+
+
+<h2>Questions</h2>
+
+What is the primary characteristic of ephemeral storage in Kubernetes?
+- It is used for long-term data storage
+- It persists across restarts
+- It does not survive across restarts (Correct)
+- It is mainly used for database storage
+
+
+In the context of Kubernetes, what is an example of ephemeral storage?
+- PersistentVolume
+- emptyDir (correct)
+- HostPath
+- NFS
+
+What is the primary purpose of a Persistent Volume (PV) in Kubernetes?
+- To provide temporary storage for pods
+- To automatically delete data when a pod is deleted
+- To store data that persists beyond the lifecycle of a pod (Correct)
+- To enhance the performance of ephemeral storage
+
+
+
+What does the Reclaim Policy 'Retain' imply in Kubernetes storage?
+- The storage is deleted immediately after the pod is deleted
+- The storage is recycled for future use
+- The data is kept until the volume is manually deleted (Correct)
+- The storage is available for dynamic provisioning
+
+
+Explanation: 
+
+En Kubernetes, la Política de Recuperación (Reclaim Policy) de un PersistentVolume (PV) determina qué sucede con el volumen una vez que se libera (cuando se elimina el PersistentVolumeClaim (PVC) que estaba vinculado a él).
+
+La Política de Recuperación Retain significa que los datos se mantienen hasta que el volumen sea eliminado manualmente. Esta política asegura que el volumen no se elimine automáticamente cuando se elimina el PVC. En su lugar, permanece en estado Released (Liberado) y los datos se mantienen intactos, lo que permite a los administradores gestionar manualmente el ciclo de vida del volumen (incluyendo la recuperación de datos, respaldos o eliminación manual).
+
+
+
+How is a PersistentVolumeClaim (PVC) in Kubernetes typically used?
+- To allocate ephemeral storage to pods
+- To delete storage volumes automatically
+- To claim storage resources defined by a PersistentVolume (correct)
+- To increase the storage capacity dynamically
+
+
+Explanation:
+
+En Kubernetes, un PersistentVolumeClaim (PVC) se usa para solicitar y reclamar recursos de PersistentVolume (PV). Un PVC especifica el tamaño, el modo de acceso (por ejemplo, ReadWriteOnce, ReadOnlyMany) y, opcionalmente, una StorageClass para el tipo de almacenamiento requerido. El PVC actúa como una solicitud de almacenamiento, y Kubernetes hará lo siguiente:
+
+1. Vinculará el PVC a un PersistentVolume (PV) existente que coincida con su solicitud (tamaño, modo de acceso y, opcionalmente, la StorageClass).
+2. Si no existe un PV adecuado, Kubernetes puede aprovisionar dinámicamente un nuevo PersistentVolume (si el aprovisionamiento dinámico está configurado).
+
+   
+Esto permite a los usuarios separar la solicitud de almacenamiento (PVC) del almacenamiento físico subyacente (PV), lo que facilita la gestión del almacenamiento en un entorno nativo de la nube.
+
+
+In Kubernetes, what is the significance of setting a volume's emptyDir.medium to Memory?
+- It specifies the volume is used for database storage
+- It configures the volume as a high-performance cache area (correct)
+- It designates the volume for long-term data storage
+- It makes the volume available for dynamic provisioning
+
+
+Explanation:
+
+En Kubernetes, el volumen de tipo emptyDir se crea cuando un pod se inicia y se elimina cuando el pod termina. Por defecto, un volumen emptyDir se almacena en el sistema de archivos del nodo. Sin embargo, si se establece el campo medium de emptyDir como Memory, el volumen se almacena en la memoria RAM del nodo en lugar de en el disco.
+
+Esto tiene implicaciones importantes:
+
+Almacenamiento en memoria: El volumen se convierte en un almacenamiento de alto rendimiento, ya que la memoria RAM es mucho más rápida que el almacenamiento en disco. Es ideal para usarlo como un área de caché de alto rendimiento, donde se necesitan accesos rápidos y temporales a los datos.
+Volumen efímero: Este tipo de volumen es efímero, lo que significa que los datos se perderán cuando el pod se elimine o se reinicie.
+
+
+
+What happens to a Kubernetes PersistentVolume with a Reclaim Policy of 'Delete' after its associated PVC is deleted?
+- The volume is retained for future use
+- The volume is automatically recycled
+- The underlying storage is deleted along with the volume (correct)
+- The volume is converted to ephemeral storage
+
+
+Explanation:
+
+When a PersistentVolume (PV) has a Reclaim Policy set to Delete, it means that the underlying storage associated with the PV (such as a cloud disk, file system, or other physical storage) will be deleted automatically when the PersistentVolumeClaim (PVC) bound to it is deleted.
+
+This is useful in scenarios where the storage is not needed after the PVC is no longer in use (for example, in cloud environments, where volumes can be provisioned and managed dynamically). The deletion of the PVC triggers the cleanup of both the Kubernetes PV and the underlying storage resource, which is removed by Kubernetes to avoid leaving orphaned resources.
+
+Cuando un PersistentVolume (PV) tiene una Política de Recuperación (Reclaim Policy) configurada como Delete, significa que el almacenamiento subyacente asociado con el PV (como un disco en la nube, un sistema de archivos, o cualquier otro recurso de almacenamiento físico) se elimina automáticamente cuando se elimina el PersistentVolumeClaim (PVC) vinculado a él.
+Esto es útil en escenarios donde el almacenamiento ya no es necesario después de que el PVC ha dejado de usarse (por ejemplo, en entornos de nube, donde los volúmenes pueden ser aprovisionados y gestionados de manera dinámica). La eliminación del PVC desencadena la limpieza tanto del PV en Kubernetes como del recurso de almacenamiento subyacente, que se elimina para evitar dejar recursos huérfanos.
+
+
+
+In the video example what was the purpose of adding a nodeSelector to the pod configuration?
+- To schedule the pod on a node with the highest available resources
+- To ensure the pod runs on a specific node due to storage limitations (correct)
+- To improve the performance of the pod
+- To allocate dynamic storage to the pod
+
+
+How is dynamic provisioning of storage in Kubernetes different from manual provisioning?
+- Dynamic provisioning does not use PersistentVolumes
+- In dynamic provisioning, volumes are created automatically when a PVC is made (correct)
+- Dynamic provisioning is used only for ephemeral storage 
+- Manual provisioning is faster and more efficient than dynamic provisioning
+
+
+Explanation
+
+Dynamic provisioning in Kubernetes refers to the automatic creation of PersistentVolumes (PVs) when a PersistentVolumeClaim (PVC) is made. With dynamic provisioning, there is no need for the administrator to manually create the PV ahead of time. Instead, when a PVC is created, Kubernetes will automatically provision a PV based on the specifications of the PVC and the associated StorageClass.
+
+
+
+Which storage solution is known for providing comprehensive storage capabilities, including block, file, and object storage, in distributed systems?
+- NFS
+- GlusterFS
+- Ceph (correct)
+- iSCSI
+
+Explanation: 
+
+Ceph is a highly scalable, distributed storage system that provides unified storage capabilities, including block, file, and object storage. It is designed to handle large amounts of data in a fault-tolerant and scalable manner, making it ideal for distributed systems. Ceph's architecture allows it to scale horizontally by adding more nodes and offers a single platform for different types of storage workloads.
+
+
+
+Importante conocer sobre Ceph
+
+Ceph (pronounced /ˈsɛf/) is a free and open-source software-defined storage platform that provides object storage,[7] block storage, and file storage built on a common distributed cluster foundation. Ceph provides distributed operation without a single point of failure and scalability to the exabyte level. Since version 12 (Luminous), Ceph does not rely on any other conventional filesystem and directly manages HDDs and SSDs with its own storage backend BlueStore and can expose a POSIX filesystem.
+
+Ceph replicates data with fault tolerance,[8] using commodity hardware and Ethernet IP and requiring no specific hardware support. Ceph is highly available and ensures strong data durability through techniques including replication, erasure coding, snapshots and clones. By design, the system is both self-healing and self-managing, minimizing administration time and other costs.
+
+
+
+
