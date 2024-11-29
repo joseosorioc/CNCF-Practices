@@ -3493,5 +3493,11 @@ Ceph (pronounced /ˈsɛf/) is a free and open-source software-defined storage pl
 Ceph replicates data with fault tolerance,[8] using commodity hardware and Ethernet IP and requiring no specific hardware support. Ceph is highly available and ensures strong data durability through techniques including replication, erasure coding, snapshots and clones. By design, the system is both self-healing and self-managing, minimizing administration time and other costs.
 
 
+<h2>StatefulSets</h2>
 
+Kubernetes StatefulSets - Study Tips
+For the KCNA examination, please focus on the following areas -
 
+The purpose of StatefulSets
+The difference/similarities between StatefulSets and Deployments
+The StatefulSet relation/dependency on Services for naming
