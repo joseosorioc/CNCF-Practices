@@ -3501,3 +3501,577 @@ For the KCNA examination, please focus on the following areas -
 The purpose of StatefulSets
 The difference/similarities between StatefulSets and Deployments
 The StatefulSet relation/dependency on Services for naming
+
+
+Definicion - k8s web sites
+
+![image](https://github.com/user-attachments/assets/a76e7d52-ed3b-49ac-9745-97e75f5660b5)
+
+
+Gestiona el despliegue y escalado de un conjunto de Pods, y garantiza el orden y unicidad de dichos Pods.
+
+Al igual que un Deployment, un StatefulSet gestiona Pods que se basan en una especificación idéntica de contenedor. A diferencia de un Deployment, un StatefulSet mantiene una identidad asociada a sus Pods. Estos pods se crean a partir de la misma especificación, pero no pueden intercambiarse; cada uno tiene su propio identificador persistente que mantiene a lo largo de cualquier re-programación.
+
+Un StatefulSet opera bajo el mismo patrón que cualquier otro controlador. Se define el estado deseado en un objeto StatefulSet, y el controlador del StatefulSet efectúa las actualizaciones que sean necesarias para alcanzarlo a partir del estado actual.
+
+Usar StatefulSets
+Los StatefulSets son valiosos para aquellas aplicaciones que necesitan uno o más de los siguientes:
+
+Identificadores de red estables, únicos.
+Almacenamiento estable, persistente.
+Despliegue y escalado ordenado, controlado.
+Actualizaciones en línea ordenadas, automatizadas.
+De los de arriba, estable es sinónimo de persistencia entre (re)programaciones de Pods. Si una aplicación no necesita ningún identificador estable o despliegue, eliminación, o escalado ordenado, deberías desplegar tu aplicación con un controlador que proporcione un conjunto de réplicas sin estado, como un Deployment o un ReplicaSet, ya que están mejor preparados para tus necesidades sin estado.
+
+Limitaciones
+El almacenamiento de un determinado Pod debe provisionarse por un Provisionador de PersistentVolume basado en la storage class requerida, o pre-provisionarse por un administrador.
+Eliminar y/o reducir un StatefulSet no eliminará los volúmenes asociados con el StatefulSet. Este comportamiento es intencional y sirve para garantizar la seguridad de los datos, que da más valor que la purga automática de los recursos relacionados del StatefulSet.
+Los StatefulSets actualmente necesitan un Servicio Headless como responsable de la identidad de red de los Pods. Es tu responsabilidad crear este Service.
+Los StatefulSets no proporcionan ninguna garantía de la terminación de los pods cuando se elimina un StatefulSet. Para conseguir un término de los pods ordenado y controlado en el StatefulSet, es posible reducir el StatefulSet a 0 réplicas justo antes de eliminarlo.
+Cuando se usan las Actualizaciones en línea con la Regla de Gestión de Pod (OrderedReady) por defecto, es posible entrar en un estado inconsistente que requiere de una intervención manual para su reparación.
+Componentes
+El ejemplo de abajo demuestra los componentes de un StatefulSet:
+
+Un servicio Headless, llamado nginx, se usa para controlar el dominio de red.
+Un StatefulSet, llamado web, que tiene una especificación que indica que se lanzarán 3 réplicas del contenedor nginx en Pods únicos.
+Un volumeClaimTemplate que proporciona almacenamiento estable por medio de PersistentVolumes provisionados por un provisionador de tipo PersistentVolume.
+             apiVersion: v1
+             kind: Service
+             metadata:
+               name: nginx
+               labels:
+                 app: nginx
+             spec:
+               ports:
+               - port: 80
+                 name: web
+               clusterIP: None
+               selector:
+                 app: nginx
+             ---
+             apiVersion: apps/v1
+             kind: StatefulSet
+             metadata:
+               name: web
+             spec:
+               selector:
+                 matchLabels:
+                   app: nginx # tiene que coincidir con .spec.template.metadata.labels
+               serviceName: "nginx"
+               replicas: 3 # por defecto es 1
+               template:
+                 metadata:
+                   labels:
+                     app: nginx # tiene que coincidir con .spec.selector.matchLabels
+                 spec:
+                   terminationGracePeriodSeconds: 10
+                   containers:
+                   - name: nginx
+                     image: registry.k8s.io/nginx-slim:0.8
+                     ports:
+                     - containerPort: 80
+                       name: web
+                     volumeMounts:
+                     - name: www
+                       mountPath: /usr/share/nginx/html
+               volumeClaimTemplates:
+               - metadata:
+                   name: www
+                 spec:
+                   accessModes: [ "ReadWriteOnce" ]
+                   storageClassName: "my-storage-class"
+                   resources:
+                     requests:
+                       storage: 1Gi
+    
+Selector de Pod
+Debes poner el valor del campo .spec.selector de un StatefulSet para que coincida con las etiquetas de su campo .spec.template.metadata.labels. Antes de Kubernetes 1.8, el campo .spec.selector se predeterminaba cuando se omitía. A partir de la versión 1.8, si no se especifica un selector de coincidencia de Pods, se produce un error de validación durante la creación del StatefulSet.
+
+Identidad de Pod
+Los Pods de un StatefulSet tienen una identidad única que está formada por un ordinal, una identidad estable de red, y almacenamiento estable. La identidad se asocia al Pod, independientemente del nodo en que haya sido (re)programado.
+
+Índice Ordinal
+Para un StatefulSet con N réplicas, a cada Pod del StatefulSet se le asignará un número entero ordinal, desde 0 hasta N-1, y que es único para el conjunto.
+
+ID estable de Red
+El nombre de anfitrión (hostname) de cada Pod de un StatefulSet se deriva del nombre del StatefulSet y del número ordinal del Pod. El patrón para construir dicho hostname es $(statefulset name)-$(ordinal). Así, el ejemplo de arriba creará tres Pods denominados web-0,web-1,web-2. Un StatefulSet puede usar un Servicio Headless para controlar el nombre de dominio de sus Pods. El nombre de dominio gestionado por este Service tiene la forma: $(service name).$(namespace).svc.cluster.local, donde "cluster.local" es el nombre de dominio del clúster. Conforme se crea cada Pod, se le asigna un nombre DNS correspondiente de subdominio, que tiene la forma: $(podname).$(governing service domain), donde el servicio en funciones se define por el campo serviceName del StatefulSet.
+
+Como se indicó en la sección limitaciones, la creación del Servicio Headless encargado de la identidad de red de los pods es enteramente tu responsabilidad.
+
+Aquí se muestran algunos ejemplos de elecciones de nombres de Cluster Domain, nombres de Service, nombres de StatefulSet, y cómo impactan en los nombres DNS de los Pods del StatefulSet:
+
+Cluster Domain	Service (ns/nombre)	StatefulSet (ns/nombre)	StatefulSet Domain	Pod DNS	Pod Hostname
+cluster.local	default/nginx	default/web	nginx.default.svc.cluster.local	web-{0..N-1}.nginx.default.svc.cluster.local	web-{0..N-1}
+cluster.local	foo/nginx	foo/web	nginx.foo.svc.cluster.local	web-{0..N-1}.nginx.foo.svc.cluster.local	web-{0..N-1}
+kube.local	foo/nginx	foo/web	nginx.foo.svc.kube.local	web-{0..N-1}.nginx.foo.svc.kube.local	web-{0..N-1}
+Nota:
+El valor de Cluster Domain se pondrá a cluster.local a menos que se configure de otra forma.
+Almacenamiento estable
+Kubernetes crea un PersistentVolume para cada VolumeClaimTemplate. En el ejemplo de nginx de arriba, cada Pod recibirá un único PersistentVolume con una StorageClass igual a my-storage-class y 1 GiB de almacenamiento provisionado. Si no se indica ninguna StorageClass, entonces se usa la StorageClass por defecto. Cuando un Pod se (re)programa en un nodo, sus volumeMounts montan los PersistentVolumes asociados con sus PersistentVolume Claims. Nótese que los PersistentVolumes asociados con los PersistentVolume Claims de los Pods no se eliminan cuando los Pods, o los StatefulSet se eliminan. Esto debe realizarse manualmente.
+
+Etiqueta de Nombre de Pod
+Cuando el controlador del StatefulSet crea un Pod, añade una etiqueta, statefulset.kubernetes.io/pod-name, que toma el valor del nombre del Pod. Esta etiqueta te permite enlazar un Service a un Pod específico en el StatefulSet.
+
+Garantías de Despliegue y Escalado
+Para un StatefulSet con N réplicas, cuando los Pods se despliegan, se crean secuencialmente, en orden de {0..N-1}.
+Cuando se eliminan los Pods, se terminan en orden opuesto, de {N-1..0}.
+Antes de que una operación de escalado se aplique a un Pod, todos sus predecesores deben estar Running y Ready.
+Antes de que se termine un Pod, todos sus sucesores deben haberse apagado completamente.
+El StatefulSet no debería tener que indicar un valor 0 para el campo pod.Spec.TerminationGracePeriodSeconds. Esta práctica no es segura y se aconseja no hacerlo. Para una explicación más detallada, por favor echa un vistazo a cómo forzar la eliminación de Pods de un StatefulSet.
+
+Cuando el ejemplo nginx de arriba se crea, se despliegan tres Pods en el orden web-0, web-1, web-2. web-1 no se desplegará hasta que web-0 no esté Running y Ready, y web-2 no se desplegará hasta que web-1 esté Running y Ready. En caso de que web-0 fallase, después de que web-1 estuviera Running y Ready, pero antes de que se desplegara web-2, web-2 no se desplegaría hasta que web-0 se redesplegase con éxito y estuviera Running y Ready.
+
+Si un usuario fuera a escalar el ejemplo desplegado parcheando el StatefulSet de forma que replicas=1, web-2 se terminaría primero. web-1 no se terminaría hasta que web-2 no se hubiera apagado y eliminado por completo. Si web-0 fallase después de que web-2 se hubiera terminado y apagado completamente, pero antes del término de web-1, entonces web-1 no se terminaría hasta que web-0 estuviera Running y Ready.
+
+Reglas de Gestión de Pods
+En Kubernetes 1.7 y versiones posteriores, el StatefulSet permite flexibilizar sus garantías de ordenación al mismo tiempo que preservar su garantía de singularidad e identidad a través del campo .spec.podManagementPolicy.
+
+Gestión de tipo OrderedReady de Pods
+La gestión de tipo OrderedReady de pods es la predeterminada para los StatefulSets. Implementa el comportamiento descrito arriba.
+
+Gestión de tipo Parallel de Pods
+La gestión de tipo Parallel de pods le dice al controlador del StatefulSet que lance y termine todos los Pods en paralelo, y que no espere a que los Pods estén Running y Ready o completamente terminados antes de lanzar o terminar otro Pod.
+
+Estrategias de Actualización
+En Kubernetes 1.7 y a posteriori, el campo .spec.updateStrategy del StatefulSet permite configurar y deshabilitar las actualizaciones automátizadas en línea para los contenedores, etiquetas, peticiones/límites de recursos, y anotaciones de los Pods del StatefulSet.
+
+On Delete
+La estrategia de actualización OnDelete implementa el funcionamiento tradicional (1.6 y previo). Cuando el campo .spec.updateStrategy.type de un StatefulSet se pone al valor OnDelete, el controlador del StatefulSet no actualizará automáticamente los Pods del StatefulSet. Los usuarios deben eliminar manualmente los Pods para forzar al controlador a crear nuevos Pods que reflejen las modificaciones hechas al campo .spec.template del StatefulSet.
+
+Rolling Updates
+La estrategia de actualización RollingUpdate implementa una actualización automatizada en línea de los Pods del StatefulSet. Es la estrategia por defecto cuando el campo .spec.updateStrategy se deja sin valor. Cuando el campo .spec.updateStrategy.type de un StatefulSet se pone al valor RollingUpdate, el controlador del StatefulSet lo eliminará y recreará cada Pod en el StatefulSet. Procederá en el mismo orden en que ha terminado los Pod (del número ordinal más grande al más pequeño), actualizando cada Pod uno por uno. Esperará a que el Pod actualizado esté Running y Ready antes de actualizar su predecesor.
+
+Particiones
+La estrategia de actualización RollingUpdate puede particionarse, indicando el valor del campo .spec.updateStrategy.rollingUpdate.partition. Si se indica una partición, todos los Pods con un número ordinal mayor o igual que el de la partición serán actualizados cuando el campo .spec.template del StatefulSet se actualice. Todos los Pods con un número ordinal que sea menor que el de la partición no serán actualizados, e incluso si son eliminados, serán recreados con la versión anterior. Si el campo .spec.updateStrategy.rollingUpdate.partition de un StatefulSet es mayor que el valor del campo .spec.replicas, las modificaciones al campo .spec.template no se propagarán a sus Pods. En la mayoría de ocasiones, no necesitarás usar una partición, pero pueden resultar útiles si quieres preparar una actualización, realizar un despliegue tipo canary, o llevar a cabo un despliegue en fases.
+
+
+
+En Kubernetes, un StatefulSet es un controlador que garantiza que un número estable de réplicas pod identicos estén en ejecución en todo momento. A diferencia de los Deployments, los StatefulSets mantienen una identidad estable para cada pod, lo que los hace ideales para aplicaciones que requieren:
+
+Identidad estable: Cada pod tiene un nombre único y una IP estática, lo que es crucial para servicios de estado como bases de datos o sistemas de almacenamiento distribuidos.
+Orden de escalado: Los pods se crean y se eliminan de forma ordenada, lo que es importante para las aplicaciones que dependen de un estado persistente.
+Volumen persistente: Los StatefulSets pueden ser configurados para usar volúmenes persistentes, lo que garantiza que los datos de la aplicación no se pierdan si un pod se reinicia o se reemplaza.
+Aplicaciones típicas de StatefulSets:
+
+Bases de datos: Bases de datos relacionales como MySQL o PostgreSQL, donde cada pod representa una instancia de la base de datos.
+Sistemas de almacenamiento distribuidos: Sistemas de archivos distribuidos como Ceph o GlusterFS, donde cada pod es un nodo en el clúster.
+Servicios de estado: Cualquier aplicación que requiera mantener un estado persistente entre reinicios, como servicios de caché o colas de mensajes.
+Características clave de StatefulSets:
+
+Escalado: Puedes escalar un StatefulSet hacia arriba o hacia abajo para aumentar o disminuir el número de réplicas.
+Actualización: Kubernetes puede actualizar automáticamente los pods de un StatefulSet sin perder datos.
+Auto-escalado: Puedes configurar un StatefulSet para escalar automáticamente en función de la carga.
+Seleccionador: Los StatefulSets utilizan un selector para identificar los pods que pertenecen al conjunto.
+Ventajas de usar StatefulSets:
+
+Facilidad de gestión: Kubernetes se encarga de la creación, escalado y actualización de los pods.
+Alta disponibilidad: Los StatefulSets garantizan que siempre haya un número estable de réplicas en ejecución.
+Escalabilidad: Puedes escalar tus aplicaciones de forma horizontal para manejar cargas más grandes.
+En resumen:
+
+Los StatefulSets son una herramienta poderosa en Kubernetes para gestionar aplicaciones de estado. Si necesitas una aplicación que requiera una identidad estable, un orden de escalado específico y volúmenes persistentes, un StatefulSet es la mejor opción.
+
+
+
+<h3>Kubernetes Deployments vs StatefulSets</h3>
+
+
+StatefulSet
+Use 'StatefulSet' with Stateful Distributed Applications, that require each node to have a persistent state. StatefulSet provides the ability to configure an arbitrary number of nodes, for a stateful application/component, through a configuration (replicas = N).
+
+There are two kinds of stateful distributed applications: Master-Master and Master-Slave. All nodes in a Master-Master configuration and Slave nodes in a Master-Slave configuration can make use of a StatefulSet.
+Examples:
+Master-Slave -> Datanodes (slaves) in a Hadoop cluster
+Master-Master -> Database nodes (master-master) in a Cassandra cluster
+
+Each Pod (replica/node) in a StatefulSet has a Unique and Stable network identity. For example in a Cassandra StatefulSet with name as 'cassandra' and number of replica nodes as N, each Cassandra pod (node) has:
+
+Ordinal Index for each pod: 0,1,..,N-1
+Stable network id: cassandra-0, cassandra-1,.., cassandra-N-1
+A separate persistent volume for each pod against a volume claim template i.e a separate storage for every pod (node)
+Pods are created in the order 0 to N-1 and terminated in the reverse order N-1 to 0
+Refer: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+
+Deployment
+'Deployment' on the other hand is suitable for stateless applications/services where the nodes do not require any special identity. A load balancer can reach any node that it chooses. All nodes are equal. A Deployment is useful for creating any number of arbitrary nodes, through a configuration (replicas = N).
+
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>StatefulSets</th>
+      <th>Deployment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State</td>
+      <td>Statefull</td>
+      <td>Stateless</td>
+    </tr>
+    <tr>
+      <td>Definition</td>
+      <td>Stateful app: Stateful applications typically involve some database, such as Cassandra, MongoDB, MessageQueue like Kafka, RabbitMQ or MySQL, and processes a read and/or write to it.</td>
+      <td>Usually, frontend components have completely different scaling requirements than the backends, so we tend to scale them individually. Not to mention the fact that backends such as databases are usually much harder to scale compared to (stateless) frontend web servers. Yes, the term “stateless” means that no past data nor state is stored or needs to be persistent when a new container is created.</td>
+    </tr>
+    <tr>
+      <td>Behaviour</td>
+      <td>When a stateful pod instance dies (or the node it’s running on fails), the pod instance needs to be resurrected on another node, new instance get the same name, network identity, and state as the one it’s replacing.</td>
+      <td>Pod replicas managed by a Deployment; they’re mostly stateless, they can be replaced with a completely new pod replica at any time.</td>
+    </tr>
+    <tr>
+      <td>Pod Mechanism</td>
+      <td>Pods created by the StatefulSet aren’t exact replicas of each other. Each can have its own set of volumes—in other words, storage (and thus persistent state)—which differentiates it from its peers.</td>
+      <td>When a Deployment replaces a pod, the new pod is a completely new pod with a new hostname and IP.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+![image](https://github.com/user-attachments/assets/d9f9fad0-4e16-41fe-9cbb-5666ddca68bc)
+
+Statefulsets are valuable for applications that require one or more of the following:
+
+1. Stable Unique Network Identifiers
+2. Stable Persistent Storage
+3. Ordered Graceful Deployment and Scaling
+4. Ordered Automated Rolling Updates
+
+Commands
+
+kubectl get statefulset: obtenemos los statefullstes
+
+
+
+Ejemplo de statefullset en el curso de Spurin:
+
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      labels:
+        app: nginx
+      name: my-server-nginx
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+          app: nginx
+      serviceName: nginx
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: nginx
+        spec:
+          containers:
+          - image: nginx
+            name: nginx
+             
+No los crea ordenado: 
+
+![image](https://github.com/user-attachments/assets/77fa2268-a413-456d-b721-1318addebfde)
+
+
+![image](https://github.com/user-attachments/assets/c4e9259d-dd2b-4803-a656-10e655c49d50)
+
+
+![image](https://github.com/user-attachments/assets/1fee7784-f78c-4fed-bb0e-fde826db0473)
+
+
+Vamos a evaluar las caracteristicas de un statefulset:
+
+![image](https://github.com/user-attachments/assets/55019f38-72e6-42f3-be55-41ba72b9a336)
+
+Binding de las replicas con un servicio de tipo ClusterIp que creo Spurin
+
+![image](https://github.com/user-attachments/assets/d2430bbd-e8ab-4d14-914d-b797db094db6)
+
+
+
+
+Le agregamos la propiedad volumeClaimtemplates
+
+![image](https://github.com/user-attachments/assets/db1c0769-96a1-4e92-b42f-5efced8109d7)
+
+
+
+n Kubernetes, un VolumeClaimTemplate es un recurso utilizado dentro de los objetos StatefulSet para gestionar volúmenes persistentes de manera dinámica y repetitiva. En términos sencillos, permite que cada pod dentro de un StatefulSet tenga un volumen persistente dedicado, con el mismo nombre y propiedades, sin necesidad de configurarlo manualmente.
+
+Explicación detallada:
+Contexto:
+
+En Kubernetes, un PersistentVolumeClaim (PVC) es un objeto que solicita almacenamiento persistente en un clúster, sin especificar un volumen concreto, lo que permite que Kubernetes gestione el almacenamiento de forma dinámica.
+Un StatefulSet se utiliza para aplicaciones con estado, donde cada pod necesita una identidad persistente y un almacenamiento persistente único.
+Uso de volumeClaimTemplates:
+
+En un StatefulSet, puedes definir un volumeClaimTemplate, que es una plantilla para crear PVCs para cada pod del StatefulSet.
+Kubernetes crea automáticamente un PVC único para cada pod, de acuerdo con las especificaciones definidas en la plantilla. Esto garantiza que cada pod tenga su propio volumen persistente que se crea cuando el pod es programado en un nodo.
+Propósito:
+
+El principal propósito de un volumeClaimTemplate es proporcionar almacenamiento persistente de forma dinámica para cada pod del StatefulSet, asegurando que cada uno de estos pods tenga su propio volumen de almacenamiento con las características definidas en la plantilla.
+Ejemplo:
+Aquí tienes un ejemplo básico de un StatefulSet que utiliza volumeClaimTemplates para crear volúmenes persistentes para cada pod:
+
+
+          apiVersion: apps/v1
+          kind: StatefulSet
+          metadata:
+            name: my-stateful-app
+          spec:
+            serviceName: "my-service"
+            replicas: 3
+            selector:
+              matchLabels:
+                app: my-stateful-app
+            template:
+              metadata:
+                labels:
+                  app: my-stateful-app
+              spec:
+                containers:
+                  - name: my-container
+                    image: my-image
+                    volumeMounts:
+                      - name: my-storage
+                        mountPath: /data
+            volumeClaimTemplates:
+              - metadata:
+                  name: my-storage
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 1Gi
+                  storageClassName: standard
+Descripción del ejemplo:
+volumeClaimTemplates: En este bloque definimos la plantilla para crear los PersistentVolumeClaims para cada pod en el StatefulSet. En este caso, se crea un volumen con el nombre my-storage.
+spec dentro de volumeClaimTemplates: Define las características del PVC, como el tamaño (1Gi), el acceso (ReadWriteOnce), y la clase de almacenamiento (standard).
+¿Qué sucede cuando se crea el StatefulSet?
+Kubernetes creará automáticamente tres PVCs para los tres pods del StatefulSet con los nombres my-storage-0, my-storage-1, y my-storage-2.
+Cada uno de esos PVCs se monta en el directorio /data dentro de los contenedores de cada pod, proporcionando almacenamiento persistente que se mantiene incluso si el pod se reinicia o se mueve a otro nodo.
+
+
+
+
+Podriamos crear persistenceVolumes
+![image](https://github.com/user-attachments/assets/76df2ee4-8396-4c02-a09e-8fa7004de58c)
+
+Flujo general de creación de un volumen persistente con StatefulSet:
+StatefulSet con volumeClaimTemplates: Definir un StatefulSet que incluya plantillas de PersistentVolumeClaim (PVC).
+Clase de almacenamiento (StorageClass): Configurar una StorageClass que administre la provisión dinámica de los volúmenes.
+Provisión de PersistentVolume: Cuando se crea un PVC, si no existe un PersistentVolume (PV) correspondiente, Kubernetes utiliza la StorageClass definida para crear dinámicamente un PV.
+Ejemplo práctico:
+A continuación, te proporcionaré un ejemplo de cómo crear un StatefulSet que gestione volúmenes persistentes con volumeClaimTemplates.
+
+1. Crear un StorageClass
+El primer paso es asegurarte de que tienes una StorageClass configurada en tu clúster de Kubernetes. La StorageClass es la que determina cómo se gestionan y provisionan los volúmenes (por ejemplo, a través de discos locales, NFS, EBS en AWS, etc.).
+
+Ejemplo de un StorageClass básico que usa la provisión dinámica de volúmenes en Kubernetes:
+
+yaml
+Copiar código
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/aws-ebs  # Si usas AWS EBS
+parameters:
+  type: gp2  # Tipo de disco (si usas AWS EBS)
+Este StorageClass le dice a Kubernetes que cree volúmenes persistentes utilizando el proveedor de almacenamiento aws-ebs, que en este caso es un disco de tipo gp2.
+
+2. Crear un StatefulSet con volumeClaimTemplates
+Ahora, creamos el StatefulSet, en el cual cada pod dentro del StatefulSet recibirá su propio PVC que estará ligado a un volumen persistente, todo gestionado automáticamente por Kubernetes.
+
+
+         apiVersion: apps/v1
+         kind: StatefulSet
+         metadata:
+           name: my-stateful-app
+         spec:
+           serviceName: "my-service"
+           replicas: 3
+           selector:
+             matchLabels:
+               app: my-stateful-app
+           template:
+             metadata:
+               labels:
+                 app: my-stateful-app
+             spec:
+               containers:
+                 - name: my-container
+                   image: my-image
+                   volumeMounts:
+                     - name: my-storage
+                       mountPath: /data
+           volumeClaimTemplates:
+             - metadata:
+                 name: my-storage  # El nombre del PVC será my-storage-0, my-storage-1, etc.
+               spec:
+                 accessModes:
+                   - ReadWriteOnce
+                 resources:
+                   requests:
+                     storage: 1Gi
+                 storageClassName: standard  # Aquí asignamos el StorageClass
+Explicación:
+volumeClaimTemplates: Este bloque dentro del StatefulSet define una plantilla de PersistentVolumeClaim que se usará para cada pod dentro del StatefulSet. Cada pod tendrá su propio PVC, que será nombrado automáticamente como my-storage-0, my-storage-1, etc., y cada uno estará asociado con un volumen persistente único.
+
+storageClassName: standard: Aquí asignamos el StorageClass previamente definido (standard en este caso). Esto le indica a Kubernetes que debe utilizar la provisión dinámica de volúmenes que proporciona el StorageClass, y que los volúmenes deberán ser gestionados por el proveedor de almacenamiento que especifique la clase (por ejemplo, EBS en AWS, o discos locales si usas otros proveedores).
+
+resources.requests.storage: 1Gi: Esto indica que cada PVC debe solicitar 1Gi de almacenamiento. Kubernetes se encargará de asignar el tamaño y tipo de disco según las configuraciones del StorageClass.
+
+¿Qué pasa cuando se crea este StatefulSet?
+Cuando se crea el StatefulSet, Kubernetes crea automáticamente un PVC para cada pod. Si no hay un volumen persistente (PV) disponible que coincida con las solicitudes de PVC, Kubernetes provisionará dinámicamente un PV utilizando la StorageClass proporcionada en la plantilla (en este caso, el StorageClass standard).
+
+Si el StatefulSet tiene 3 réplicas, se crearán 3 PVCs (por ejemplo, my-storage-0, my-storage-1, y my-storage-2), y Kubernetes asignará un volumen para cada PVC de acuerdo con la StorageClass definida.
+
+3. Ver los volúmenes persistentes (PV) creados
+Una vez que el StatefulSet esté en ejecución, puedes comprobar los PersistentVolumes que han sido creados dinámicamente con el siguiente comando:
+
+bash
+Copiar código
+kubectl get pv
+Deberías ver que Kubernetes ha creado un volumen persistente para cada PVC, y que estos están siendo utilizados por los pods del StatefulSet.
+
+
+
+Questions
+
+What is the primary difference between Deployments and StatefulSets in Kubernetes?
+- StatefulSets provide a sticky identity for each pod (Correct)
+- Deployments are used for stateful applications
+- StatefulSets do not support rolling updates
+- Deployments manage stateful applications
+
+
+When a StatefulSet is used in Kubernetes, how does each pod manage its storage?
+- Each pod shares a single Persistent Volume
+- Each pod creates its own Persistent Volume Claim (Correct)
+- All pods use ephemeral storage
+- Storage is not supported in StatefulSets
+
+
+What is the purpose of the 'serviceName' in a StatefulSet's configuration?
+- It specifies the name of the service to expose the StatefulSet
+- It is used to define a headless service for network identity (Correct)
+- It defines the name of the StatefulSet
+- It determines the storage class for persistent storage
+
+
+Explanation:
+
+In a StatefulSet, the serviceName field is used to specify the name of the headless service that will be created for the StatefulSet. This service is responsible for providing network identity to the individual pods within the StatefulSet.
+
+When a StatefulSet is created, Kubernetes automatically creates DNS records for each pod in the StatefulSet based on this serviceName. These DNS records allow direct communication between the pods, ensuring that each pod has a stable, unique network identity that is consistent across pod restarts.
+
+For example, if you set serviceName: "my-headless-service" in the StatefulSet, Kubernetes will create DNS entries like:
+
+my-stateful-app-0.my-headless-service.<namespace>.svc.cluster.local
+my-stateful-app-1.my-headless-service.<namespace>.svc.cluster.local
+These entries allow other pods or services to access specific pods within the StatefulSet directly.
+
+
+What happens to the data volume if a pod in a StatefulSet is deleted and recreated?
+- The data is lost
+- The data persists and is reattached to the new pod  (Correct)
+- The data is replicated to other pods
+- The data is moved to a backup pod
+
+
+Explanation:
+In Kubernetes, when you use a StatefulSet, each pod typically has its own PersistentVolumeClaim (PVC), which is tied to a PersistentVolume (PV) that stores the pod's data. This setup ensures that even if a pod is deleted and recreated (such as during a restart or scaling operation), its associated data volume remains intact and is reattached to the new pod.
+
+Here’s what happens in more detail:
+
+Pod Deletion: When a pod in a StatefulSet is deleted, the associated PVC (PersistentVolumeClaim) remains intact. The PVC references a PersistentVolume (PV) that holds the pod's data.
+
+Pod Recreation: The StatefulSet ensures that when the pod is recreated (with the same name as before), it is assigned the same PVC. Kubernetes will then reattach the same PersistentVolume (PV) to the new pod, ensuring that the pod has access to its previous data.
+
+This behavior is key to maintaining data persistence in stateful applications, like databases, that need to retain their state even when pods are restarted or rescheduled across nodes.
+
+
+
+What is a key benefit of using StatefulSets for stateful applications in Kubernetes?
+- They support automatic scaling
+- They provide stable network IDs for each pod (Correct)
+- They automatically backup data
+- They require less configuration than Deployments
+
+
+
+Explanation:
+One of the key benefits of using StatefulSets in Kubernetes is that they provide stable network identities and stable persistent storage for stateful applications. Here's how this works:
+
+Stable Network IDs: Each pod in a StatefulSet gets a unique, stable network identity. The pods are named sequentially (e.g., pod-0, pod-1, pod-2, etc.), and these names are stable across pod restarts. This enables applications to know exactly which pod they are communicating with, which is essential for many stateful applications, such as databases, where individual pods might need to be addressed directly.
+
+Stable Persistent Storage: Each pod in a StatefulSet also has its own associated PersistentVolumeClaim (PVC), which ensures that the storage is persistent and is not lost when pods are deleted or rescheduled. The PVCs are tied to specific pods, ensuring that the data persists across restarts.
+
+
+
+In a StatefulSet's updateStrategy, what is the purpose of the 'partition' value?
+- It specifies the number of replicas
+- It determines the number of pods to update simultaneously
+- It indicates the starting point for a rolling update (Correct)
+- It defines the version of the application to deploy
+
+
+Explanation:
+In a StatefulSet, the updateStrategy field defines how updates to the StatefulSet are managed. The partition value is a part of the rolling update strategy and it controls how many pods will be updated during a rolling update, by indicating the starting point for the update.
+
+Here’s how the partition works in more detail:
+
+Partition Value: The partition specifies the pod index up to which updates will not occur. In other words, pods with an index less than the partition value will not be updated during the rolling update, and only the pods with an index greater than or equal to the partition value will be updated.
+
+If partition = 0, it means that no pods will be updated initially, and the update will start from pod 0.
+If partition = 2, it means that only pods 2, 3, etc., will be updated, while pods 0 and 1 will remain in their current state.
+As the update progresses, the partition value is typically decreased to allow the update to proceed to the next set of pods.
+The partition value is especially useful when you need to control the pace of the update or avoid disruption in critical parts of your application by holding back the update on certain pods.
+
+Example:
+Consider a StatefulSet with 5 replicas (pod-0, pod-1, pod-2, pod-3, and pod-4). If the partition is set to 2, the rolling update will start from pod-2 and update the remaining pods (pod-2, pod-3, pod-4). Pods pod-0 and pod-1 will not be updated during this process.
+
+
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          partition: 2
+   
+How are pods in a Kubernetes StatefulSet named?
+- With randomized names
+- With the StatefulSet name followed by a unique identifier
+- With the same name as the StatefulSet
+- Sequentially, starting from zero and prefixed with the StatefulSet name (Corrrect)
+
+Explanation
+
+he correct answer is:
+
+Sequentially, starting from zero and prefixed with the StatefulSet name
+Explanation:
+In Kubernetes, when you create a StatefulSet, the pods are named sequentially based on the name of the StatefulSet followed by a unique index starting from 0. This allows each pod to have a stable, unique identity, which is crucial for stateful applications.
+
+The naming pattern for pods in a StatefulSet is as follows:
+
+php
+Copiar código
+<statefulset-name>-<ordinal-index>
+For example, if the StatefulSet is named my-stateful-app and it has 3 replicas, the pods will be named:
+
+my-stateful-app-0
+my-stateful-app-1
+my-stateful-app-2
+These names are sequential and are based on the index value (0, 1, 2, etc.). This gives each pod in the StatefulSet a stable identity, even if they are rescheduled or recreated.
+
+****Importante****: Estudiar sobre los rollingUpdates
+
+
+Kubernetes NetworkPolicies - Study Tips
+For the KCNA Examination, you need to be aware of the role of Network Policies and that policies are cumulative. If you apply multiple NetworkPolicies to a set of pods, the policies are added together.
+
+The effective policy is the union of all the individual policies. This approach ensures that if any policy allows a particular type of traffic, that traffic is allowed.
+
+
