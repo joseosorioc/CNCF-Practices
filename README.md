@@ -4075,3 +4075,159 @@ For the KCNA Examination, you need to be aware of the role of Network Policies a
 The effective policy is the union of all the individual policies. This approach ensures that if any policy allows a particular type of traffic, that traffic is allowed.
 
 
+<h2>Network Policy</h2>
+
+![image](https://github.com/user-attachments/assets/9df99681-3bdc-4cd5-84bc-7886b7e29fed)
+
+
+If you want to control traffic flow at the IP address or port level for TCP, UDP, and SCTP protocols, then you might consider using Kubernetes NetworkPolicies for particular applications in your cluster. NetworkPolicies are an application-centric construct which allow you to specify how a pod is allowed to communicate with various network "entities" (we use the word "entity" here to avoid overloading the more common terms such as "endpoints" and "services", which have specific Kubernetes connotations) over the network. NetworkPolicies apply to a connection with a pod on one or both ends, and are not relevant to other connections.
+
+The entities that a Pod can communicate with are identified through a combination of the following three identifiers:
+
+Other pods that are allowed (exception: a pod cannot block access to itself)
+Namespaces that are allowed
+IP blocks (exception: traffic to and from the node where a Pod is running is always allowed, regardless of the IP address of the Pod or the node)
+When defining a pod- or namespace-based NetworkPolicy, you use a selector to specify what traffic is allowed to and from the Pod(s) that match the selector.
+
+Meanwhile, when IP-based NetworkPolicies are created, we define policies based on IP blocks (CIDR ranges).
+
+
+     apiVersion: networking.k8s.io/v1
+     kind: NetworkPolicy
+     metadata:
+       name: test-network-policy
+       namespace: default
+     spec:
+       podSelector:
+         matchLabels:
+           role: db
+       policyTypes:
+       - Ingress
+       - Egress
+       ingress:
+       - from:
+         - ipBlock:
+             cidr: 172.17.0.0/16
+             except:
+             - 172.17.1.0/24
+         - namespaceSelector:
+             matchLabels:
+               project: myproject
+         - podSelector:
+             matchLabels:
+               role: frontend
+         ports:
+         - protocol: TCP
+           port: 6379
+       egress:
+       - to:
+         - ipBlock:
+             cidr: 10.0.0.0/24
+         ports:
+         - protocol: TCP
+           port: 5978
+
+
+Note:
+POSTing this to the API server for your cluster will have no effect unless your chosen networking solution supports network policy.
+Mandatory Fields: As with all other Kubernetes config, a NetworkPolicy needs apiVersion, kind, and metadata fields. For general information about working with config files, see Configure a Pod to Use a ConfigMap, and Object Management.
+
+spec: NetworkPolicy spec has all the information needed to define a particular network policy in the given namespace.
+
+podSelector: Each NetworkPolicy includes a podSelector which selects the grouping of pods to which the policy applies. The example policy selects pods with the label "role=db". An empty podSelector selects all pods in the namespace.
+
+policyTypes: Each NetworkPolicy includes a policyTypes list which may include either Ingress, Egress, or both. The policyTypes field indicates whether or not the given policy applies to ingress traffic to selected pod, egress traffic from selected pods, or both. If no policyTypes are specified on a NetworkPolicy then by default Ingress will always be set and Egress will be set if the NetworkPolicy has any egress rules.
+
+ingress: Each NetworkPolicy may include a list of allowed ingress rules. Each rule allows traffic which matches both the from and ports sections. The example policy contains a single rule, which matches traffic on a single port, from one of three sources, the first specified via an ipBlock, the second via a namespaceSelector and the third via a podSelector.
+
+egress: Each NetworkPolicy may include a list of allowed egress rules. Each rule allows traffic which matches both the to and ports sections. The example policy contains a single rule, which matches traffic on a single port to any destination in 10.0.0.0/24.
+
+
+****Importante***** 
+
+![image](https://github.com/user-attachments/assets/78ceb885-4c40-45bb-b38d-d65df5eee642)
+
+
+Commands: 
+
+kubectl get networkpolicy: obtiene las networks policys
+
+
+
+Questions
+
+What is the primary function of NetworkPolicies in Kubernetes?
+- To automate pod deployment
+- To classify Pods as isolated and control their communication (Correct)
+- To increase the storage capacity of pods
+- To monitor pod performance
+
+
+In Kubernetes, what does an 'Ingress' rule in a NetworkPolicy define?
+- The traffic allowed to exit from pods
+- The storage limits for pods
+- The traffic allowed to enter to pods (Correct)
+- The scheduling preferences for pods
+
+
+How does a NetworkPolicy in Kubernetes become effective?
+- By default, it is effective immediately after the cluster creation  (Correct)
+- It must be linked to a specific service
+- It becomes effective after it is applied
+- Only after restarting the Kubernetes cluster
+
+
+When a pod is created using kubectl run in Kubernetes, what type of label is automatically assigned to it?
+- namespace:
+- run: (Correct)
+- pod:
+- service:
+
+Explanation
+
+When you create a pod using kubectl run in Kubernetes, a label called run is automatically assigned to the pod. The label key will be run, and the value will be the name of the pod or deployment.
+For example, if you run:
+kubectl run mypod --image=nginx
+A label run=mypod will automatically be applied to the pod. You can check the labels using kubectl get pods --show-labels.
+
+
+Which component is essential for the enforcement of NetworkPolicies in Kubernetes?
+- The Kubernetes API server
+- A Container Runtime Interface (CRI) plugin
+- A Container Network Interface (CNI) plugin (Correct)
+- The Kubernetes scheduler
+
+NetworkPolicies in Kubernetes control the communication between pods based on rules like source, destination, and ports. However, these policies are enforced by the CNI (Container Network Interface) plugin.
+The CNI plugin is responsible for configuring network connectivity and enforcing the network policies that are defined in Kubernetes. It ensures that traffic is allowed or blocked between pods according to the rules specified in the NetworkPolicy.
+
+
+
+What is the default behaviour of a pod in a Kubernetes cluster that does not have any NetworkPolicies applied to it?
+- It cannot send or receive any traffic
+- It can only communicate within its own namespace 
+- It can send and receive traffic from any source (Correct)
+- It is isolated from the rest of the cluster
+
+
+Explanation:
+
+The correct answer is: It can send and receive traffic from any source
+
+In Kubernetes, if no NetworkPolicies are applied to a pod, it is not isolated by default. This means the pod is permissive, and it can send and receive traffic from any other pod, service, or external source. The absence of NetworkPolicies implies that Kubernetes does not enforce any restrictions on network traffic between pods or namespaces.
+
+
+How do NetworkPolicies behave when multiple policies are applied to a set of pods in Kubernetes?
+- They cancel each other out, and none are applied
+- Only the most restrictive policy is applied
+- Policies are additive and cumulative in effect  (Correct)
+- Only the least restrictive policy is applied
+
+
+
+Explanation:
+
+The correct answer is:
+
+Policies are additive and cumulative in effect
+
+When multiple NetworkPolicies are applied to a set of pods in Kubernetes, they are not mutually exclusive or individually prioritized (i.e., the most restrictive or least restrictive is not automatically applied). Instead, they are additive and cumulative — all the policies are considered, and the final result is the combination of all the rules from each applied policy.
