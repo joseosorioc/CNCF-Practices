@@ -4222,12 +4222,163 @@ How do NetworkPolicies behave when multiple policies are applied to a set of pod
 - Policies are additive and cumulative in effect  (Correct)
 - Only the least restrictive policy is applied
 
-
-
 Explanation:
 
-The correct answer is:
-
-Policies are additive and cumulative in effect
+The correct answer is: Policies are additive and cumulative in effect
 
 When multiple NetworkPolicies are applied to a set of pods in Kubernetes, they are not mutually exclusive or individually prioritized (i.e., the most restrictive or least restrictive is not automatically applied). Instead, they are additive and cumulative — all the policies are considered, and the final result is the combination of all the rules from each applied policy.
+
+
+
+<h2>Kubernetes Pod Disruption Budgets</h2>
+
+Kubernetes Pod Disruption Budgets - Study Tips
+For the KCNA examination, a general understanding of Pod Disruption Budgets is required, specific on the implementation and use-cases should be considered as informational only in the following video.
+
+
+Reliability with examples pods with replicas
+
+Se borraron de un nodo, sin embargo mantiene sus replicas en el worker 2, incluso si la boran
+![image](https://github.com/user-attachments/assets/bd62c9fe-366e-4c88-b5d8-4e03d131a601)
+
+![image](https://github.com/user-attachments/assets/b07df307-7ed5-41ac-ab3d-5e49996027b4)
+
+
+Comandos
+
+- kubectl cordon worker-1 && kubectl delete pod/nginx-77b4fdf86c-bgx4z pod/nginx-77b4fdf86c-7srbx
+
+  kubectl cordon worker-1
+  Este comando marca el nodo worker-1 como "cordoneado". Cuando un nodo está cordoneado, Kubernetes evita que se asignen nuevos pods a ese nodo, pero no afecta a los pods que ya están en ejecución en el nodo. Es una manera de evitar que más cargas de trabajo lleguen a ese nodo mientras se pueden seguir ejecutando los pods existentes.
+  
+  cordon: Marca el nodo como no programable (no puede aceptar nuevos pods).
+  worker-1: Es el nombre del nodo que estás marcando como cordoneado.
+  2. kubectl delete pod/nginx-77b4fdf86c-bgx4z pod/nginx-77b4fdf86c-7srbx
+  Este comando elimina dos pods específicos del clúster de Kubernetes:
+  
+  kubectl delete pod: Elimina uno o más pods del clúster.
+  nginx-77b4fdf86c-bgx4z y nginx-77b4fdf86c-7srbx: Son los nombres de los pods específicos que estás eliminando. Es posible que estos pods sean parte de un despliegue de Nginx.
+  Cuando se elimina un pod que forma parte de un Deployment (como en este caso parece ser un pod de Nginx), el controlador de replicación del Deployment creará nuevos pods automáticamente para reemplazar los eliminados, garantizando que el número de réplicas del Deployment se mantenga.
+  
+  En resumen:
+  kubectl cordon worker-1: Marca al nodo worker-1 como no disponible para nuevos pods.
+  kubectl delete pod ...: Elimina dos pods específicos de Nginx.
+
+
+
+
+-  kubectl drain worker-2 --delete-emptydir-data=true --ignore-daemonsets=true
+
+
+   El comando kubectl drain se utiliza en Kubernetes para preparar un nodo para su mantenimiento, lo que implica mover todos los pods que están en ese nodo a otros nodos disponibles dentro del clúster. A diferencia de kubectl cordon, que solo 
+   evita que se programen nuevos pods en el nodo, kubectl drain intenta reubicar los pods que están en el nodo de forma activa. Es común usar kubectl drain cuando se necesita realizar mantenimiento en un nodo, como actualizarlo o apagarlo.
+   
+   Desglose del comando: kubectl drain worker-2 --delete-emptydir-data=true --ignore-daemonsets=true
+
+  kubectl drain: Este comando intenta evacuar el nodo especificado (worker-2 en este caso) moviendo todos los pods programados en ese nodo a otros nodos disponibles.
+
+  El nodo se marca como no programable (equivalente a cordon) para que no se asignen nuevos pods mientras se realiza el proceso de drenado.
+  worker-2: Es el nombre del nodo que estás drenando (en este caso, worker-2).
+  
+  --delete-emptydir-data=true: Esta opción hace que los datos almacenados en los volúmenes de tipo emptyDir de los pods que están en el nodo también sean eliminados cuando esos pods son evacuados y eliminados. Los volúmenes emptyDir se crean cuando un pod se ejecuta y se eliminan cuando el pod es destruido. Si esta opción no se especifica o se pone a false, los datos de los volúmenes emptyDir se conservarían.
+  
+  --ignore-daemonsets=true: Por defecto, kubectl drain no moverá ni eliminará los pods de los DaemonSets. Los DaemonSets son objetos que aseguran que haya un pod ejecutándose en cada nodo (por ejemplo, para tareas de logging o monitoring). Esta opción le dice a Kubernetes que ignore los pods gestionados por DaemonSets durante el drenado, lo que significa que esos pods no se eliminarán ni se moverán a otro nodo. Si no usas esta opción, los pods de los DaemonSets también se moverían o eliminarían, lo cual generalmente no es lo deseado.
+
+
+- kubectl uncordon controlplane: El comando kubectl uncordon se utiliza en Kubernetes para marcar un nodo previamente cordoneado como "disponible" nuevamente para programar pods. Esto significa que, después de ejecutar uncordon, Kubernetes permitirá que nuevos pods se asignen a ese nodo.
+   
+- kubectl get pdb: 
+
+POD DISRUPTION BUDGET
+
+Un Pod Disruption Budget (PDB) es un recurso de Kubernetes que establece el número mínimo de pods que deben seguir disponibles durante una interrupción: 
+- Las interrupciones pueden ser voluntarias, como la escalación de nodos o las operaciones de mantenimiento.
+- Las interrupciones también pueden ser involuntarias, como los fallos de hardware o los bloqueos del sistema.
+- Los PDBs ayudan a: Mantener la estabilidad de la aplicación, Minimizar el tiempo de inactividad, Garantizar la alta disponibilidad de las aplicaciones. 
+- Los PDBs son útiles en diversas industrias, como el comercio electrónico, donde pueden ayudar a garantizar que un número mínimo de pods permanezca disponible durante las actualizaciones.
+
+![image](https://github.com/user-attachments/assets/abb5086f-ba5a-41fd-a7f1-514bdcfad5f6)
+
+
+- kubectl create pdb my-nginx-test --selector=app=my-nginx-test --min-available=2: estamos creando un Pod Disruption Budget
+
+
+****Importante*****
+Specifying a Disruption Budget for your Application: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+Leer sobre este link: https://kubernetes.io/es/docs/tasks/run-application/configure-pdb/
+Leer sobre esto: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/
+Leer: A Hands-On Guide to Kubernetes Pod Disruption Budget (PDB) - https://medium.com/@muppedaanvesh/a-hand-on-guide-to-kubernetes-pod-disruption-budget-pdb-%EF%B8%8F-ebe3155a4b7c
+
+
+Questions
+
+What is the primary purpose of Pod Disruption Budgets (PDBs) in Kubernetes?
+- To automate pod scaling
+- To ensure high availability during voluntary disruptions (Correct)
+- To balance load across multiple nodes
+- To monitor pod performance
+
+
+
+In the context of Kubernetes, what does the term 'voluntary disruptions' refer to?
+- Unplanned outages like hardware failures
+- Intentional actions like maintenance or upgrades (Correct)
+- Automatic pod scaling based on load
+- Network interruptions external to the cluster
+
+
+Which Kubernetes command is used to make a node un-schedulable?
+- kubectl drain
+- kubectl delete
+- kubectl cordon (Correct)
+- kubectl create
+
+
+What happens when you use the 'kubectl drain' command on a node?
+- The node is deleted from the cluster
+- It marks the node as schedulable
+- It removes all pods from the node (Correct)
+- It automatically creates a new node
+
+
+Explanation
+
+When you use the kubectl drain command on a node, the correct behavior is:
+
+It removes all pods from the node.
+Here’s a breakdown of what happens when you run kubectl drain on a node:
+
+Evacuates Pods: The command removes all pods from the node by either deleting them or migrating them to other nodes in the cluster. Kubernetes will attempt to safely evict the pods running on that node while respecting PodDisruptionBudgets (PDBs) to ensure that a minimum number of pods are available during disruptions.
+Respecting DaemonSets: By default, kubectl drain does not affect pods managed by DaemonSets. If you want to drain a node but still allow DaemonSet pods to run, you can use the --ignore-daemonsets=true option.
+Marks Node as Unschedulable: The node is marked as unschedulable (equivalent to kubectl cordon), meaning Kubernetes will not schedule any new pods on it until it is uncordoned with the kubectl uncordon command.
+
+
+
+What is the difference between PDBs and replicas in Kubernetes?
+- PDBs automate scaling, while replicas ensure high availability
+- Replicas ensure availability under normal operations, while PDBs protect during disruptions (Correct)
+- Replicas manage storage, while PDBs manage networking
+- There is no difference; they are the same
+
+
+
+How does a Pod Disruption Budget improve application stability during maintenance?
+- By increasing the number of replicas automatically
+- By preventing the eviction of a certain number of pods (Correct)
+- By redistributing pods across available nodes
+- By upgrading the Kubernetes version
+
+
+
+<h2>Kubernetes Security</h2>
+
+Kubernetes Security - Study Tips
+For the KCNA exam, the following considerations -
+
+Awareness of Security Tools and their function including Falco and Open Policy Agent
+Knowledge that Kubescape can be used for hardening to NSA and CISA standards
+OpenID Connect and it's purpose, be aware that the exam may shorten this to OIDC
+Legacy: Although Pod Security Policies are deprecated, this was previously a common question in the exam and you should be aware that Pod Security Policies manage Clusters and Namespaces at runtime
+The 4C's of Cloud Native Security
+
+
