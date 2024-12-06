@@ -4897,3 +4897,296 @@ The purpose of Service Meshes
 The main components, Proxy and Data Plane
 Common open source offerings for Service Meshes
 The role of the SMI
+
+
+Un service mesh, es una capa dentro de la infraestructura de una aplicación de microservicios que hace que la comunicación entre servicios sea flexible, confiable y rápida. Proporciona descubrimiento de servicios, equilibrio de carga, cifrado, autenticación y autorización, soporte para el patrón de interruptor de circuito (circuit-breaker) entre otras capacidades.
+
+¿Porqué es necesario un Service Mesh?
+En las arquitecturas monolíticas, tratamos casi exclusivamente con tráfico norte-sur, pero con microservicios, debemos tratar con el tráfico este-oeste, ya que con los monolitos, los diferentes componentes se comunican entre sí mediante llamadas dentro de la aplicación. Con microservicios, reemplazamos las llamadas dentro de la aplicación con comunicación entre APIs a través de la red. Esto significa que los diferentes servicios dentro de nuestra arquitectura no tienen por que saber el uno del otro, mientras cada API sea consumible.
+
+El tráfico este-oeste (entre APIs de nuestros microservicios) representa una mayor desafío, este tráfico demandan más en términos de estandarización de llamadas entre cada microservicio, su monitorización, el despliegue y aprovisionamiento de recursos.
+
+
+![image](https://github.com/user-attachments/assets/c8488035-1857-4f62-8f21-886aaf5b95c8)
+
+![image](https://github.com/user-attachments/assets/293b0ced-868b-4287-bb21-60e689903145)
+
+![image](https://github.com/user-attachments/assets/3ce7b310-6c65-4e73-8603-9186215fa326)
+
+
+
+Componentes de Un Service Mesh
+
+![image](https://github.com/user-attachments/assets/480d6cec-0914-475f-9ed0-c5da89fe0b0d)
+
+
+Data Plane
+The data plane handles the actual traffic between services. It comprises a collection of intelligent proxies, deployed as sidecars alongside service instances. These proxies intercept and manage all network communication between microservices. They apply various policies such as routing, load balancing, and authentication, ensuring that data packets reach their intended destinations.
+
+The proxies within the data plane are responsible for executing detailed instructions provided by the control plane. They perform tasks like encrypting and decrypting requests for secure transmission, implementing rate limiting to prevent service overload, and recording telemetry data for monitoring purposes.
+
+The Control Plane
+The control plane acts as the brain of the service mesh architecture, orchestrating the configuration and management of the network’s communication rules. It centralizes policy decisions and distributes these policies to the data plane’s proxies for enforcement. This enables dynamic updates and communication management without direct code changes or redeployments.
+
+The control plane provides a unified interface for administrators to define, apply, and monitor policies across all services. Through this interface, operators can implement security measures like authentication and authorization, manage traffic flow via routing rules, and observe system behavior through logging and monitoring tools.
+
+
+
+
+***Importante***, conocer que es SMI (Service Mesh Interface)
+
+Service Mesh Interface provides:
+- A standard interface for service meshes on Kubernetes
+- A basic feature set for the most common service mesh use cases
+- Flexibility to support new service mesh capabilities over time
+- Space for the ecosystem to innovate with service mesh technology
+
+
+What SMI covers
+Service Mesh Interface is a specification that covers the most common service mesh capabilities:
+
+- Traffic policy – apply policies like identity and transport encryption across services
+- Traffic telemetry – capture key metrics like error rate and latency between services
+- Traffic management – shift traffic between different services
+ 
+Kubernetes Native
+The SMI is specified as a collection of Kubernetes Custom Resource Definitions (CRD) and Extension API Servers. These APIs can be installed onto any Kubernetes cluster and manipulated using standard tools.
+
+
+Tambien es importante conocer que es Istio
+
+Istio extends Kubernetes to establish a programmable, application-aware network. Working with both Kubernetes and traditional workloads, Istio brings standard, universal traffic management, telemetry, and security to complex deployments.
+
+Select the features you want and Istio deploys proxy infrastructure as needed. Use the zero-trust tunnel for Layer 4 performance and security, or add the powerful Envoy service proxy for Layer 7 features.
+
+
+Istio es una plataforma de código abierto diseñada para facilitar la gestión de microservicios. Se usa principalmente en entornos de Kubernetes, aunque también se puede usar en otras infraestructuras. Su objetivo principal es ofrecer soluciones para la conectividad, seguridad, observabilidad y gestión del tráfico entre los microservicios dentro de una arquitectura distribuida.
+
+Funciones principales de Istio:
+Gestión del Tráfico: Istio permite controlar cómo se enrutan las solicitudes entre los microservicios, proporcionando funcionalidades como:
+
+Balanceo de carga.
+Enrutamiento avanzado (por ejemplo, canary deployments, A/B testing).
+Control de tráfico basado en condiciones, como la versión del servicio o la carga.
+Seguridad: Istio proporciona una capa de seguridad para las comunicaciones entre servicios mediante:
+
+Autenticación y autorización: Puede garantizar que las comunicaciones entre microservicios sean seguras, utilizando mTLS (mutual TLS) para encriptar las comunicaciones y verificar las identidades de los servicios.
+Control de acceso: Permite definir políticas que limitan quién puede acceder a qué servicios.
+Observabilidad: Ayuda a obtener visibilidad completa del comportamiento de los microservicios, proporcionando métricas, logs y trazas a través de:
+
+Recopilación de métricas: Istio integra herramientas como Prometheus para el monitoreo de métricas de tráfico.
+Trazabilidad distribuida: Gracias a herramientas como Jaeger o Zipkin, Istio permite rastrear la trayectoria de las solicitudes a través de todos los servicios involucrados en un proceso.
+Política y Gobernanza: Permite definir políticas a nivel de red para gestionar el comportamiento de los servicios, como la limitación de tasas, la gestión de errores, etc.
+
+Componentes de Istio:
+Envoy: Es un proxy de red de alto rendimiento que Istio utiliza para interceptar el tráfico entre los microservicios. Cada microservicio se comunica a través de un proxy Envoy, lo que permite a Istio aplicar políticas y recopilar datos sin necesidad de modificar el código de los servicios.
+Istiod: Es el componente de control de Istio, que gestiona la configuración y las políticas, y coordina la comunicación entre los proxies Envoy.
+Ventajas de Istio:
+Desacopla la lógica de red y seguridad del código de los microservicios: Los desarrolladores no necesitan implementar funcionalidades de red y seguridad en cada microservicio individualmente.
+Fácil integración con herramientas de monitoreo y trazabilidad.
+Escalabilidad y flexibilidad en el enrutamiento y control del tráfico.
+
+Example of a Service Mesh: Istio Architecture Diagram
+Istio is a popular, open source service mesh solution. The following diagram shows the architecture of the Istio service mesh.
+
+![image](https://github.com/user-attachments/assets/28c89c33-aec8-4306-ada9-784f2241ebe3)
+
+
+
+
+
+
+Leer Este articulo, muy bueno: https://medium.com/nerd-for-tech/microservice-design-pattern-sidecar-sidekick-pattern-dbcea9bed783
+
+
+Sidecar Pattern
+
+Deploy components of an application into a separate process or container to provide isolation and encapsulation. This pattern can also enable applications to be composed of heterogeneous components and technologies.
+
+This pattern is named Sidecar because it resembles a sidecar attached to a motorcycle. In the pattern, the sidecar is attached to a parent application and provides supporting features for the application. The sidecar also shares the same lifecycle as the parent application, being created and retired alongside the parent. The sidecar pattern is sometimes referred to as the sidekick pattern and is a decomposition pattern.
+
+Sidecar Pattern in k8s
+
+The first single-node pattern is the sidecar pattern. The sidecar pattern is a single-node pattern made up of two containers. The first is the application container. It contains the core logic for the application. Without this container, the application would not exist. In addition to the application container, there is a sidecar container. The role of the sidecar is to augment and improve the application container, often without the application container’s knowledge. In its simplest form, a sidecar container can be used to add functionality to a container that might otherwise be difficult to improve. Sidecar containers are coscheduled onto the same machine via an atomic container group, such as the pod API object in Kubernetes. In addition to being scheduled on the same machine, the application container and sidecar container share a number of resources, including parts of the filesystem, hostname and network, and many other namespaces. A generic image of this sidecar pattern is shown in Figure 2-1.
+
+![image](https://github.com/user-attachments/assets/b95f5c96-f9fb-4463-93d5-207671867974)
+
+
+Context and problem
+Applications and services often require related functionality, such as monitoring, logging, configuration, and networking services. These peripheral tasks can be implemented as separate components or services.
+
+If they're tightly integrated into the application, they can run in the same process as the application, making efficient use of shared resources. However, this also means they're not well isolated, and an outage in one of these components can affect other components or the entire application. Also, they usually need to be implemented using the same language as the parent application. As a result, the component and the application have close interdependence on each other.
+
+If the application is decomposed into services, then each service can be built using different languages and technologies. While this gives more flexibility, it means that each component has its own dependencies and requires language-specific libraries to access the underlying platform and any resources shared with the parent application. In addition, deploying these features as separate services can add latency to the application. Managing the code and dependencies for these language-specific interfaces can also add considerable complexity, especially for hosting, deployment, and management.
+
+Solution
+Co-locate a cohesive set of tasks with the primary application, but place them inside their own process or container, providing a homogeneous interface for platform services across languages.
+
+Diagram of the Sidecar pattern
+
+A sidecar service isn't necessarily part of the application, but is connected to it. It goes wherever the parent application goes. Sidecars are supporting processes or services that are deployed with the primary application. On a motorcycle, the sidecar is attached to one motorcycle, and each motorcycle can have its own sidecar. In the same way, a sidecar service shares the fate of its parent application. For each instance of the application, an instance of the sidecar is deployed and hosted alongside it.
+
+Advantages of using a sidecar pattern include:
+
+A sidecar is independent from its primary application in terms of runtime environment and programming language, so you don't need to develop one sidecar per language.
+
+The sidecar can access the same resources as the primary application. For example, a sidecar can monitor system resources used by both the sidecar and the primary application.
+
+Because of its proximity to the primary application, there's no significant latency when communicating between them.
+
+Even for applications that don't provide an extensibility mechanism, you can use a sidecar to extend functionality by attaching it as its own process in the same host or sub-container as the primary application.
+
+The sidecar pattern is often used with containers and referred to as a sidecar container or sidekick container.
+
+
+Al Español
+
+El Sidecar Pattern (o patrón sidecar) es un patrón arquitectónico comúnmente utilizado en arquitecturas de microservicios, particularmente cuando se trabaja con contenedores, como en entornos de Kubernetes. En este patrón, una aplicación principal (o servicio) se despliega junto a un contenedor o proceso adicional que ofrece funcionalidades complementarias, pero que no forma parte directa de la lógica de negocio de la aplicación principal.
+
+Este contenedor adicional se conoce como el sidecar, y generalmente se utiliza para gestionar aspectos relacionados con la infraestructura, la observabilidad, la seguridad, el monitoreo, o la gestión del tráfico sin modificar el código de la aplicación principal.
+
+Características del Sidecar Pattern:
+Desacoplamiento: El sidecar opera de manera independiente del servicio principal, lo que permite que la aplicación principal se enfoque en su lógica de negocio, mientras que el sidecar gestiona tareas transversales o de infraestructura.
+
+Cohabitación: El sidecar y el servicio principal comparten el mismo ciclo de vida y el mismo entorno de ejecución (como un pod en Kubernetes), pero operan de forma autónoma en cuanto a sus responsabilidades y funciones.
+
+Transparencia: El sidecar generalmente se implementa sin que el código del servicio principal tenga que cambiar. Esto permite añadir funcionalidades adicionales de manera transparente.
+
+
+
+
+
+Concepto de Sidecar containers
+
+Sidecar containers are the secondary containers that run along with the main application container within the same Pod. These containers are used to enhance or to extend the functionality of the primary app container by providing additional services, or functionality such as logging, monitoring, security, or data synchronization, without directly altering the primary application code.
+
+Typically, you only have one app container in a Pod. For example, if you have a web application that requires a local webserver, the local webserver is a sidecar and the web application itself is the app container.
+
+Sidecar containers in Kubernetes
+Kubernetes implements sidecar containers as a special case of init containers; sidecar containers remain running after Pod startup. This document uses the term regular init containers to clearly refer to containers that only run during Pod startup.
+
+Provided that your cluster has the SidecarContainers feature gate enabled (the feature is active by default since Kubernetes v1.29), you can specify a restartPolicy for containers listed in a Pod's initContainers field. These restartable sidecar containers are independent from other init containers and from the main application container(s) within the same pod. These can be started, stopped, or restarted without effecting the main application container and other init containers.
+
+You can also run a Pod with multiple containers that are not marked as init or sidecar containers. This is appropriate if the containers within the Pod are required for the Pod to work overall, but you don't need to control which containers start or stop first. You could also do this if you need to support older versions of Kubernetes that don't support a container-level restartPolicy field.
+
+
+
+
+Questions
+
+What are the two main components of a Service Mesh?
+- Data Plane and Application Plane
+- Data Plane and Control Plane (Correct)
+- Control Plane and Configuration Plane
+- Communication Plane and Data Plane
+
+
+What pattern is commonly used in the Data Plane of a Service Mesh?
+- Monolithic pattern
+- Sidecar pattern (Correct)
+- Singleton pattern
+- Observer pattern
+
+
+What is one of the key security features provided by a Service Mesh?
+- Basic HTTPS encryption
+- Mutual TLS  (Correct)
+- Simple password authentication
+- API key validation
+
+Explanation
+
+The correct answer is: Mutual TLS (mTLS)
+
+One of the key security features provided by a service mesh is mutual TLS (mTLS), which ensures that both the client and the server authenticate each other during communication. This feature encrypts the traffic between services and verifies the identity of both parties, significantly enhancing security in microservices architectures.
+
+Concepto adicional: mutual TLS
+
+What is mutual TLS (mTLS)?
+Mutual TLS, or mTLS for short, is a method for mutual authentication. mTLS ensures that the parties at each end of a network connection are who they claim to be by verifying that they both have the correct private key. The information within their respective TLS certificates provides additional verification.
+
+mTLS is often used in a Zero Trust security framework* to verify users, devices, and servers within an organization. It can also help keep APIs secure<.
+
+
+What is TLS?
+Transport Layer Security (TLS) is an encryption protocol in wide use on the Internet. TLS, which was formerly called SSL, authenticates the server in a client-server connection and encrypts communications between client and server so that external parties cannot spy on the communications. There are three important things to understand about how TLS works:
+
+
+What does SMI stand for in the context of Service Meshes?
+- Service Mesh Integration
+- Service Mesh Interface (Correct)  (este concepto ya lo vimos)
+- Service Management Interface
+- Service Mesh Infrastructure
+
+
+What is the primary goal of the Service Mesh Interface (SMI)?
+- To provide a specific implementation for Service Meshes
+- To create a unified programming language for Service Meshes
+- To offer a common, interoperable interface for various Service Mesh solutions  (Correct)
+- To replace Kubernetes in cloud-native environments
+
+
+The correct answer is:
+
+To offer a common, interoperable interface for various Service Mesh solutions
+
+Explanation:
+The Service Mesh Interface (SMI) is a set of standards and specifications aimed at providing a common, interoperable API for service mesh solutions. Its primary goal is to create a way for different service mesh technologies (like Istio, Linkerd, Consul, etc.) to work together with a consistent set of APIs. This helps developers and operators to work with service meshes in a more unified manner, without being tied to a specific implementation.
+
+Here’s why the other options are incorrect:
+
+To provide a specific implementation for Service Meshes: This is not the goal of the SMI. Instead of offering a specific implementation, the SMI aims to standardize the interfaces and APIs so that different service meshes can comply with the same set of standards.
+
+To create a unified programming language for Service Meshes: The SMI does not focus on creating a new programming language. Its goal is to standardize APIs and interfaces, not to change how developers write code for service meshes.
+To replace Kubernetes in cloud-native environments: Kubernetes is a container orchestration platform, and the SMI has no intention of replacing Kubernetes. The SMI works alongside Kubernetes in cloud-native environments, specifically focusing on the network layer (service-to-service communication) provided by service meshes.
+
+
+Which aspect is NOT directly addressed by Service Mesh Interface (SMI) API specifications?
+- Traffic management
+- Access control 
+- Metrics
+- Data storage (Correct)
+
+Explanation:
+
+The correct answer is:
+
+Data storage
+
+Explanation:
+The Service Mesh Interface (SMI) focuses on standardizing several aspects of service mesh functionality, particularly around the management of microservices in cloud-native environments. However, data storage is not one of the aspects addressed by the SMI.
+
+Here’s a breakdown of the other options:
+
+- Traffic management: SMI provides specifications for managing traffic between services, such as routing, load balancing, and policy enforcement (e.g., retries, timeouts). This is directly addressed by SMI.
+
+- Access control: SMI includes specifications for managing access control, such as defining policies for which services can communicate with each other, enforcing mutual TLS, and other security controls. This is an important aspect of service meshes and is included in the SMI API.
+
+- Metrics: The SMI also deals with the collection and exposure of metrics to allow monitoring and observability. It provides a standard interface for gathering metrics related to service mesh behavior (e.g., traffic volume, latencies, errors).
+
+
+In the context of Service Meshes, what is the role of the Control Plane?
+- Manages database interactions
+- Acts as a client application
+- Serves as a management hub, configuring and directing proxies (Correct)
+- Directly handles user requests
+
+
+
+<h2>Observability</h2>
+
+
+Cloud Native Observability - Study Tips
+For the KCNA exam you will need an understanding of the following -
+
+The 3 pillars of Cloud Native Observability
+Where and why you would use each Pillar, i.e. Logs, Metrics, Traces
+The different types of Metrics, i.e. Gauges, Counters, Meters, Histograms
+The relation between Alerting and the 3 pillars of Cloud Native Observability
+Be aware of kubectl top
+Have an understanding of options such as OpenTracing/OpenTelemetry and that these operate at the Application layer
+
+
+
+
+
