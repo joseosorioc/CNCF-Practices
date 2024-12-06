@@ -4886,3 +4886,14 @@ Explanation:
 Helm Charts can be packaged for distribution using the helm package command. This command packages a chart into a .tgz file (a compressed tarball) that can be shared or uploaded to a Helm chart repository.
 
 Here’s an example of how you would package a Helm chart: <code>helm package ./my-chart</code>
+
+
+<h2>Service Mesh</h2>
+
+Service Meshes - Study Tips
+For the KCNA exam pay particular attention to the following -
+
+The purpose of Service Meshes
+The main components, Proxy and Data Plane
+Common open source offerings for Service Meshes
+The role of the SMI
