@@ -4382,3 +4382,236 @@ Legacy: Although Pod Security Policies are deprecated, this was previously a com
 The 4C's of Cloud Native Security
 
 
+Tools for support the security in Kubernetes
+
+![image](https://github.com/user-attachments/assets/4d59f0dc-415d-40c1-8649-e31e622e9f08)
+
+
+Leer este ducumento: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+
+Comands
+
+El comando kubectl replace --force -f ubuntu_secure.yaml es utilizado en Kubernetes para reemplazar un recurso (como un pod, deployment, service, etc.) que ya existe en el clúster. Vamos a desglosar el comando:
+* kubectl: Es la herramienta de línea de comandos de Kubernetes. Permite interactuar con el clúster de Kubernetes y administrar sus recursos.
+* replace: Este subcomando reemplaza un recurso que ya existe en el clúster con el contenido del archivo proporcionado. Si el recurso no existe, se obtiene un error.
+*  --force: Esta opción se usa para forzar el reemplazo de un recurso aunque el clúster no pueda realizar un "rolling update" o no haya una comparación directa. Se utiliza para actualizar el recurso incluso si eso requiere eliminar y recrear el * objeto de forma abrupta. Advertencia: Usar --force puede causar una interrupción temporal del servicio, ya que el recurso será destruido y luego recreado.
+* -f ubuntu_secure.yaml: Especifica el archivo de definición de recursos de Kubernetes, en este caso ubuntu_secure.yaml. Este archivo debe contener la descripción del recurso a crear o reemplazar en formato YAML.
+
+<h4>Diferencias Claves</h4>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th>kubectl apply</th>
+      <th>kubectl replace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Enfoque</td>
+      <td>Declarativo (gestiona el estado deseado)</td>
+      <td>Imperativo (reemplaza el recurso completamente)</td>
+    </tr>
+    <tr>
+      <td>Manejo de recursos existentes</td>
+      <td>Actualiza los recursos existentes o los crea si no existen</td>
+      <td>Reemplaza completamente los recursos existentes</td>
+    </tr>
+    <tr>
+      <td>Control de versiones</td>
+      <td>Mantiene un historial de cambios (para aplicar cambios incrementales)</td>
+      <td>No mantiene historial de cambios, sobrescribe el recurso por completo</td>
+    </tr>
+    <tr>
+      <td>Uso en equipos múltiples</td>
+      <td>Más adecuado para entornos colaborativos y entornos dinámicos</td>
+      <td>Puede ser útil para cambios drásticos o restauración completa</td>
+    </tr>
+    <tr>
+      <td>Acción sobre recursos no existentes</td>
+      <td>Crea el recurso si no existe</td>
+      <td>Devuelve un error si el recurso no existe</td>
+    </tr>
+    <tr>
+      <td>Aplicación de cambios</td>
+      <td>Realiza cambios incrementales, solo lo que es necesario</td>
+      <td>Reemplaza el recurso completo, destruye el recurso existente y lo recrea</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+Ejemplo de archivo:
+
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       creationTimestamp: null
+       labels:
+         run: ubuntu
+       name: ubuntu
+     spec:
+       securityContext:
+         runAsUser: 1000
+         runAsGroup: 1000
+       containers:
+       - args:
+         - sleep
+         - infinity
+         image: spurin/rootshell:latest
+         name: ubuntu
+         resources: {}
+         securityContext:
+           allowPrivilegeEscalation: false
+       dnsPolicy: ClusterFirst
+       restartPolicy: Always
+     status: {}
+
+
+dentro de las ventajas podemos agregar:
+
+securityContext: 
+  allowPrivilegeEscalation: false
+
+Puesto que la opción allowPrivilegeEscalation: false evita que un proceso dentro del contenedor pueda elevar sus privilegios (es decir, que no pueda obtener privilegios más altos de los que tiene inicialmente). En otras palabras, no permite que un contenedor ejecute procesos como usuario root o adquiera privilegios adicionales mediante técnicas como setuid o setgid.
+
+
+![image](https://github.com/user-attachments/assets/f1ea8bbd-c9c8-41ae-bd9f-f15d2a21ed61)
+
+Antes se usaba Pod Security Policys, sin embargo fueron removidas en versiones posteriores. 
+
+Pod Security Policies
+Removed feature
+PodSecurityPolicy was deprecated in Kubernetes v1.21, and removed from Kubernetes in v1.25.
+Instead of using PodSecurityPolicy, you can enforce similar restrictions on Pods using either or both:
+
+Pod Security Admission
+a 3rd party admission plugin, that you deploy and configure yourself
+For a migration guide, see Migrate from PodSecurityPolicy to the Built-In PodSecurity Admission Controller. For more information on the removal of this API, see PodSecurityPolicy Deprecation: Past, Present, and Future.
+
+If you are not running Kubernetes v1.31, check the documentation for your version of Kubernetes.
+
+
+Kubernetes Admission Controllers
+
+What are they?
+An admission controller is a piece of code that intercepts requests to the Kubernetes API server prior to persistence of the object, but after the request is authenticated and authorized.
+
+Admission controllers may be validating, mutating, or both. Mutating controllers may modify objects related to the requests they admit; validating controllers may not.
+
+Admission controllers limit requests to create, delete, modify objects. Admission controllers can also block custom verbs, such as a request connect to a Pod via an API server proxy. Admission controllers do not (and cannot) block requests to read (get, watch or list) objects.
+
+The admission controllers in Kubernetes 1.31 consist of the list below, are compiled into the kube-apiserver binary, and may only be configured by the cluster administrator. In that list, there are two special controllers: MutatingAdmissionWebhook and ValidatingAdmissionWebhook. These execute the mutating and validating (respectively) admission control webhooks which are configured in the API.
+
+Admission control phases
+The admission control process proceeds in two phases. In the first phase, mutating admission controllers are run. In the second phase, validating admission controllers are run. Note again that some of the controllers are both.
+
+If any of the controllers in either phase reject the request, the entire request is rejected immediately and an error is returned to the end-user.
+
+Finally, in addition to sometimes mutating the object in question, admission controllers may sometimes have side effects, that is, mutate related resources as part of request processing. Incrementing quota usage is the canonical example of why this is necessary. Any such side-effect needs a corresponding reclamation or reconciliation process, as a given admission controller does not know for sure that a given request will pass all of the other admission controllers.
+
+Why do I need them?
+Several important features of Kubernetes require an admission controller to be enabled in order to properly support the feature. As a result, a Kubernetes API server that is not properly configured with the right set of admission controllers is an incomplete server and will not support all the features you expect.
+
+How do I turn on an admission controller?
+The Kubernetes API server flag enable-admission-plugins takes a comma-delimited list of admission control plugins to invoke prior to modifying objects in the cluster. For example, the following command line enables the NamespaceLifecycle and the LimitRanger admission control plugins:
+
+kube-apiserver --enable-admission-plugins=NamespaceLifecycle,LimitRanger ...
+Note:
+Depending on the way your Kubernetes cluster is deployed and how the API server is started, you may need to apply the settings in different ways. For example, you may have to modify the systemd unit file if the API server is deployed as a systemd service, you may modify the manifest file for the API server if Kubernetes is deployed in a self-hosted way.
+How do I turn off an admission controller?
+The Kubernetes API server flag disable-admission-plugins takes a comma-delimited list of admission control plugins to be disabled, even if they are in the list of plugins enabled by default.
+
+kube-apiserver --disable-admission-plugins=PodNodeSelector,AlwaysDeny ...
+Which plugins are enabled by default?
+To see which admission plugins are enabled:
+
+kube-apiserver -h | grep enable-admission-plugins
+
+![image](https://github.com/user-attachments/assets/729bc938-e945-4363-9889-f8036adcda1b)
+
+
+
+
+Others definitions for Admission Controllers in spanish
+
+Un Admission Controller (Controlador de Admisión) en Kubernetes es un componente que intercepta y valida las solicitudes de creación, modificación o eliminación de recursos dentro del clúster antes de que estas sean persistidas en la API de Kubernetes. Los Admission Controllers permiten que las políticas de seguridad, auditoría y validación sean aplicadas de manera centralizada en el clúster.
+
+¿Cómo funcionan los Admission Controllers?
+Cuando una solicitud se realiza a la API de Kubernetes (por ejemplo, para crear o modificar un Pod, Deployment, etc.), Kubernetes pasa la solicitud a través de una serie de Admission Controllers antes de que la solicitud sea finalmente aceptada o rechazada.
+
+El flujo típico de una solicitud es:
+
+El cliente (por ejemplo, kubectl) envía una solicitud al API Server de Kubernetes.
+El API Server procesa la solicitud y la pasa a través de los Admission Controllers.
+Los Admission Controllers pueden:
+Validar: Comprobar si la solicitud cumple con ciertas políticas o reglas.
+Mutar: Modificar la solicitud antes de que se persista (por ejemplo, añadiendo etiquetas, volúmenes, etc.).
+Después de pasar por los Admission Controllers, la solicitud es persistida en la base de datos de Kubernetes (etcd), y el recurso es creado o actualizado.
+Tipos de Admission Controllers
+Los Admission Controllers pueden clasificarse en dos categorías principales:
+
+Validación:
+
+Validan las solicitudes de recursos para asegurarse de que cumplen con las reglas de la política del clúster (por ejemplo, comprobar que un contenedor no tiene privilegios de root o que el tamaño de un pod es adecuado).
+Si una solicitud no pasa la validación, es rechazada.
+Mutación:
+
+Modifican las solicitudes antes de que se apliquen, agregando o modificando configuraciones de los recursos.
+Esto se utiliza para agregar automáticamente etiquetas, anotaciones, volúmenes, configuraciones de seguridad, etc.
+Ejemplos de Admission Controllers comunes:
+NamespaceLifecycle:
+
+Se asegura de que los objetos no puedan crearse en un espacio de nombres (namespace) que ha sido eliminado o marcado para su eliminación.
+LimitRanger:
+
+Aplica límites de recursos a los contenedores en un Pod (por ejemplo, limita la cantidad de CPU o memoria que puede usar un contenedor).
+ResourceQuota:
+
+Aplica límites a los recursos que se pueden consumir dentro de un namespace específico (por ejemplo, el número máximo de Pods, CPU, memoria, etc.).
+PodSecurityPolicy (desaprobado en versiones posteriores de Kubernetes, reemplazado por PodSecurity):
+
+Asegura que los Pods cumplan con políticas de seguridad, como la prohibición de ejecutar contenedores como root, la obligación de usar un usuario no privilegiado, etc.
+NodeRestriction:
+
+Restringe el acceso de los nodos a solo sus propios recursos. Por ejemplo, un nodo no podrá crear Pods en otro nodo, ni modificar la configuración de otros nodos.
+SecurityContextDeny:
+
+Rechaza cualquier Pod que tenga un securityContext que permita privilegios elevados, como ejecutar como root.
+MutatingAdmissionWebhook y ValidatingAdmissionWebhook:
+
+Permiten integrar webhooks externos que se pueden usar para realizar validaciones o mutaciones más complejas y específicas que no están cubiertas por los Admission Controllers integrados de Kubernetes.
+Los webhooks permiten a los desarrolladores crear políticas personalizadas que se apliquen a las solicitudes de recursos.
+¿Dónde se configuran los Admission Controllers?
+En Kubernetes, los Admission Controllers son parte del API Server. Se pueden habilitar o deshabilitar al configurar el kube-apiserver (generalmente en el archivo de configuración del clúster o al ejecutar el servidor). Existen dos tipos de Admission Controllers que se pueden habilitar:
+
+Mutating Admission Controllers: Modifican las solicitudes.
+Validating Admission Controllers: Validan las solicitudes.
+¿Por qué son importantes?
+Seguridad:
+Los Admission Controllers son esenciales para aplicar políticas de seguridad dentro de Kubernetes. Por ejemplo, puedes usar un Admission Controller para asegurarte de que los Pods no se ejecuten como root o que no puedan usar privilegios elevados.
+Automatización:
+Pueden automatizar tareas repetitivas o necesarias para mantener la coherencia en el clúster. Por ejemplo, agregar etiquetas o anotaciones automáticamente a todos los recursos que se crean.
+Cumplimiento de políticas:
+Garantizan que las políticas del clúster sean aplicadas correctamente a nivel de configuración y comportamiento de los recursos, asegurando el cumplimiento de estándares internos o externos (como regulaciones de seguridad).
+Ejemplo de uso de un Admission Controller
+Imagina que quieres asegurarte de que todos los Pods creados en tu clúster no se ejecuten como root. Para ello, podrías habilitar el Admission Controller PodSecurityPolicy (aunque este controlador será deprecado en futuras versiones, y se recomienda utilizar el controlador PodSecurity en su lugar).
+
+Un ejemplo de configuración de política de seguridad que impide ejecutar Pods como root sería algo así:
+
+
+    apiVersion: policy/v1beta1
+    kind: PodSecurityPolicy
+    metadata:
+      name: no-root
+    spec:
+      privileged: false
+      runAsUser:
+        rule: MustRunAsNonRoot
+
+        
+Esta política se aplicaría a los Pods creados en el clúster a través de un Admission Controller, asegurando que no se permitan Pods que se ejecuten con privilegios de root.
