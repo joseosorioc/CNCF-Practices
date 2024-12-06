@@ -4806,3 +4806,83 @@ Helm and Helm Charts - Study Tips
 For the KCNA exam a basic understanding of Helm as a package manager solution for Kubernetes is required.
 
 
+Helm es una herramienta de gestión de paquetes para Kubernetes. Facilita la instalación, configuración y gestión de aplicaciones y servicios en clústeres de Kubernetes a través de charts (paquetes de Kubernetes preconfigurados). Al igual que apt en Debian/Ubuntu o yum en CentOS/RHEL para sistemas operativos, Helm proporciona una manera sencilla de empaquetar, distribuir y gestionar aplicaciones dentro de un clúster Kubernetes.
+
+¿Qué es un "Helm Chart"?
+Un Helm Chart es un conjunto de archivos que describen los recursos de Kubernetes necesarios para ejecutar una aplicación. Esto incluye:
+
+Archivos YAML que definen Pods, Services, Deployments, ConfigMaps, Secrets, etc.
+Plantillas configurables que permiten personalizar la instalación de la aplicación según las necesidades del entorno o del usuario.
+
+![image](https://github.com/user-attachments/assets/505a0315-a701-413c-bfd7-09a7fd3af035)
+
+Bonito...
+
+Intalamos la dependencia de tree con el gestor brew, ya visualisamos en forma de arbol: 
+
+![image](https://github.com/user-attachments/assets/9623d5a8-8061-43dc-a965-f293f2eabbf2)
+
+
+<h4>Como estan compuestos los archivos </h4>
+
+Como esta compuesto el archivo Chart.yaml
+
+![image](https://github.com/user-attachments/assets/f23f1994-02be-42aa-8d24-63d4aebc97d1)
+
+Como esta compuesto el archivo values.yaml (es solo una primera parte porque este archivo es extenso)
+
+![image](https://github.com/user-attachments/assets/5f88c016-39dd-44a1-94e3-f150dc055fc9)
+
+
+Desplegando una app con Helm
+
+![image](https://github.com/user-attachments/assets/b92a4bbc-092e-4d0d-ac32-215a4401e80d)
+
+
+Comands
+
+- helm install <release-name> <chart> [flags] : instala un gráfico (chart) de Helm en un clúster de Kubernetes.
+
+- helm list: para listar los "releases" (despliegues) de aplicaciones que han sido instalados en un clúster de Kubernetes mediante Helm.
+
+- helm search <hub|repo> [term] [flags] : Busca gráficos (charts) en un repositorio de Helm.
+
+- helm repo <command> [flags]; Gestiona los repositorios de Helm (agregar, actualizar, listar).
+
+
+
+<h2>Questions</h2>
+
+What is the primary function of Helm in Kubernetes?
+- Monitoring Kubernetes nodes
+- Simplifying the management of Kubernetes applications (Correct)
+- Providing network security for Kubernetes clusters
+- Automating the backup of Kubernetes data
+
+
+Which of the following is required for Helm's plugin installation?
+- Docker
+- Python
+- git (Correct)
+- Node.js
+
+Explanation: For installing Helm plugins, the required tool is git. Many Helm plugins are hosted in Git repositories, so git is needed to clone these repositories during the plugin installation process.
+
+What is the purpose of Helm Charts in Kubernetes?
+- To monitor resource usage
+- To manage ingress controllers
+- To facilitate deployment and management of applications (Correct)
+- To encrypt sensitive data
+
+How can Helm Charts be packaged for distribution?
+- Using the helm distribute command
+- With the docker package utility
+- Using the helm package command (Correct)
+- Through the kubectl package command
+
+Explanation:
+
+Explanation:
+Helm Charts can be packaged for distribution using the helm package command. This command packages a chart into a .tgz file (a compressed tarball) that can be shared or uploaded to a Helm chart repository.
+
+Here’s an example of how you would package a Helm chart: <code>helm package ./my-chart</code>
