@@ -4615,3 +4615,194 @@ Un ejemplo de configuración de política de seguridad que impide ejecutar Pods 
 
         
 Esta política se aplicaría a los Pods creados en el clúster a través de un Admission Controller, asegurando que no se permitan Pods que se ejecuten con privilegios de root.
+
+
+The Kyverno (Es un proyecto graduado de la CNCF ***Tenerlo en cuenta*** )
+
+
+The Kyverno project provides a comprehensive set of tools to manage the complete Policy-as-Code (PaC) lifecycle for Kubernetes and other cloud native environments.
+Kyverno policies are declarative YAML resources and no new language is required. Kyverno enables use of familiar tools such as kubectl, git, and kustomize to manage policies. Kyverno supports JMESPath and the Common Expressions Language (CEL) for efficient handling of complex logic.
+
+
+Kyverno es una herramienta de política de seguridad y gestión de configuraciones para Kubernetes. Es un admission controller que permite a los administradores de Kubernetes definir, aplicar y verificar políticas de seguridad, cumplimiento y gobernanza en recursos dentro del clúster de manera fácil y declarativa.
+
+
+Open Policy Agent  (Es un proyecto graduado de la CNCF ***Tenerlo en cuenta*** )
+
+
+¿Qué es Open Policy Agent (OPA)?
+OPA es un motor de políticas general-purpose que puede integrarse con cualquier sistema que necesite políticas, no solo Kubernetes. Funciona evaluando políticas que se definen mediante el lenguaje de políticas Rego y tomando decisiones en función de los datos proporcionados por el sistema.
+
+OPA puede ser utilizado para:
+
+- Validación de políticas de seguridad (por ejemplo, si un contenedor puede ejecutarse como root).
+- Control de acceso basado en roles (RBAC).
+- Auditoría de cumplimiento normativo.
+- Decisiones de enrutamiento dinámico en micro.
+
+
+Falco (Es un proyecto graduado de la CNCF ***Tenerlo en cuenta*** )
+
+Falco is a cloud-native security tool designed for Linux systems. It employs custom rules on kernel events, which are enriched with container and Kubernetes metadata, to provide real-time alerts. Falco helps you gain visibility into abnormal behavior, potential security threats, and compliance violations, contributing to comprehensive runtime security.
+
+Representacion de un conjunto de politicas en Kubernetes
+
+![image](https://github.com/user-attachments/assets/1b1f9ce7-88b0-4f9e-85ab-468b296a0ea0)
+
+
+
+Kubescape
+An open-source Kubernetes security platform for your clusters, CI/CD pipelines, and IDE that seperates out the security signal from the scanner noise
+Kubescape is an open-source Kubernetes security platform, built for use in your day-to-day workflow, by fitting into your clusters, CI/CD pipelines and IDE. It serves as a one-stop-shop for Kuberenetes security and includes vulnerability and misconfiguration scanning.
+
+
+You can run scans via the CLI, or add the Kubescape Helm chart, which gives an in-depth view of what is going on in the cluster.
+Kubescape includes misconfiguration and vulnerability scanning as well as risk analysis and security compliance indicators. All results are presented in context and users get many cues on what to do based on scan results.Targeted at the DevSecOps practitioner or platform engineer, it offers an easy-to-use CLI interface, flexible output formats, and automated scanning capabilities. It saves Kubernetes users and admins precious time, effort, and resources.
+Kubescape scans clusters, YAML files, and Helm charts. It detects misconfigurations according to multiple frameworks (including NSA-CISA, MITRE ATT&CK® and the CIS Benchmark).
+Kubescape was created by ARMO and is a Cloud Native Computing Foundation (CNCF) sandbox project.
+
+OpenID
+
+OpenID es un estándar de autenticación y una tecnología de identidad descentralizada que permite a los usuarios autenticarse en diferentes sitios web y aplicaciones usando una única identidad, sin necesidad de crear nuevas credenciales para cada servicio. El objetivo principal de OpenID es facilitar un inicio de sesión único (SSO, por sus siglas en inglés) para que los usuarios no tengan que gestionar múltiples contraseñas en diferentes plataformas.
+
+Fue creado por la Open ID Foundation
+
+The OpenID Foundation’s vision is to help people assert their identity wherever they choose. And our mission is to lead the global community in creating identity standards that are secure, interoperable, and privacy-preserving. Founded in 2007, the OpenID Foundation (OIDF) is a non-profit open standards body developing identity and security specifications that serve billions of consumers across millions of applications.
+
+
+![image](https://github.com/user-attachments/assets/eb5286cf-ac1d-4456-ab1d-1966d7a0ad6a)
+
+
+
+<h2>Importantisimo aprenderse este diagrama (Obligatorio recordarlo)</h2>
+
+For awareness and also for the purposes of the KCNA exam, you should be aware of the 4C’s of Cloud Native Security, namely Cloud, Cluster, Container, Code.
+
+Each endpoint acts as a layer from the outside-in and is a security best practice in Cloud Native Computing.
+
+Each subsequent layer acts as a reinforcement for the layer within. For example, Code would benefit from the security implementations of Container, Cluster and Cloud respectively.
+
+See the following image with a friendly poem to help you remember this!
+
+![image](https://github.com/user-attachments/assets/dc3e2816-df17-413a-b155-fb2a9d8bae24)
+
+
+
+Questions
+
+What Kubernetes feature defines privilege and access control settings for a Pod or Container?
+- Security Admission Controller
+- Security Contexts (Correct)
+- Pod Security Policies
+- Cluster Policies
+
+
+What is the primary function of Admission Controllers in Kubernetes?
+- To orchestrate container deployment
+- To define network policies
+- To act as gatekeepers for pod creation and modification (Correct)
+- To monitor pod performance
+
+
+What Kubernetes security feature was deprecated in version 1.21 and removed in version 1.25?
+- Security Contexts
+- Pod Admission Controllers
+- Pod Security Policies  (Correct)
+- Kubernetes Service Accounts
+
+
+Which tool is an open-source runtime security project that integrates with Kubernetes for identifying abnormal behavior and potential security threats?
+- Kubescape
+- Kyverno
+- Falco  (Correct)
+- Open Policy Agent
+
+The correct answer is: Falco
+
+Explanation:
+Falco is an open-source runtime security tool that integrates with Kubernetes and helps identify abnormal behavior and potential security threats in real-time. It uses a system call monitoring approach to detect suspicious activities, such as unexpected file access, privilege escalation, or unauthorized processes running on your containers and Kubernetes clusters. It is often used for security monitoring and threat detection within Kubernetes environments by monitoring kernel system calls and generating alerts when it detects abnormal behavior.
+
+
+
+Which protocol is recommended for enhanced authentication in large-scale Kubernetes deployments?
+- SAML
+- OAuth 2.0
+- LDAP
+- OpenID Connect (OIDC)  (Correct)
+
+The correct answer is: OpenID Connect (OIDC)
+
+Explanation:
+OpenID Connect (OIDC) is the recommended protocol for enhanced authentication in large-scale Kubernetes deployments. It is an identity layer built on top of OAuth 2.0 and is commonly used for authenticating users in cloud-native environments, including Kubernetes clusters.
+
+
+Why OIDC?
+
+Standardized and Flexible: OIDC is widely adopted and supported by cloud identity providers such as Google, AWS, Azure, and Okta, making it easy to integrate with your existing identity and access management systems.
+User Authentication: It allows Kubernetes to authenticate users via an identity provider (IdP), such as Google or Active Directory, using tokens (JWT tokens) that are verified by Kubernetes.
+Scalable: OIDC is well-suited for large-scale environments because it supports centralized identity management and single sign-on (SSO), streamlining the authentication process.
+Secure: It integrates with modern security protocols, providing robust mechanisms like token-based authentication and support for multi-factor authentication (MFA).
+
+
+
+Which tool is designed for vulnerability and misconfiguration scanning in Kubernetes clusters?
+- Falco
+- Kyverno
+- Open Policy Agent
+- Kubescape  (Correct)
+
+
+The correct answer is:
+
+Kubescape
+
+Explanation:
+Kubescape is a tool designed specifically for vulnerability scanning and misconfiguration detection in Kubernetes clusters. It scans Kubernetes configurations (including YAML files), Helm charts, and Kubernetes resources for potential security vulnerabilities, misconfigurations, and policy violations.
+It focuses on identifying potential risks and security issues in the way Kubernetes resources are configured, such as exposed ports, insecure pod configurations, or improper role-based access control (RBAC) settings.
+
+
+
+
+Which of the following is a common option for Pod Admission Controllers in Kubernetes?
+- Kyverno and Open Policy Agent Gatekeeper
+- Helm and Kustomize
+- Docker and Containerd
+- Grafana and Prometheus
+
+
+The correct answer is:
+
+Kyverno and Open Policy Agent Gatekeeper
+
+Explanation:
+
+- Pod Admission Controllers in Kubernetes are mechanisms that intercept requests to the Kubernetes API server before the requests are persisted, allowing administrators to enforce policies, modify objects, or reject requests based on certain criteria.
+
+- Kyverno and Open Policy Agent Gatekeeper (OPA Gatekeeper) are both policy engines used for enforcing policies in Kubernetes, including policies on pods and other resources. They act as Admission Controllers, which allow you to define rules and policies for resources at the time they are created, updated, or deleted. These tools are specifically designed for policy validation and can prevent misconfigurations and enforce security standards in a Kubernetes cluster.
+
+- Kyverno: A Kubernetes-native policy engine that can validate, mutate, and generate Kubernetes resources. It supports both the admission control process and the enforcement of policies across various resources, including pods.
+
+- OPA Gatekeeper: A policy engine built on Open Policy Agent that helps enforce policies in Kubernetes by using Rego (a declarative language). Gatekeeper works as an Admission Controller to evaluate and enforce policies for resources in the cluster, including pods.
+
+
+In the Kubernetes security context example, what is the outcome of setting allowPrivilegeEscalation: false in the container's security context?
+- It allows containers to run as root
+- It prevents containers from accessing cluster resources 
+- It prevents the escalation of privileges in the container (Correct)
+- It enables network policies for the container
+
+
+Which sequence correctly represents the 4C's of Cloud Native Security?
+- Containers, Clusters, Cloud, Code
+- Cloud, Clusters, Containers, Code (Correct)
+- Code, Containers, Cloud, Clusters
+- Clusters, Containers, Code, Cloud
+
+
+
+<h2>Helm and Helm Charts</h2>
+
+Helm and Helm Charts - Study Tips
+For the KCNA exam a basic understanding of Helm as a package manager solution for Kubernetes is required.
+
+
