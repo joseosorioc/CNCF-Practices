@@ -5188,5 +5188,667 @@ Have an understanding of options such as OpenTracing/OpenTelemetry and that thes
 
 
 
+CLoud Native Observability
 
+![image](https://github.com/user-attachments/assets/5737b6a6-cc56-4e5d-804e-1af8d25d150d)
+
+Definitions
+
+<h3>Logs</h3>
+
+- Logs are available in a variety of formats 
+- Typically the verbosity level can be adjusted 
+- Often file based but other options like streaming exist 
+- Can sometimes be manipulated through the likes of syslog;
+
+
+
+<h3>Metrics</h3>
+
+- Emitted over a period of time
+- Memory Metrics — Amount of Memory used
+- Typically time based and are measured at set intervals
+- Useful insight for reviewing whether a component is as expected, underperforming or overperforming
+
+
+![image](https://github.com/user-attachments/assets/648e6021-1a8f-49dd-9b65-813f02d9bbaa)
+
+
+- Gauges: los Gauges son un tipo de métrica que mide un valor que puede cambiar hacia arriba o hacia abajo en cualquier momento. A diferencia de los contadores (counters), que solo incrementan, los gauges pueden reflejar valores dinámicos y fluctuantes a lo largo del tiempo, lo que los hace útiles para monitorear métricas que pueden aumentar o disminuir, como el uso de memoria, la temperatura de un sistema o el número de elementos en una cola.
+
+Características principales de los Gauges:
+Valores dinámicos: Pueden representar valores que suben y bajan, como el uso de CPU, el tamaño de la memoria utilizada, la cantidad de conexiones abiertas, etc.
+
+Instantáneas: Miden el valor en un punto específico del tiempo. No se suman ni se agregan como un contador, sino que reflejan el estado actual de la métrica.
+
+Ejemplos comunes:
+
+Uso de memoria o almacenamiento.
+Número de conexiones activas en un servidor.
+Número de usuarios actualmente conectados.
+Temperatura de un dispositivo o servidor.
+Posibles valores: Pueden tomar cualquier valor dentro de un rango permitido, como un número entero o un valor decimal.
+
+![image](https://github.com/user-attachments/assets/74fc4973-93fe-4dcc-b657-75c5b071f972)
+
+
+- Contadores (Counters): SOLO aumentan, NUNCA disminuyen. Por ejemplo, un contador podría ser el número de solicitudes HTTP recibidas (de unas API Request).
+
+ ![image](https://github.com/user-attachments/assets/1bb90103-4006-4285-94b6-a77c3af8657a)
+
+
+ - Meters
+
+El término meter (o métrica de tasa en algunos casos) se refiere a un tipo de métrica que mide la frecuencia con la que ocurren ciertos eventos en un sistema durante un período de tiempo determinado. Es muy similar a un counter, pero con un enfoque en la tasa de ocurrencia de los eventos en lugar de solo contar su número total.
+
+Características principales de un Meter:
+Medición de la tasa de eventos: Un meter no solo cuenta los eventos, sino que también mide cuántos eventos ocurren por unidad de tiempo (por ejemplo, eventos por segundo, por minuto, etc.). Esto es útil cuando se quiere saber qué tan rápido está ocurriendo un proceso o acción.
+
+Frecuencia o tasa: Un meter se utiliza para calcular la frecuencia o tasa de eventos. Ejemplos incluyen cuántas solicitudes HTTP por segundo o cuántos mensajes por minuto están siendo procesados en un sistema.
+
+Conceptos clave:
+
+Eventos contados: Similar a un contador, un meter puede contar eventos, pero lo hace con el enfoque adicional de la tasa con la que ocurren.
+Promedio de tasas: Calcula promedios de eventos por unidad de tiempo. Por ejemplo, puede calcular la tasa de peticiones HTTP que llegan a un servidor.
+Tasa instantánea: Mide la tasa de eventos en un intervalo muy corto de tiempo (por ejemplo, cuántos eventos están ocurriendo en el último segundo).
+Acumulación de eventos: A lo largo del tiempo, los eventos se acumulan, y el meter puede ofrecer estadísticas como:
+
+Total de eventos contados (similar a un contador).
+Promedio de eventos por segundo, minuto, hora, etc.
+La tasa instantánea de eventos.
+Ejemplos comunes de Meters:
+Solicitudes HTTP por segundo: Un meter podría medir cuántas solicitudes HTTP se reciben por segundo en un servidor web.
+
+Métrica: Número de solicitudes por segundo (requests per second, RPS).
+Errores por minuto: Un meter podría medir cuántos errores HTTP 500 se producen por minuto.
+
+Métrica: Errores 500 por minuto.
+Tasa de eventos de una cola: Si tienes un sistema de procesamiento de eventos o tareas, un meter podría medir cuántos eventos o tareas se procesan por minuto.
+
+Métrica: Número de tareas procesadas por segundo o minuto.
+Tasa de consumo de mensajes en un sistema de mensajería: En sistemas que consumen y procesan mensajes (por ejemplo, Kafka, RabbitMQ), un meter podría medir la tasa a la que los mensajes son consumidos o procesados.
+
+Diferencias con otros tipos de métricas:
+Counters: Los contadores simplemente cuentan el número total de eventos que han ocurrido hasta el momento. En cambio, un meter mide la frecuencia con la que ocurren esos eventos a lo largo del tiempo.
+
+Ejemplo de contador: número total de solicitudes HTTP.
+Ejemplo de meter: tasa de solicitudes HTTP por segundo.
+Gauges: Los gauges son métricas que pueden aumentar o disminuir (por ejemplo, el uso de memoria o el número de conexiones abiertas). Los meters, en cambio, se centran en la tasa de eventos durante un periodo de tiempo.
+
+Histograms: Los histogramas miden la distribución de los valores de ciertos eventos, como las latencias. Los meters miden las tasas de esos eventos, pero no sus distribuciones.
+
+
+
+
+<h3>Histograms</h3>
+
+A histogram is a graphical representation of the distribution of numerical data. It's essentially a bar chart, where each bar represents a range of values, and the height of the bar corresponds to the frequency of data points within that range.
+
+For example, if you have a dataset of response times for a web application, a histogram can show you how many requests fall into different time intervals, such as 0-100ms, 100-200ms, and so on.
+
+Histograms are useful in observability because they enable you to quickly understand the shape of the data and identify patterns or anomalies. A histogram of number of errors can quickly show you that errors spiked at a specific time and how the number of errors recovered after that.
+
+![image](https://github.com/user-attachments/assets/c4968203-9257-468c-9423-6b4d61e35705)
+
+
+
+
+<h3>Traces</h3>
+
+Son un mecanismo para seguir el flujo de una solicitud o evento a través de los diferentes componentes de un sistema distribuido. Las trazas permiten identificar cómo una solicitud interactúa con los distintos servicios, aplicaciones o microservicios que componen el sistema, proporcionando una visión detallada de la latencia, los cuellos de botella y el comportamiento de las interacciones entre sistemas.
+
+- An essential component in Cloud Native Observablity
+- Trace/Track progress of request as it traverses through the system
+- Provides fantastic insights!
+- End to End lifecycle
+
+
+![image](https://github.com/user-attachments/assets/5fae7a5e-123e-4e94-9334-1ad32e34b451)
+
+
+
+
+
+Observability and Monitoring
+
+![image](https://github.com/user-attachments/assets/2a63f46b-3963-403b-bae3-8709d787ef99)
+
+
+
+
+<h3>Self Monitoring</h3>
+
+Self-monitoring observability is a software practice that involves observability stacks monitoring each other to reduce the risk of unexpected outages. It can be used in addition to redundancy and high availability to help prevent correlated failures
+
+Self-monitoring (autovigilancia o monitoreo autónomo) es el proceso mediante el cual un sistema o aplicación monitorea su propio estado, rendimiento y salud sin intervención humana directa. En lugar de depender exclusivamente de herramientas externas o equipos de monitoreo para detectar problemas o anomalías, un sistema de self-monitoring se integra con métricas y mecanismos internos que le permiten autoevaluarse y, en algunos casos, tomar medidas automáticas en respuesta a eventos o condiciones detectadas.
+
+
+Proyectos de Observability
+
+![image](https://github.com/user-attachments/assets/619cd3b4-5bd4-4e1b-9153-0c59f7f2e80b)
+
+
+
+
+Introduction
+Purpose: Aims to provide a standardised and easy way to trace requests across distributed systems, helping developers to monitor and troubleshoot complex microservices architectures.
+Vendor-Neutral API: It offers a way to collect trace data without being tied to any specific tracing backend (like Jaeger or Zipkin). This flexibility allows for easy integration and migration between different tracing systems.
+
+
+How OpenTracing/OpenTelemetry Operates at the Application Layer
+
+- Instrumentation: Developers add code to their applications to create and manage spans. These spans represent individual operations or requests, capturing essential data such as start and end times, tags, and logs.
+
+- Span Context Propagation: As requests move through different services and processes, the span context is propagated, ensuring a continuous trace across service boundaries. This is often handled via HTTP headers or messaging metadata.
+
+- Data Reporting: The instrumented applications report span data to a tracing backend. This data collection is designed to be low-overhead to minimize the impact on application performance.
+
+- Analysis and Visualisation: The backend (like Jaeger or Zipkin) aggregates this data, providing a visual representation of the traces. This visualisation aids in performance analysis, debugging, and optimisation.
+
+
+Resources for Further Learning
+
+- Official Documentation: OpenTracing Website (the project is recently archived but still has valuable information) provides guides, API documentation, and a conceptual overview of distributed tracing: https://opentracing.io/
+- OpenTelemetry Documentation: OpenTelemetry provides guides on moving from OpenTracing to OpenTelemetry: https://opentelemetry.io/docs/migration/opentracing/
+- By integrating OpenTracing/OpenTelemetry into applications, developers gain critical insights into the performance and behaviour of their systems, making it easier to identify and solve issues in a distributed environment.
+
+
+
+
+Proyectos de Observabilidad en la CNCF
+
+OpenTracing
+
+OpenTracing es un proyecto que define una API abierta y neutral para rastrear y monitorear solicitudes de aplicaciones: 
+Permite a los desarrolladores recopilar datos sobre el rendimiento de las aplicaciones distribuidas 
+Permite a los usuarios evitar el bloqueo de proveedores al permitir cambiar el implementador de OpenTracing 
+Permite a los desarrolladores de marcos de trabajo y bibliotecas compartidas proporcionar una funcionalidad de rastreo lista para usarse 
+
+OpenTracing permite: 
+Identificar cuellos de botella y problemas de latencia
+Diagnosticar fallas
+Comprender la secuencia de eventos, dependencias, y paths dentro del sistema
+Facilitar la localización de cuellos de botella de rendimiento
+Hacer más fácil la resolución de problemas de errores
+Proporcionar información sobre el comportamiento de la aplicación
+
+
+Opentelemetry
+
+Tambien fue creado en la CNCF. OpenTelemetry is a collection of APIs, SDKs, and tools. Use it to instrument, generate, collect, and export telemetry data (metrics, logs, and traces) to help you analyze your software’s performance and behavior.
+![image](https://github.com/user-attachments/assets/1d735403-aac3-4e32-97cd-bbd5123c2d85)
+
+
+El comando kubectl top (Entender)
+
+Shows the current resource utilization for nodes or pods
+
+Explanation:
+The kubectl top command is used in Kubernetes to display resource usage metrics for nodes or pods in the cluster, such as CPU and memory utilization. It provides real-time data about how much CPU and memory each resource (node or pod) is consuming, which helps in monitoring the health and performance of your Kubernetes cluster.
+
+For example:
+
+kubectl top nodes: Shows the resource usage (CPU, memory) for all nodes in the cluster.
+kubectl top pods: Displays the resource usage (CPU, memory) for all pods running in the cluster.
+This command relies on the Metrics Server, a component that collects resource usage data and makes it available to tools like kubectl.
+
+
+
+
+Questions
+
+What is the primary purpose of Observability in Cloud Native systems?
+- To manage user permissions and access
+- To accurately measure a system's state through its output (Correct)
+- To enhance the graphical user interface of the system
+- To increase the storage capacity of cloud services
+
+
+Which of the following is not a type of telemetry in the context of Cloud Native Observability?
+- Logs
+- Metrics 
+- Traces
+- Encryption (Correct)
+
+
+In Cloud Native Observability, what are Logs primarily used for?
+- To measure the network bandwidth
+- To encrypt sensitive data
+- To output messages from programs, applications, and processes (Correct)
+- To track the physical location of devices
+
+
+What characteristic of Metrics makes them essential for Observability?
+- They are static and unchangeable
+- They are cumulative and always increase
+- They are time-based and measured at set intervals (Correct)
+- They provide real-time user feedback
+
+Explanation:
+
+The correct answer is: - They are time-based and measured at set intervals
+
+Metrics are essential for observability because they provide a quantitative view of a system's behavior over time. By being time-based and measured at regular intervals, metrics allow you to track changes, trends, and performance in your system. This time-based data is crucial for understanding how the system behaves, identifying issues, and making informed decisions on improvements.
+
+
+What is a Counter in the context of Cloud Native Observability?
+- A device that measures physical properties
+- A cumulative metric that increases over time (Correct)
+- A statistical method for data encryption 
+- A tool for visualizing network topology
+
+
+
+Which of these is an example of a Trace in Cloud Native Observability?
+- A static record of a user's login history
+- Tracking the process of a request through a system (Correct)
+- A snapshot of current server capacity
+- A log file stored on a physical disk
+
+
+What role do Alerts play in Cloud Native Observability?
+- They predict future system states based on historical data
+- They provide notifications about system anomalies or issues (Correct)
+- They serve as a primary storage method for telemetry data
+- They act as a backup system for logs, metrics, and trace
+
+
+What are the three fundamental pillars of Cloud Native Observability?
+- Encryption, Compression, and Redundancy
+- Logs, Metrics, and Traces             <-  (Correct)
+- Authentication, Authorization, and Accounting
+- Bandwidth, Latency, and Throughput
+
+
+Which pillar of Cloud Native Observability would be most useful for predicting future resource usage?
+- Logs
+- Metrics  (Correct)
+- Traces
+- Alerts
+
+
+In Cloud Native Observability, which format would be considered user-friendly for outputting logging data whilst supporting complex and hierarchical data?
+- CSV
+- JSON (Correct)
+- YAML
+- HTML
+
+The correct answer is:
+
+JSON
+
+Explanation:
+In Cloud Native Observability, JSON (JavaScript Object Notation) is widely considered the most user-friendly and flexible format for outputting logging data, especially when dealing with complex and hierarchical data. Here’s why:
+
+Hierarchical Structure: JSON supports nested structures (objects and arrays), making it ideal for representing complex and hierarchical data. This allows logs to contain multiple levels of information, such as timestamps, log levels, metadata, and context in a structured way.
+
+Machine Readable: JSON is easy to parse by both humans and machines. It’s commonly used for integration with log aggregators, monitoring tools, and centralized logging systems like Elasticsearch, Prometheus, Splunk, and others.
+
+Interoperability: JSON is a widely accepted and standardized format, supported by most programming languages and observability platforms. This ensures compatibility with various tools, dashboards, and automation systems.
+
+
+
+
+In which layer of a software system do OpenTracing and OpenTelemetry primarily operate?
+- Network
+- Operating System
+- Application (Correct)
+- Hardware
+
+
+
+The correct answer is:
+
+- Application
+
+Explanation:
+OpenTracing and OpenTelemetry primarily operate at the Application layer of a software system. They are frameworks for distributed tracing and observability, designed to provide insights into how requests and transactions flow through various services, applications, and components in a distributed system.
+
+OpenTracing: It provides a standard API for tracing requests and measuring their latency across multiple services or microservices.
+OpenTelemetry: It is a more comprehensive and modern framework that combines tracing, metrics, and logs. OpenTelemetry standardizes the collection and transmission of observability data from applications, services, and infrastructure.
+
+
+
+
+What does the kubectl top command do in a Kubernetes environment?
+
+- Lists the most frequently used Kubernetes commands
+- Shows the current resource utilization for nodes or pods (Correct)
+- Displays the top layer of the Kubernetes architecture 
+- Ranks the services in the cluster based on traffic
+
+
+
+The correct answer is:
+
+- Shows the current resource utilization for nodes or pods
+
+Explanation:
+The kubectl top command is used in Kubernetes to display resource usage metrics for nodes or pods in the cluster, such as CPU and memory utilization. It provides real-time data about how much CPU and memory each resource (node or pod) is consuming, which helps in monitoring the health and performance of your Kubernetes cluster.
+
+For example:
+
+kubectl top nodes: Shows the resource usage (CPU, memory) for all nodes in the cluster.
+kubectl top pods: Displays the resource usage (CPU, memory) for all pods running in the cluster.
+This command relies on the Metrics Server, a component that collects resource usage data and makes it available to tools like kubectl.
+
+
+
+LDAP and OIDC in k8s
+
+- https://pmvk.medium.com/step-by-step-guide-to-integrate-ldap-with-kubernetes-1f3fe1ec644e
+- https://medium.com/@extio/kubernetes-authentication-with-oidc-simplifying-identity-management-c56ede8f2dec
+
+
+
+<h2>Taints and Tolerations</h2>
+
+
+Node affinity is a property of Pods that attracts them to a set of nodes (either as a preference or a hard requirement). Taints are the opposite -- they allow a node to repel a set of pods.
+
+Tolerations are applied to pods. Tolerations allow the scheduler to schedule pods with matching taints. Tolerations allow scheduling but don't guarantee scheduling: the scheduler also evaluates other parameters as part of its function.
+
+Taints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes. One or more taints are applied to a node; this marks that the node should not accept any pods that do not tolerate the taints.
+
+Concepts
+You add a taint to a node using kubectl taint. For example,
+
+kubectl taint nodes node1 key1=value1:NoSchedule
+places a taint on node node1. The taint has key key1, value value1, and taint effect NoSchedule. This means that no pod will be able to schedule onto node1 unless it has a matching toleration.
+
+To remove the taint added by the command above, you can run:
+
+kubectl taint nodes node1 key1=value1:NoSchedule-
+You specify a toleration for a pod in the PodSpec. Both of the following tolerations "match" the taint created by the kubectl taint line above, and thus a pod with either toleration would be able to schedule onto node1:
+
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoSchedule"
+tolerations:
+- key: "key1"
+  operator: "Exists"
+  effect: "NoSchedule"
+The default Kubernetes scheduler takes taints and tolerations into account when selecting a node to run a particular Pod. However, if you manually specify the .spec.nodeName for a Pod, that action bypasses the scheduler; the Pod is then bound onto the node where you assigned it, even if there are NoSchedule taints on that node that you selected. If this happens and the node also has a NoExecute taint set, the kubelet will eject the Pod unless there is an appropriate tolerance set.
+
+Here's an example of a pod that has some tolerations defined:
+
+pods/pod-with-toleration.yaml Copy pods/pod-with-toleration.yaml to clipboard
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  tolerations:
+  - key: "example-key"
+    operator: "Exists"
+    effect: "NoSchedule"
+The default value for operator is Equal.
+
+A toleration "matches" a taint if the keys are the same and the effects are the same, and:
+
+the operator is Exists (in which case no value should be specified), or
+the operator is Equal and the values should be equal.
+Note:
+There are two special cases:
+
+If the key is empty, then the operator must be Exists, which matches all keys and values. Note that the effect still needs to be matched at the same time.
+
+An empty effect matches all effects with key key1.
+
+The above example used the effect of NoSchedule. Alternatively, you can use the effect of PreferNoSchedule.
+
+The allowed values for the effect field are:
+
+NoExecute
+This affects pods that are already running on the node as follows:
+Pods that do not tolerate the taint are evicted immediately
+Pods that tolerate the taint without specifying tolerationSeconds in their toleration specification remain bound forever
+Pods that tolerate the taint with a specified tolerationSeconds remain bound for the specified amount of time. After that time elapses, the node lifecycle controller evicts the Pods from the node.
+NoSchedule
+No new Pods will be scheduled on the tainted node unless they have a matching toleration. Pods currently running on the node are not evicted.
+PreferNoSchedule
+PreferNoSchedule is a "preference" or "soft" version of NoSchedule. The control plane will try to avoid placing a Pod that does not tolerate the taint on the node, but it is not guaranteed.
+You can put multiple taints on the same node and multiple tolerations on the same pod. The way Kubernetes processes multiple taints and tolerations is like a filter: start with all of a node's taints, then ignore the ones for which the pod has a matching toleration; the remaining un-ignored taints have the indicated effects on the pod. In particular,
+
+if there is at least one un-ignored taint with effect NoSchedule then Kubernetes will not schedule the pod onto that node
+if there is no un-ignored taint with effect NoSchedule but there is at least one un-ignored taint with effect PreferNoSchedule then Kubernetes will try to not schedule the pod onto the node
+if there is at least one un-ignored taint with effect NoExecute then the pod will be evicted from the node (if it is already running on the node), and will not be scheduled onto the node (if it is not yet running on the node).
+For example, imagine you taint a node like this
+
+kubectl taint nodes node1 key1=value1:NoSchedule
+kubectl taint nodes node1 key1=value1:NoExecute
+kubectl taint nodes node1 key2=value2:NoSchedule
+And a pod has two tolerations:
+
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoSchedule"
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoExecute"
+In this case, the pod will not be able to schedule onto the node, because there is no toleration matching the third taint. But it will be able to continue running if it is already running on the node when the taint is added, because the third taint is the only one of the three that is not tolerated by the pod.
+
+Normally, if a taint with effect NoExecute is added to a node, then any pods that do not tolerate the taint will be evicted immediately, and pods that do tolerate the taint will never be evicted. However, a toleration with NoExecute effect can specify an optional tolerationSeconds field that dictates how long the pod will stay bound to the node after the taint is added. For example,
+
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoExecute"
+  tolerationSeconds: 3600
+means that if this pod is running and a matching taint is added to the node, then the pod will stay bound to the node for 3600 seconds, and then be evicted. If the taint is removed before that time, the pod will not be evicted.
+
+Example Use Cases
+Taints and tolerations are a flexible way to steer pods away from nodes or evict pods that shouldn't be running. A few of the use cases are
+
+Dedicated Nodes: If you want to dedicate a set of nodes for exclusive use by a particular set of users, you can add a taint to those nodes (say, kubectl taint nodes nodename dedicated=groupName:NoSchedule) and then add a corresponding toleration to their pods (this would be done most easily by writing a custom admission controller). The pods with the tolerations will then be allowed to use the tainted (dedicated) nodes as well as any other nodes in the cluster. If you want to dedicate the nodes to them and ensure they only use the dedicated nodes, then you should additionally add a label similar to the taint to the same set of nodes (e.g. dedicated=groupName), and the admission controller should additionally add a node affinity to require that the pods can only schedule onto nodes labeled with dedicated=groupName.
+
+Nodes with Special Hardware: In a cluster where a small subset of nodes have specialized hardware (for example GPUs), it is desirable to keep pods that don't need the specialized hardware off of those nodes, thus leaving room for later-arriving pods that do need the specialized hardware. This can be done by tainting the nodes that have the specialized hardware (e.g. kubectl taint nodes nodename special=true:NoSchedule or kubectl taint nodes nodename special=true:PreferNoSchedule) and adding a corresponding toleration to pods that use the special hardware. As in the dedicated nodes use case, it is probably easiest to apply the tolerations using a custom admission controller. For example, it is recommended to use Extended Resources to represent the special hardware, taint your special hardware nodes with the extended resource name and run the ExtendedResourceToleration admission controller. Now, because the nodes are tainted, no pods without the toleration will schedule on them. But when you submit a pod that requests the extended resource, the ExtendedResourceToleration admission controller will automatically add the correct toleration to the pod and that pod will schedule on the special hardware nodes. This will make sure that these special hardware nodes are dedicated for pods requesting such hardware and you don't have to manually add tolerations to your pods.
+
+Taint based Evictions: A per-pod-configurable eviction behavior when there are node problems, which is described in the next section.
+
+Taint based Evictions
+FEATURE STATE: Kubernetes v1.18 [stable]
+The node controller automatically taints a Node when certain conditions are true. The following taints are built in:
+
+node.kubernetes.io/not-ready: Node is not ready. This corresponds to the NodeCondition Ready being "False".
+node.kubernetes.io/unreachable: Node is unreachable from the node controller. This corresponds to the NodeCondition Ready being "Unknown".
+node.kubernetes.io/memory-pressure: Node has memory pressure.
+node.kubernetes.io/disk-pressure: Node has disk pressure.
+node.kubernetes.io/pid-pressure: Node has PID pressure.
+node.kubernetes.io/network-unavailable: Node's network is unavailable.
+node.kubernetes.io/unschedulable: Node is unschedulable.
+node.cloudprovider.kubernetes.io/uninitialized: When the kubelet is started with an "external" cloud provider, this taint is set on a node to mark it as unusable. After a controller from the cloud-controller-manager initializes this node, the kubelet removes this taint.
+In case a node is to be drained, the node controller or the kubelet adds relevant taints with NoExecute effect. This effect is added by default for the node.kubernetes.io/not-ready and node.kubernetes.io/unreachable taints. If the fault condition returns to normal, the kubelet or node controller can remove the relevant taint(s).
+
+In some cases when the node is unreachable, the API server is unable to communicate with the kubelet on the node. The decision to delete the pods cannot be communicated to the kubelet until communication with the API server is re-established. In the meantime, the pods that are scheduled for deletion may continue to run on the partitioned node.
+
+Note:
+The control plane limits the rate of adding new taints to nodes. This rate limiting manages the number of evictions that are triggered when many nodes become unreachable at once (for example: if there is a network disruption).
+You can specify tolerationSeconds for a Pod to define how long that Pod stays bound to a failing or unresponsive Node.
+
+For example, you might want to keep an application with a lot of local state bound to node for a long time in the event of network partition, hoping that the partition will recover and thus the pod eviction can be avoided. The toleration you set for that Pod might look like:
+
+tolerations:
+- key: "node.kubernetes.io/unreachable"
+  operator: "Exists"
+  effect: "NoExecute"
+  tolerationSeconds: 6000
+Note:
+Kubernetes automatically adds a toleration for node.kubernetes.io/not-ready and node.kubernetes.io/unreachable with tolerationSeconds=300, unless you, or a controller, set those tolerations explicitly.
+
+These automatically-added tolerations mean that Pods remain bound to Nodes for 5 minutes after one of these problems is detected.
+
+DaemonSet pods are created with NoExecute tolerations for the following taints with no tolerationSeconds:
+
+node.kubernetes.io/unreachable
+node.kubernetes.io/not-ready
+This ensures that DaemonSet pods are never evicted due to these problems.
+
+Taint Nodes by Condition
+The control plane, using the node controller, automatically creates taints with a NoSchedule effect for node conditions.
+
+The scheduler checks taints, not node conditions, when it makes scheduling decisions. This ensures that node conditions don't directly affect scheduling. For example, if the DiskPressure node condition is active, the control plane adds the node.kubernetes.io/disk-pressure taint and does not schedule new pods onto the affected node. If the MemoryPressure node condition is active, the control plane adds the node.kubernetes.io/memory-pressure taint.
+
+You can ignore node conditions for newly created pods by adding the corresponding Pod tolerations. The control plane also adds the node.kubernetes.io/memory-pressure toleration on pods that have a QoS class other than BestEffort. This is because Kubernetes treats pods in the Guaranteed or Burstable QoS classes (even pods with no memory request set) as if they are able to cope with memory pressure, while new BestEffort pods are not scheduled onto the affected node.
+
+The DaemonSet controller automatically adds the following NoSchedule tolerations to all daemons, to prevent DaemonSets from breaking.
+
+node.kubernetes.io/memory-pressure
+node.kubernetes.io/disk-pressure
+node.kubernetes.io/pid-pressure (1.14 or later)
+node.kubernetes.io/unschedulable (1.10 or later)
+node.kubernetes.io/network-unavailable (host network only)
+Adding these tolerations ensures backward compatibility. You can also add arbitrary tolerations to DaemonSets.
+
+
+Como especificar y pasar a un namespace
+
+- To avoid specifying the namespace with each kubectl command, you can define a Kubernetes context that includes the desired namespace. This allows you to set the context once and then use kubectl without specifying the namespace every time.
+
+
+<h2>Versioning (Importante tenerlo en cuenta)</h2>
+
+![image](https://github.com/user-attachments/assets/2bcd4d60-6830-44c4-8a74-f64d7aad68f7)
+
+- When an API is updated to version 1 (v1), it is considered to be in the stable stage of development. At this stage, the API is considered to be mature, reliable, and ready for production use without major changes expected.
+- The term "alpha" is used to refer to an early stage in the development of an API where it is still in the experimental phase and undergoing significant changes. APIs in the alpha stage are not stable and may have breaking changes.
+- When an API is updated to version 1 (v1), it is considered to be in the stable stage of development. At this stage, the API is considered to be mature, reliable, and ready for production use without major changes expected.
+- The term "production" is used to refer to the final stage in the development of an API where it is considered stable, reliable, and ready for use in a production environment. APIs in the production stage are expected to have minimal changes and be fully supported for users.
+
+
+Overall explanation
+Once an API is updated to version 1 (v1), it is typically referred to as reaching "stable" This stage signifies that the API has matured, and its core features and functionality have been stabilized, making it suitable for production use. Subsequent updates and enhancements to the API are expected to maintain backward compatibility with the v1 version, ensuring that existing applications and integrations continue to work without major disruptions.
+
+https://kubernetes.io/docs/reference/using-api/
+
+
+
+<h2>Spreed Contraints in kubernetes</h2>
+
+Overall explanation
+Spread constraints in Kubernetes are primarily used to evenly distribute pods of a particular service or application across the cluster's nodes, enhancing load balancing and resource utilization.
+
+Incorrect Answers:
+
+Spread constraints are not concerned with resource requests and limits but with pod distribution for load balancing.
+never scheduling on the same node describes the purpose of anti-affinity rules, not spread constraints.
+scheduling pods with specific labels don't he same node describes affinity rules for collocating pods, not spread constraints.
+
+https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#pod-topology-spread-constraints
+
+
+
+
+<h2>East-West Traffic</h2>
+
+Overall explanation
+In the context of service mesh, east-west traffic typically refers to communication between services within the data center or cluster. Service mesh solutions like Istio and Linkerd focus on managing and securing this internal service-to-service traffic.
+
+In computer networking, east-west traffic is network traffic among devices within a specific data center. The other direction of traffic flow is north-south traffic, data flowing from or to a system physically residing outside the data center.
+
+Traffic
+As a result of virtualization, private cloud, converged, and hyper-converged infrastructure adoption, east-west traffic volumes have increased. Today many virtual functions including virtual firewalls, load balancers and other software-defined networking (SDN) perform various functions and services that previously ran on physical hardware. As these components relay data to each other, they increase traffic on the network, which can increase latency and cause network congestion.As disaggregated compute and storage becomes popular, east-west traffic volumes will increase.
+
+https://en.wikipedia.org/wiki/East-west_traffic
+
+
+Tráfico Este-Oeste (East-West Traffic) se refiere a la comunicación de datos que ocurre dentro de un centro de datos o un entorno de nube entre servicios, aplicaciones o componentes que forman parte de la misma red o sistema. Es decir, es tráfico que se mueve horizontalmente dentro de un clúster o entre servicios que se ejecutan en la misma región o zona de disponibilidad.
+
+En contraste, el tráfico Norte-Sur (North-South) se refiere al tráfico que entra y sale de un centro de datos o de la nube (normalmente entre los usuarios finales y la aplicación o el sistema).
+
+
+North - South Traffic
+
+North-south traffic refers to network traffic that enters or exits an organization's internal network, as opposed to traffic that occurs within the network (referred to as "east-west" traffic). The terms "north-south" and "south-north" are used to describe the direction of traffic flow in relation to an organization's network perimeter.
+
+North-south traffic typically refers to communication between devices inside an organization and devices or services outside of the organization, such as the internet or cloud-based services. This type of traffic often involves the exchange of sensitive information, such as user credentials, and is critical to the functioning of an organization's IT systems. Examples of north-south traffic include web browsing, email, and cloud-based applications.
+
+
+
+<h2>Memory Default Namespaces</h2>
+
+
+Overall explanation
+If a namespace in Kubernetes has default limits of 1 CPU and 256Gi of memory, and a pod definition file within that namespace doesn't specify any resource requirements, then the default resources assigned to the pod would inherit from the namespace.
+
+In this case, the pod would have the following default resource assignments:
+
+CPU: 1 CPU core
+Memory: 256Gi (gibibytes) of memory
+
+These default values are inherited from the namespace's default limits. However, it's important to note that if the namespace's default limits are not explicitly set, Kubernetes will use its cluster-wide default settings or any defaults provided by the underlying infrastructure or Kubernetes distribution.
+
+https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/
+
+
+
+Leer
+
+https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/
+
+
+
+<h2></h2>
+
+Overall explanation
+These agreements are often called "Service Level Agreements" (SLAs). A Service Level Agreement is a formal contract between a service provider (vendor) and a service consumer (user) that outlines the specific performance and reliability guarantees, including Service Level Objectives (SLOs), that the provider commits to delivering. SLAs help ensure transparency, define expectations, and establish accountability for the quality of the managed service.
+
+Incorrect Answers:
+
+all of these others are just acronyms that I made up :)
+
+Leer ****importante***: https://www.atlassian.com/incident-management/kpis/sla-vs-slo-vs-sli
+
+![image](https://github.com/user-attachments/assets/cb7831ea-08d0-4773-8ca5-fcea9bac202a)
+
+
+<h2>Controllers and Reconciliation</h2>
+Controllers are the core of Kubernetes, and of any operator.
+
+It’s a controller’s job to ensure that, for any given object, the actual state of the world (both the cluster state, and potentially external state like running containers for Kubelet or loadbalancers for a cloud provider) matches the desired state in the object. Each controller focuses on one root Kind, but may interact with other Kinds.
+
+We call this process reconciling.
+
+
+What platform was the first to standardize the distribution of container images and comply with the OCI distribution specification?
+The first platform to standardize the distribution of container images and comply with the OCI distribution specification was Docker. Docker's adoption of the OCI distribution specification contributed to greater compatibility and interoperability among container runtimes and tools in the containerization ecosystem. This move helped establish a common standard for storing, sharing, and distributing container images across various platforms.
+
+Leer este articulo: https://www.docker.com/blog/donating-docker-distribution-to-the-cncf/
+
+
+
+<h2>Scalability</h2>
+
+
+Deploying a cloud-native application for effective autoscaling involves ensuring the application is designed to scale, creating an infrastructure that supports seamless resource expansion, and configuring autoscaling to meet user demand while also enabling cost-efficient downsizing during lower traffic periods.
+
+Leer: https://glossary.cncf.io/scalability/
+
+
+
+<h2>When scheduling a pod</h2>
+
+When scheduling a pod in Kubernetes, several phases are used to determine the best node to place the pod. These phases include:
+
+Filtering: In this phase, the scheduler filters out nodes that do not meet the pod's resource requirements, affinity/anti-affinity rules, and node selectors. Nodes that pass these filters move on to the next phase.
+
+Scoring: Once the nodes have been filtered, the scheduler assigns a score to each node based on various factors, such as resource availability, load, and custom scheduling preferences (if specified). Nodes with higher scores are considered better candidates for placement.
+
+Prioritization: After scoring, the scheduler prioritizes nodes based on the assigned scores. Nodes with higher scores are given priority for pod placement.
+
+Binding: In the final phase, the scheduler selects the node with the highest priority and binds the pod to that node. The binding process ensures that the pod is scheduled to run on the chosen node.
+
+These phases collectively help the scheduler make informed decisions about where to place pods in the cluster, considering factors like resource constraints, affinity rules, node health, and custom preferences defined by administrators or users. The goal is to optimize resource utilization and meet the requirements and constraints specified for each pod.
 
