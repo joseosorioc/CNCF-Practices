@@ -5852,3 +5852,183 @@ Binding: In the final phase, the scheduler selects the node with the highest pri
 
 These phases collectively help the scheduler make informed decisions about where to place pods in the cluster, considering factors like resource constraints, affinity rules, node health, and custom preferences defined by administrators or users. The goal is to optimize resource utilization and meet the requirements and constraints specified for each pod.
 
+
+<h2>Prometheus and Grafana</h2>
+
+Prometheus
+
+Prometheus, a Cloud Native Computing Foundation project, is a systems and service monitoring system. It collects metrics from configured targets at given intervals, evaluates rule expressions, displays the results, and can trigger alerts when specified conditions are observed.
+
+The features that distinguish Prometheus from other metrics and monitoring systems are:
+
+- A multi-dimensional data model (time series defined by metric name and set of key/value dimensions)
+- PromQL, a powerful and flexible query language to leverage this dimensionality
+- No dependency on distributed storage; single server nodes are autonomous
+- An HTTP pull model for time series collection
+- Pushing time series is supported via an intermediary gateway for batch jobs
+- Targets are discovered via service discovery or static configuration
+- Multiple modes of graphing and dashboarding support
+- Support for hierarchical and horizontal federation
+- Architecture overview
+- Architecture overview
+
+
+
+![image](https://github.com/user-attachments/assets/3d7d98e2-52fe-453a-a412-10ef6fce7afc)
+
+
+Grafana
+
+Grafana allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share dashboards with your team and foster a data-driven culture:
+
+- Visualizations: Fast and flexible client side graphs with a multitude of options. Panel plugins offer many different ways to visualize metrics and logs.
+- Dynamic Dashboards: Create dynamic & reusable dashboards with template variables that appear as dropdowns at the top of the dashboard.
+- Explore Metrics: Explore your data through ad-hoc queries and dynamic drilldown. Split view and compare different time ranges, queries and data sources side by side.
+- Explore Logs: Experience the magic of switching from metrics to logs with preserved label filters. Quickly search through all your logs or streaming them live.
+- Alerting: Visually define alert rules for your most important metrics. Grafana will continuously evaluate and send notifications to systems like Slack, PagerDuty, VictorOps, OpsGenie.
+- Mixed Data Sources: Mix different data sources in the same graph! You can specify a data source on a per-query basis. This works for even custom datasources.
+
+
+![image](https://github.com/user-attachments/assets/3326a187-1467-4a6b-bb49-ccfd6d2cb63d)
+
+
+
+Somes Roles
+
+![image](https://github.com/user-attachments/assets/7733a4f3-4608-4e55-9956-681c91d164a1)
+
+
+Essentials Components
+
+![image](https://github.com/user-attachments/assets/da96039b-c875-451e-a08e-ed3bc14722e4)
+
+Importante: debemos profundizar en Prometheus and Graphana. 
+
+
+Questions
+
+Who was the original creator of Prometheus before it was donated to CNCF?
+- Google
+- SoundCloud (Correct)
+- Microsoft
+- IBM
+
+The correct answer is: SoundCloud
+
+Explanation:
+Prometheus was originally created by SoundCloud in 2012 as an internal monitoring system. The team at SoundCloud needed a more robust and flexible monitoring tool, and thus, Prometheus was developed to handle their time-series data and monitoring requirements.
+
+Prometheus gained popularity quickly due to its powerful query language (PromQL), its simplicity, and its design that catered well to modern, containerized environments. In 2016, Prometheus was donated to the Cloud Native Computing Foundation (CNCF), where it became one of the key projects in the cloud-native ecosystem.
+
+
+
+What is the significance of the 'kube-prometheus operator’ project?
+- It is a project for advanced Kubernetes networking
+- It is a solution for setting up Kubernetes with Prometheus and Grafana (Correct)
+- It is a Kubernetes security enhancement tool
+- It is a Kubernetes cluster management interface
+
+Explanation
+
+The kube-prometheus-operator project is a set of Kubernetes manifests, tools, and operators designed to facilitate the deployment and management of Prometheus, Alertmanager, and Grafana on Kubernetes clusters. It provides a convenient way to set up monitoring and alerting for Kubernetes clusters using Prometheus as the metrics collection tool, Alertmanager for alerting, and Grafana for visualization.
+
+
+
+What is the primary purpose of Kube-State-Metrics?
+- To gather metrics about the state of objects via the Kubernetes API (Correct)
+- To provide a user interface for Kubernetes cluster management
+- To encrypt data communication between Kubernetes components
+- To deploy and manage Prometheus within a Kubernetes cluster
+
+Explanation
+
+The correct answer is: To gather metrics about the state of objects via the Kubernetes API 
+
+To gather metrics about the state of objects via the Kubernetes API. Kube-State-Metrics is a service that generates metrics about the state of various Kubernetes objects (like Pods, Deployments, Nodes, etc.) by querying the Kubernetes API. It doesn't collect metrics about the resource usage (like CPU or memory); instead, it focuses on the state of the Kubernetes resources.
+
+  
+
+What is the primary role of the Node-exporter in Prometheus?
+- Managing database storage
+- Providing hardware and OS metrics from the Kernel (Correct)
+- Translating Kubernetes information to Prometheus metrics
+- Generating visual graphs and charts
+
+Explanation
+
+The correct answer is: Providing hardware and OS metrics from the Kernel.
+
+Node-exporter is a Prometheus exporter designed to gather and expose hardware and operating system (OS) metrics from the node (machine) where it is running. These metrics include details about the machine's resources such as CPU, memory, disk, network, and filesystem.
+
+![image](https://github.com/user-attachments/assets/d71e4dbf-11d9-4155-b91e-175dfff12ffc)
+
+
+
+What is the primary role of the Prometheus Adapter?
+- To manage user access to Prometheus.
+- To adapt Kubernetes information to Prometheus metrics (Correct)
+- To serve as a database for Prometheus data
+- To facilitate communication between Prometheus and external APIs
+
+
+The correct answer is: To adapt Kubernetes information to Prometheus metrics.
+
+Explanation: The Prometheus Adapter is primarily used in Kubernetes environments to enable custom metrics support for the Horizontal Pod Autoscaler (HPA) and other Kubernetes components that need to make decisions based on metrics stored in Prometheus.
+
+Key Role of the Prometheus Adapter
+
+- Custom Metrics: The Prometheus Adapter enables Kubernetes to use Prometheus metrics as custom metrics for scaling workloads, such as scaling pods based on custom application metrics that are collected by Prometheus.
+
+- Adapter for HPA: It allows the Kubernetes Horizontal Pod Autoscaler to scale applications based on metrics that Prometheus is scraping. These custom metrics can include application-specific metrics (e.g., HTTP request count, custom business metrics) or even resource metrics that aren't part of Kubernetes' default metrics.
+
+- API Interface: The adapter exposes Prometheus metrics through the Kubernetes metrics API. It translates queries to Prometheus into a format that Kubernetes understands, allowing it to scale resources based on the Prometheus data.
+
+
+
+What is PromQL primarily used for in Prometheus?
+- Managing user permissions
+- Scheduling backup operations
+- Querying and exploring metrics (Correct)
+- Configuring alert notifications
+
+
+
+The correct answer is: Querying and exploring metrics.
+
+Explanation:
+PromQL (Prometheus Query Language) is the powerful query language used in Prometheus to interact with the data it collects. PromQL allows users to query and explore time-series data stored by Prometheus, enabling them to:
+
+- Retrieve Metrics: You can query specific metrics, apply filters, and aggregate data over time (e.g., average CPU usage over the last 5 minutes).
+- Create Alerts: PromQL can be used to define alerting rules based on specific thresholds or conditions in the data.
+- Explore Data: PromQL is used to visualize metrics directly in Prometheus' built-in web interface or in external tools like Grafana. It helps you explore metrics in real-time and perform ad-hoc analysis.
+- Aggregation and Calculation: You can perform various mathematical operations on metrics, like summing up data across multiple instances, calculating rates, or computing percentiles.
+- Common Use Cases of PromQL: Basic Queries: Extracting specific metrics (e.g., up{job="node"} to view the "up" status of node exporters).
+- Aggregation: Summing or averaging metrics across multiple instances (e.g., avg(rate(http_requests_total[5m])) by (job) to get the average HTTP request rate for each job).
+- Time Ranges: Working with time-series data over specific ranges (e.g., http_requests_total{status="500"}[1h] to get HTTP 500 errors in the last hour).
+- Alerting: Defining conditions for triggering alerts based on metric values (e.g., avg(rate(cpu_usage[5m])) > 0.9 to alert if CPU usage is over 90%).
+
+
+Grafana is primarily used for which of the following in an observability stack?
+- Real-time performance analysis and troubleshooting
+- Automated code deployment
+- Data encryption and security
+- Cloud infrastructure provisioning
+
+Explanation: Ya tenemos las definiciones de Grafana y sus objetivos. 
+
+Prometheus Components 
+
+![image](https://github.com/user-attachments/assets/c30071d3-d45c-4f7a-9e80-453c02e91195)
+
+
+
+<h2>Cost Management</h2>
+
+
+Cost Management - Study Tips
+For the KCNA exam, there are some key points which you will need to be aware about which are covered in this video -
+
+Cloud Anomaly Detection
+KubeCost as a tool for Cost Observability
+
+
