@@ -6197,6 +6197,145 @@ What is a primary function of KubeCost in cloud-native environments?
 
 
 
+ContainerD/CRI-O
+ContainerD:
+
+- ContainerD is an industry standard container runtime with emphasis on simplicity, robustness and portability
+
+- This includes Docker's functionality for executing containers, low-level storage & managing image transfers.
+
+- ContainerD makes it easier for projects like K8s to access the low-level "Docker" elements they need
+
+- Images built with Docker aren't really "Docker image"
+
+- Images are built in the standardized OCI format.
+
+![image](https://github.com/user-attachments/assets/9ba29aa1-b2ca-4d97-91ad-fb38129b0b64)
+
+
+
+ContainerD logo
+CRI-O
+Alternative to using Docker
+
+It supports runc & kata containers as container runtimes
+
+
+
+<h1>Las diferencias entre Docker, containerd, CRI-O y runc</h1>
+
+    <p>Los contenedores no están estrechamente vinculados al nombre Docker. Puedes usar otras herramientas para ejecutar contenedores.</p>
+
+    <p>Puedes estar ejecutando contenedores con Docker, o un montón de otras herramientas que no son Docker. Docker es solo una de las muchas opciones, y Docker (la compañía) crea algunas de las herramientas más geniales del ecosistema, pero no todas.</p>
+
+    <h2>Existen dos grandes estándares alrededor de los contenedores:</h2>
+
+    <ul>
+        <li><strong>Open Container Initiative (OCI)</strong>: un conjunto de estándares para contenedores, que describe el formato de las imágenes, el runtime y la distribución.</li>
+        <li><strong>Container Runtime Interface (CRI) en Kubernetes</strong>: una API que permite usar diferentes runtimes de contenedores en Kubernetes.</li>
+    </ul>
+
+![image](https://github.com/user-attachments/assets/254d5c33-ab2c-43fd-af39-f479819dd154)
+
+
+<h3>How the Docker stack works</h3>
+
+Docker Engine comes with a bunch of tools to make it easy to build and run containers as a developer, or a systems administrator. It is basically a command-line interface (CLI) for working with containers.
+
+So, in reality, when you run a container with docker, you’re actually running it through the Docker daemon, which calls containerd, which then uses runc.
+
+But the docker command is just one piece of the puzzle. It actually calls down to some lower-level tools to do the heavy lifting:
+
+
+![image](https://github.com/user-attachments/assets/fd1d2ae0-2fa7-4ccf-9d33-d1289f323b57)
+
+
+
+What are the lower-level tools in the Docker stack?
+From the bottom up, these are the tools that docker uses to run containers:
+
+Lowest-level 🔩 The low-level container runtime. runc is a low-level container runtime. It uses the native features of Linux to create and run containers. It follows the OCI standard, and it includes libcontainer, a Go library for creating containers.
+🔧 The high-level container runtime. containerd sits above the low-level runtime, and adds a bunch of features, like transferring images, storage, and networking. It also fully supports the OCI spec.
+👺 The Docker daemon. dockerd is a daemon process (a long-running process that stays running in the background) which provides a standard API, and talks to the container runtime
+Highest level 👩‍💻 The Docker CLI tool. Finally, docker-cli gives you the power to interact with the Docker daemon using docker ... commands. This lets you control containers without needing to understand the lower levels.
+Does Kubernetes use Docker?
+A really common question is “how do containers run in Kubernetes?”. Does Kubernetes use Docker? Well, it doesn’t anymore — but it used to.
+
+Originally, Kubernetes used Docker (Docker Engine) to run containers.
+
+But, over time, Kubernetes evolved into a container-agnostic platform. The Container Runtime Interface (CRI) API was created in Kubernetes, which allows different container runtimes to be plugged into it.
+
+Docker Engine, being a project older than Kubernetes, doesn’t implement CRI. So to help with the transition, the Kubernetes project included a component called dockershim, which allowed Kubernetes to run containers with the Docker runtime.
+
+It bridged the gap between the old world and the new.
+
+Death of the shim also
+But, as of Kubernetes 1.24, the dockershim component was removed completely, and Kubernetes no longer supports Docker as a container runtime. Instead, you need to choose a container runtime that implements CRI.
+
+The logical successor to Docker Engine in Kubernetes clusters is… containerd. (10 points if you got that correct!) Or you can use an alternative runtime, like CRI-O.
+
+This doesn’t mean that Kubernetes can’t run so-called Docker-formatted containers. Both containerd and CRI-O can run Docker-formatted and OCI-formatted images in Kubernetes; they can do it without having to use the docker command or the Docker daemon.
+
+Open Container Initiative (OCI) specifications
+The OCI was one of the first efforts at creating some standards for the container world. It was established in 2015 by Docker and others.
+
+The OCI is backed by a bunch of tech companies and maintains a specification for the container image format, and how containers should be run.
+
+For example: you might use one OCI-compliant runtime for your Linux hosts, but a different runtime for your Windows hosts.
+
+Kubernetes Container Runtime Interface
+The other standard we need to talk about is the Container Runtime Interface (CRI). This is an API that was created by the Kubernetes project.
+
+CRI is an interface used by Kubernetes to control the different runtimes that create and manage containers.
+
+
+![image](https://github.com/user-attachments/assets/150da967-47cc-4abb-81f5-e98f9ed3c1d2)
+
+
+
+So if you prefer to use containerd to run your containers in Kubernetes, you can! Or, if you prefer to use CRI-O, then you can. This is because both of these runtimes implement the CRI specification.
+
+But, if you pay to get support (security, bug fixes etc) from a vendor, your choice of container runtime might be made for you. For example, Red Hat’s OpenShift uses CRI-O, and offers support for it. Docker provides support for their own containerd.
+
+containerd and CRI-O
+We’ve seen that Docker Engine calls down to a bunch of lower-level tools. But what are these tools? And how do they fit together?
+
+The first layer is the high-level runtimes: containerd, created by Docker, and CRI-O, created by Red Hat.
+
+containerd
+containerd is a high-level container runtime that came from Docker. It implements the CRI spec. It pulls images from registries, manages them and then hands over to a lower-level runtime, which uses the features of the Linux kernel to create processes we call ‘containers’.
+
+CRI-O
+CRI-O is another high-level container runtime which implements the Kubernetes Container Runtime Interface (CRI). It’s an alternative to containerd. It pulls container images from registries, manages them on disk, and launches a lower-level runtime to run container processes.
+
+Yes, CRI-O is another container runtime. It was born out of Red Hat, IBM, Intel, SUSE .
+
+runc and other low-level runtimes
+runc is an OCI-compatible container runtime. It implements the OCI specification and runs the container processes.
+
+runc is sometimes called the “reference implementation” of OCI.
+
+Other low-level runtimes
+But, runc isn’t the only low-level runtime. The OCI specification is allowing other tools to implement the same functionality in a different way:
+
+crun a container runtime written in C (by contrast, runc is written in Go.)
+firecracker-containerd from AWS, which implements the OCI specification as individual lightweight VMs (and it is also the same technology which powers AWS Lambda)
+gVisor from Google, which creates containers that have their own kernel. It implements OCI in its runtime called runsc.
+
+Otras imagenes para saber la diferencia entre CRI-O, Containerd etc
+
+![image](https://github.com/user-attachments/assets/c817ff6c-41a2-4edc-8ad9-9b727a4e736c)
+
+![image](https://github.com/user-attachments/assets/c2143846-206c-4a0a-b0c4-9ac310c356db)
+
+
+![image](https://github.com/user-attachments/assets/415883a8-5450-447c-8d27-ee54442c05f5)
+
+![image](https://github.com/user-attachments/assets/6db6d12d-03a7-464e-8743-de3dc632008f)
+
+![image](https://github.com/user-attachments/assets/126a8b3e-97c7-470e-a746-08be824a45f9)
+
+
 <h2>Cloud Native Application Delivery and GitOps</h2>
 
 Cloud Native Application Delivery and GitOps - Study Guide
@@ -6206,3 +6345,7 @@ Be aware of Argo and how this software integrates with the GitOps lifecycle
 Knowledge that Argo can be further utilised through the use of Argo Workflows
 Have an understanding and awareness of Flux, an Argo alternative
 Have an understanding of the GitOps toolkit which Flux utilises
+
+
+
+
