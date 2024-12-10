@@ -6336,6 +6336,9 @@ Otras imagenes para saber la diferencia entre CRI-O, Containerd etc
 ![image](https://github.com/user-attachments/assets/126a8b3e-97c7-470e-a746-08be824a45f9)
 
 
+***Importantisimo***: <strong> Kubernetes deprecated Docker as a container runtime starting with version 1.20.</strong> Although Docker is still widely used in many environments, Kubernetes no longer directly supports Docker as the container runtime. Instead, Kubernetes recommends using containerd or CRI-O as alternative container runtimes. Docker's functionality is still available, but Kubernetes now interfaces with the container runtime through the Container Runtime Interface (CRI), and Docker is not fully compliant with CRI.
+
+
 <h2>Cloud Native Application Delivery and GitOps</h2>
 
 Cloud Native Application Delivery and GitOps - Study Guide
