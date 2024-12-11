@@ -6678,3 +6678,106 @@ Diferencias entre Flux y Argo
 
 ![image](https://github.com/user-attachments/assets/c553d96e-d905-4d86-9035-1265489f4193)
 
+
+
+<h2>Questions</h2>
+
+GitOps can be best described as:
+- A version control system for tracking changes in computer files
+- A set of practices that uses Git as a single source of truth for cluster management and application delivery (Correct)
+- A continuous integration/continuous deployment (CI/CD) tool for software development
+- A project management tool for software development teams
+
+The correct answer is:
+
+A set of practices that uses Git as a single source of truth for cluster management and application delivery.
+GitOps is a modern approach to continuous delivery and operations, where Git repositories are used as the source of truth for both infrastructure and application deployment. It relies on Git to store and version configuration files, enabling automated deployment, monitoring, and management of cloud-native applications and Kubernetes clusters.
+
+
+What is the primary role of Argo in the context of Cloud Native Application Delivery and GitOps?
+- It is a cloud service provider like AWS or Azure
+- It is a tool for static code analysis and security scanning
+- It is a Cloud Native tool used for application delivery (Correct)
+- It is a database management system for cloud applications
+
+
+In Argo CD, how is the initial admin password retrieved?
+- By querying the argocd-initial-admin-secret using a kubectl get secret command (Correct)
+- It is set during the ArgoCD installation process
+- By checking the ArgoCD user interface settings
+- By emailing ArgoCD support for the password
+
+The correct answer is: By querying the argocd-initial-admin-secret using a kubectl get secret command
+
+When you install Argo CD, it generates an initial admin password and stores it in a Kubernetes secret called argocd-initial-admin-secret. You can retrieve this password by running the following command:
+
+<code>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d</code>
+
+<strong>This will decode and display the initial admin password, which can then be used to log in to the Argo CD UI.</strong>
+
+
+
+Which GitOps engine is capable of orchestrating parallel jobs on Kubernetes?
+- Jenkins X 
+- Argo Workflows (Correct)
+- Travis CI
+- CircleCI
+
+The correct answer is: Argo Workflows
+
+Argo Workflows is a Kubernetes-native workflow engine that allows you to define, execute, and manage workflows in a Kubernetes environment. It is capable of orchestrating complex workflows, including parallel job execution, making it a powerful tool for handling CI/CD pipelines, data processing, and other batch-oriented tasks. You can define workflows as Kubernetes custom resources, and Argo Workflows supports parallel steps, retries, and dependencies, making it ideal for orchestrating parallel jobs on Kubernetes.
+
+
+
+
+Which GitOps delivery tool utilises the GitOps Toolkit?
+- Jenkins
+- Argo CD
+- Flux (Correct)
+- GitLab CI/CD
+
+The correct answer is: Flux
+
+Flux is a GitOps delivery tool that utilizes the GitOps Toolkit. The GitOps Toolkit is a collection of composable, Kubernetes-native components designed for building and extending GitOps workflows. Flux leverages this toolkit to manage the deployment of applications and configurations to Kubernetes clusters using Git as the source of truth.
+Argo CD, while also a popular GitOps tool, does not use the GitOps Toolkit; it has its own set of components.
+
+
+![image](https://github.com/user-attachments/assets/5c16bcb1-e7e6-45dc-bc84-6da2bccb07a4)
+
+
+The APIs comprise Kubernetes custom resources, which can be created and updated by a cluster user, or by other automation tooling.
+
+You can use the toolkit to extend Flux, and to build your own systems for continuous delivery. The source-watcher guide is a good place to start.
+
+A reference for each component and API type is linked below.
+
+
+- Source Controller: The GitOps Toolkit Source Controller documentation.
+
+- Kustomize Controller: The GitOps Toolkit Kustomize Controller documentation.
+
+- Helm Controller: The GitOps Toolkit Helm Controller documentation.
+
+- Notification Controller: The GitOps Toolkit Notification Controller documentation.
+
+- Image reflector and automation controllers: The GitOps Toolkit Image Automation Controllers documentation.
+
+
+
+
+
+In the GitOps paradigm for Kubernetes, which tool is specifically designed to ensure that the state of a cluster matches the configuration stored in a Git repository?
+- Jenkins X
+- Helm
+- Argo CD
+- Flux (Correct)
+
+
+Flux:
+
+Operativo: Tiende a tener un enfoque más operativo, utilizando operadores de Kubernetes para gestionar la configuración.
+Custom Resources: Define Custom Resources (CRDs) para representar la configuración deseada y utiliza controladores para mantener el estado del cluster.
+Extensibilidad: Es altamente extensible y permite personalizar la gestión de aplicaciones a través de la creación de nuevos operadores.
+
+
+Importante: Aunque en cierta medida ambas garantizan lo mismo. 
