@@ -6351,4 +6351,330 @@ Have an understanding of the GitOps toolkit which Flux utilises
 
 
 
+![image](https://github.com/user-attachments/assets/69fabe38-3c65-41fc-a062-42fea477ea83)
+
+
+
+<h3>Argo CD</h3>
+
+¿Qué es Argo CD?
+
+Argo CD es una herramienta declarativa de distribución continua para Kubernetes. Se puede utilizar como una herramienta independiente o como parte del flujo de trabajo de integración y distribución continuas (CI/CD) para distribuir los recursos que los clústeres necesitan.
+
+Para gestionar las configuraciones de la infraestructura y las aplicaciones en consonancia con GitOps, tu repositorio de Git debe ser la única fuente de información. Es necesario expresar el estado deseado de manera declarativa, crear versiones de él y extraerlo automáticamente. Aquí es donde entra en juego Argo CD. 
+
+
+Concepto Importante
+
+Argo CD es una herramienta de tipo declarativa que está a cargo de la entrega continua en el sistema de Kubernetes. Así pues, esta opción de Argo CD incluye la capacidad de llevar a cabo un proceso de extracción de código actualizado de los repositorios de la plataforma de Git, con el objetivo de implementarlo de forma directa en los componentes de Kubernetes.
+
+
+Además de esto, la aplicación de Argo CD contribuye a garantizar la automatización de los procesos de administración del ciclo de vida e implementación de aplicaciones, así como su fácil entendimiento.
+
+Esta herramienta es reconocida por su funcionamiento como controlador o administración de Kubernetes, pues se encarga de las actividad de monitoreo continuo de las aplicaciones que se encuentran siendo ejecutadas, a la vez que compara su estado real con el estado deseado indicado en el repositorio de Git.
+
+También es importante destacar que Argo CD trabaja con las etapas más recientes del proceso de GitOps, lo que permite asegurar que las configuraciones más novedosas se implementan de forma adecuada en el clúster de Kubernetes.
+
+<h4>Características de Argo CD</h4>
+
+- Gestión de la configuración de la infraestructura y la administración de actualizaciones de las aplicaciones, entre otros.
+- Puede sincronizar de manera automática el estado de la aplicación con su versión más reciente de la configuración declarativa.
+- Incluye la posibilidad de implementar las aplicaciones de forma manual o automatizada en el interior de un clúster de la plataforma de Kubernetes.
+- Permite la visualización de los errores o inconsistencias de implementación, así como la identificación y resolución de las modificaciones a nivel de ajuste y configuración.
+- Ofrece aplicación automática de las modificaciones del estado deseado en el interior del repositorio de Git al entorno de destino, lo que garantiza que las diferentes aplicaciones puedan mantenerse sincronizadas.
+- Es compatible con la opción de webhooks, a cargo de la activación en la plataforma de BitBucket, GitHub y GitLab.
+- Posee una interfaz de Línea de Comandos, conocida como CLI, así como su Interfaz de Usuario Web.
+
+How works Argo
+
+![image](https://github.com/user-attachments/assets/6c7691ab-c896-4a48-96e9-cba6c894325a)
+
+***Tenemos que practicar con ArgoCD****
+
+
+
+What is Argo Workflows?
+Argo Workflows is an open source container-native workflow engine for orchestrating parallel jobs on Kubernetes. Argo Workflows is implemented as a Kubernetes CRD.
+
+Define workflows where each step in the workflow is a container.
+Model multi-step workflows as a sequence of tasks or capture the dependencies between tasks using a graph (DAG).
+Easily run compute intensive jobs for machine learning or data processing in a fraction of the time using Argo Workflows on Kubernetes.
+Run CI/CD pipelines natively on Kubernetes without configuring complex software development products.
+
+
+
+Why Argo Workflows?
+- Designed from the ground up for containers without the overhead and limitations of legacy VM and server-based environments.
+- Cloud agnostic and can run on any Kubernetes cluster.
+- Easily orchestrate highly parallel jobs on Kubernetes.
+- Argo Workflows puts a cloud-scale supercomputer at your fingertips!
+
+
+
+¿Qué es Argo Workflows?
+Argo Workflows es un motor de orquestación de tareas basado en contenedores, que permite crear y gestionar tareas complejas definidas como flujos de trabajo dentro de Kubernetes. Es una herramienta esencial para la automatización y gestión de procesos complejos.
+
+Esta herramienta permite orquestar tareas complejas en Kubernetes, facilitando la automatización y gestión de procesos que requieren múltiples pasos y dependencias.
+
+Principales características
+Motor de orquestación de tareas basado en contenedores
+Crea y gestiona tareas complejas como flujos de trabajo en Kubernetes
+Argo Workflows facilita la definición y ejecución de workflows mediante archivos YAML, donde cada paso del workflow se define de manera clara y estructurada.
+
+Arquitectura de Argo Workflows
+La arquitectura de Argo Workflows se centra en tres componentes clave:
+
+Controller: monitorea y gestiona los estados de los Workflows.
+CRDs: define recursos personalizados para Kubernetes.
+UI: interfaz gráfica para monitorear y gestionar workflows.
+Componentes clave
+Controller: actúa como el corazón del sistema, encargado de monitorear y gestionar los estados de los workflows. Asegura que cada tarea se ejecute correctamente y maneja los errores y reintentos.
+CRDs (Custom Resource Definitions): expande Kubernetes con recursos personalizados que permiten definir workflows y tareas de manera nativa.
+UI: proporciona una interfaz gráfica intuitiva para visualizar y gestionar los workflows, facilitando la interacción y monitoreo de las tareas en ejecución.
+Seguridad en Argo Workflows
+La seguridad es fundamental en cualquier entorno de producción, y Argo Workflows no es la excepción. Para garantizar un control de acceso detallado, Argo Workflows se integra perfectamente con el sistema de Control de Acceso Basado en Roles (RBAC) de Kubernetes, permitiendo definir quién puede crear, modificar o visualizar los workflows.
+
+Configuración de RBAC con SSO
+Argo Workflows es compatible con sistemas de Single Sign-On (SSO), lo que simplifica la gestión centralizada de la autenticación. Esto permite asignar roles automáticamente en Argo según los grupos de usuarios definidos en el sistema SSO, proporcionando una experiencia de usuario fluida y segura.
+
+Página de login de Argo
+Asignación de Service Accounts
+Las Service Accounts de Kubernetes permiten especificar permisos y roles para los recursos. Al integrar Argo Workflows con un sistema SSO, podemos asignar roles específicos a los usuarios basados en sus grupos de SSO mediante las anotaciones en las Service Accounts.
+
+A continuación, se muestra cómo configurar una Service Account en Kubernetes para que se asocie con un grupo específico definido en el SSO:
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: group1-sa
+  annotations:
+    workflows.argoproj.io/rbac-rule: "'group1' in groups"
+    workflows.argoproj.io/rbac-rule-precedence: "1"
+En este ejemplo, la Service Account group1-sa se asigna a los usuarios que pertenecen al grupo group1 en el sistema SSO. Esta configuración asegura que los workflows ejecutados por usuarios de este grupo tengan los permisos adecuados definidos en las políticas RBAC de Argo Workflows.
+
+Autenticación vía Token de Service Account (Impersonar SA)
+La utilización de tokens de autenticación para la impersonación directa de Service Accounts permite que un usuario actúe en nombre de una Service Account específica. Esta funcionalidad es especialmente útil para delegar tareas o permisos específicos a una Service Account, mejorando la flexibilidad y seguridad del sistema.
+
+Beneficios de RBAC y SSO en workflows
+Seguridad mejorada. Proporciona un control de acceso granular, asegurando que solo usuarios autorizados puedan realizar acciones específicas.
+Simplificación de la gestión de usuarios y permisos. Facilita la administración de roles y accesos, reduciendo la carga administrativa.
+Mayor conformidad con políticas de seguridad corporativas. Asegura que la implementación cumpla con las normativas y estándares de seguridad de la organización.
+La implementación de estas prácticas de seguridad en Argo Workflows no solo refuerza la protección del entorno de producción, sino que también simplifica la gestión de usuarios y asegura el cumplimiento de las políticas de seguridad corporativas.
+
+Ejemplos de workflows
+Argo Workflows se puede utilizar en una gran variedad de aplicaciones. Aquí veremos algunos ejemplos de cómo implementar estos workflows.
+
+Ejemplo de pipeline de CI/CD
+Un pipeline de CI/CD es una serie de pasos que deben ejecutarse para llevar el código desde desarrollo hasta producción. Con Argo Workflows, puedes definir cada uno de estos pasos como un template separado.
+
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: ci-cd-pipeline-
+spec:
+  entrypoint: ci-cd-process
+  templates:
+    - name: ci-cd-process
+      steps:
+        - - name: build
+            template: build-template
+        - - name: test
+            template: test-template
+        - - name: deploy
+            template: deploy-template
+En este ejemplo, hemos definido un pipeline básico de CI/CD. Cada paso del workflow, desde la construcción hasta el despliegue, es manejado como una etapa separada dentro del flujo de trabajo.
+
+Definición de plantillas
+Las plantillas en Argo Workflows permiten la reutilización de configuraciones comunes. Cada plantilla define una tarea específica, como construir, testear o desplegar, que se puede reutilizar en múltiples workflows o incluso en diferentes pasos del mismo workflow.
+
+templates:
+- name: ci-cd-process
+  ...
+- name: build-template
+  container:
+    image: build-image:latest
+    command: [build]
+- name: test-template
+  container:
+    image: test-image:latest
+    command: [test]
+- name: deploy-template
+  container:
+    image: deploy-image:latest
+    command: [deploy]
+Parámetros de entrada
+Los workflows pueden recibir parámetros y entradas que se utilizan en diferentes etapas del flujo de trabajo. Aquí vemos un ejemplo de cómo se puede pasar un mensaje como parámetro al workflow y utilizarlo en una tarea específica.
+
+spec:
+  entrypoint: echo-param
+  arguments:
+    parameters:
+    - name: message
+      value: "Hello, World!"
+  templates:
+  - name: echo-param
+    inputs:
+      parameters:
+      - name: message
+    container:
+      image: alpine:3.7
+      command: [echo, "{{ inputs.parameters.message }}"]
+Salidas y artefactos
+Los workflows también pueden generar salidas y artefactos que se pueden utilizar en etapas posteriores o almacenar para su posterior uso. En este ejemplo, la tarea de echo-param genera un archivo de texto con un mensaje, que luego se almacena como un parámetro de salida para su uso en otras tareas.
+
+templates:
+- name: echo-param
+  container:
+    image: alpine:3.7
+    command: [sh, -c]
+    args: ["echo 'Hello, World!' > /tmp/message.txt"]
+  outputs:
+    parameters:
+    - name: message
+      valueFrom:
+        path: /tmp/message.txt
+    artifacts:
+    - name: message
+      path: /tmp/message.txt
+Consumir salidas y artefactos
+Para consumir las salidas y artefactos generados por una tarea anterior, se pueden definir entradas específicas. En este ejemplo, la tarea consume-output recibe tanto un parámetro como un artefacto de la tarea anterior, y los utiliza en su propio proceso: en este caso, para verificar si el mensaje generado anteriormente está presente en el archivo de texto.
+
+- name: consume-output
+  inputs:
+    parameters:
+    - name: message
+    artifacts:
+    - name: message
+      path: /tmp/message.txt
+  container:
+    image: alpine:3.7
+    command: [sh, -c]
+    args: ["cat /tmp/message.txt | grep -q '{{inputs.parameters.message}}'"]
+Interpolaciones de cadenas
+Una característica poderosa de Argo Workflows es el uso de interpolaciones de cadenas, que permiten manipular y transformar datos en las definiciones de los workflows. Por ejemplo, se pueden codificar en base64, convertir a mayúsculas, o establecer valores predeterminados para variables no definidas, facilitando la manipulación de datos y la creación de flujos de trabajo más dinámicos y flexibles.
+
+{{ message }} => Hello, World!
+{{ message | base64encode }} => SGVsbG8sIFdvcmxkIQ==
+{{ message | upper }} => HELLO, WORLD!
+{{ nonsetted | default('default value') }} => default value
+Más información en Sprig Functions.
+
+Mejores prácticas y consejos
+Para maximizar la eficiencia y confiabilidad de tus workflows, es importante seguir algunas mejores prácticas:
+
+Uso de templates para reutilización: facilita la reutilización de configuraciones comunes en diferentes workflows.
+Estrategias para manejo de errores y retries: implementa estrategias efectivas para manejar errores y reintentos, asegurando que los workflows sean robustos y resilientes.
+Optimización de recursos: asegura que los recursos se utilicen de manera eficiente, evitando el desperdicio y garantizando un rendimiento óptimo.
+
+
+
+Templates - Argo WorkFlow
+Several template types define the required functions of a workflow, typically in a container. Template definitions include:
+
+Container — schedules a container. This template’s spec is identical to a Kubernetes container spec, allowing you to define the container in the same way you normally would in Kubernetes. This template type is probably the most popular. 
+Resource — directly performs operations on a cluster resource. You can use this template for cluster resource requests such as GET, CREATE, APPLY, PATCH, REPLACE, or DELETE. 
+Script — a convenience wrapper for a container. It is similar to a container spec but with a source: field that lets you define a script in place. You can save the script to a file to be executed. The script produces a result that automatically exports to an Argo variable, like this:
+{{tasks.<NAME>.outputs.result}}
+{{steps.<NAME>.outputs.result}}
+Suspend — suspends the execution of a workflow for a specified duration or indefinitely (until you manually resume it). You can resume a suspend template from UI, the API endpoint, or the CLI using the argo resume command.
+Additional templates include template invocaters, which you can use to invoke or call other templates and control their execution:
+
+Steps — lets you define workflow tasks as a sequence of steps. The template’s structure contains outer lists that run in sequence and inner lists that run in parallel. You can control execution using a wide range of settings. 
+DAG — lets you define workflow tasks as a graph of dependencies. The DAG lists all the tasks and specifies the order of their completion (i.e., if a task has dependencies). Argo will run any tasks without dependencies immediately.
+
+
+
+![image](https://github.com/user-attachments/assets/aacd7cc6-ab51-45f5-a210-933ffc910689)
+
+
+
+****Importante*****
+
+Cloud Native Application Delivery and GitOps - Further Study
+In our lesson, we provided an introduction to Argo CD. To extend your knowledge further and for the purposes of the KCNA examination, we recommend familiarising yourself with the Argo CD Workflows offering and an understanding that workflows are available to enhance the capabilities of Argo CD in managing complex deployment processes.
+
+It is also important from an exam perspective to have an awareness of Flux, an ArgoCD alternative and in particular, be aware that Flux may be a more appropriate solution for synchronised cluster changes. This is explained and detailed below. From an examination viewpoint please pay particular attention to Configuration Sync:
+
+Argo CD Workflows
+For more information, visit the Argo Workflows documentation at https://argoproj.github.io/workflows/
+
+Argo CD workflows are central to managing complex deployment processes. These workflows allow for the orchestration of multi-step deployment processes, integrating with the Argo Workflows project for advanced automation capabilities.
+
+Key aspects include:
+
+Sequential and Parallel Execution: Workflows can be configured to run tasks either in sequence or parallel, providing control over the deployment process.
+Integration with Argo Workflows: This integration allows for the creation of complex pipelines combining CI (Continuous Integration) and CD (Continuous Deployment) tasks in a unified workflow.
+Customisable Pipelines: Users can create custom pipelines to match their specific deployment requirements, such as incorporating testing stages, approval processes, or integration with external tools.
+Introduction to Flux
+While our lesson primarily focused on Argo CD for implementing GitOps principles, it's beneficial to broaden your awareness of options in this space by exploring Flux, another prominent GitOps continuous delivery solution. Flux is an open-source project maintained by the CNCF, with detailed documentation available at Flux's official website.
+
+Comparison Between Argo CD and Flux
+Both Argo CD and Flux are powerful tools for GitOps, but they have distinct features and architectural approaches.
+
+Architecture and Operation: Argo CD follows a more centralised approach, with a single point of control for deployment. In contrast, Flux adopts a more decentralised stance, where each Flux instance operates independently, making it potentially more scalable in large systems.
+
+
+
+Configuration Sync: Both Argo CD and Flux can continuously monitor a Git repository and can automatically apply changes.
+
+
+In the video demonstration for Argo CD you’ll note that we optionally selected the synchronise option when setting up our app. It would have been possible if we wished to toggle this and to then synchronise manually later if we wished.
+
+Flux however has always traditionally used a pull-based approach and was one of the first tools in the Kubernetes ecosystem to introduce this capability as one of it’s core features. It will automatically synchronise changes.
+
+Flux’s original design was strongly centered around it’s synchronisation process and this approach has made Flux synonymous with the GitOps approach of continous synchronisation between the repository and cluster. For this reason, many would consider Flux the “textbook” choice for continous synchronisation, even though both Flux and ArgoCD share this capability.
+
+Customisation and Extensibility: Flux is built on the GitOps Toolkit, a set of composable APIs and specialised tools, allowing for more customisation and extensibility. This modular approach lets you tailor Flux to fit more complex scenarios.
+
+Ecosystem and Community: Both tools have strong communities and are part of the CNCF landscape. However, their ecosystems differ slightly, with Flux being more aligned with the broader CNCF ecosystem, potentially offering better integration with other CNCF projects.
+Flux and the GitOps Toolkit
+Flux's use of the GitOps Toolkit is a significant aspect that sets it apart from other similar tools. The GitOps Toolkit is a collection of APIs and controllers that can be combined to create a complete GitOps workflow. These components include:
+
+Source Controller: Manages the acquisition of source code from repositories like Git.
+
+Kustomize Controller: Applies Kubernetes manifests using Kustomize, a tool for customising Kubernetes configurations.
+
+Helm Controller: Allows for the declarative management of Helm chart releases.
+
+Notification Controller: Handles alerts and notifications for the GitOps workflow.
+These components provide a flexible and powerful way to implement GitOps, allowing for more granular control and customisation of the continuous delivery process.
+
+While Argo CD is an excellent GitOps tool that we've explored in our lesson, understanding Flux and its use of the GitOps Toolkit can provide you with a more comprehensive view of the GitOps landscape. Both tools have their strengths, and knowing when to use one over the other can be crucial in certain deployment scenarios. For those interested in delving deeper into Flux, its documentation is a great starting point.
+
+
+
+Flux or FluxCD
+
+Flux is a set of continuous and progressive delivery solutions for Kubernetes that are open and extensible. The latest version of Flux brings many new features, making it more flexible and versatile.
+Flux is a CNCF Graduated project.
+
+FluxCD is an open-source tool that ensures that the state of a Kubernetes cluster matches the configuration stored in a Git repository. It automatically applies changes made to the repository to the cluster. FluxCD is a part of the CNCF incubating projects and it works through the use of custom resource definitions (CRDs), which extend Kubernetes APIs and offers additional features.
+
+Pros:
+
+- Strong GitOps operator, maintaining high availability and supporting multi-tenancy.
+- Provides detailed monitoring and alerting through integration with Prometheus.
+- Supports Helm chart releases out-of-the-box.
+- Offers a robust automation and reconciliation loop.
+- Leverages image scanning and can update Git repository when new images are available.
+
+
+Cons:
+
+- More complex to set up when compared to ArgoCD.
+- Smaller community, although it is growing as FluxCD gains popularity.
+- Less mature in terms of the user interface and no native webui although you can adopt the wave-gitops for some functionality.
+- Doesn't support Gitflow pull-request merges, all commits must be pushed on the monitored branch.
+
+
+***Importante*****
+
+<strong>ArgoCD y Flux CD hacen parte de la CNCF, son proyectos creados, incubados y graduados de la CNCF</strong>
+
+![image](https://github.com/user-attachments/assets/e738368a-d304-4f68-b91e-27bec625dc5b)
+
+ 
+Diferencias entre Flux y Argo
+
+![image](https://github.com/user-attachments/assets/c553d96e-d905-4d86-9035-1265489f4193)
 
