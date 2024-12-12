@@ -46,6 +46,7 @@ Important:
 
 
 
+<h1>Cloud Native Architecture Fundamentals</h1>
 
 
 Cloud Native Architecture Fundamentals - Further Study
@@ -54,19 +55,19 @@ Characteristics of Cloud Native Applications
 
 Cloud Native Applications harness the power of the cloud to provide increased resilience, agility, operability, and observability. Let's dive a bit deeper into these characteristics.
 
-Resiliency
+<h3>Resiliency</h3>
 
 Resilient applications are designed to withstand failures and continue to function or recover quickly. They typically make use of patterns such as redundancy, failover, and graceful degradation. Self-healing, where systems automatically detect and recover from failure, is a key aspect of resilient cloud-native applications. Kubernetes, for instance, has a built-in self-healing mechanism where it maintains a desired number of pod replicas and replaces failed instances.
 
-Agility
+<h3>Agility</h3> 
 
 Agility in the context of cloud-native applications refers to the ability to quickly build, modify, and deploy applications. Agile practices such as microservices and continuous delivery pipelines, backed by automation, promote rapid iteration and responsiveness to change.
 
-Operability
+<h3>Operability</h3> 
 
 Operability encompasses the ease of deploying, running, and managing applications. Cloud-native applications are designed to be easily monitored, configured, and maintained. They typically leverage automation and Infrastructure as Code (IaC) tools like Terraform to streamline operations and minimise toil.
 
-Observability
+<h3>Observability </h3> 
 
 Observability is the ability to understand the internal state of your system based on the outputs it generates. It's a critical component in diagnosing issues and understanding how an application behaves in the wild. Logging, monitoring, and tracing (collectively known as the 'three pillars of observability') are vital practices to understand the state and performance of cloud-native applications.
 
@@ -84,7 +85,9 @@ IAC - Understand the meaning of Infrastructure as Code and its connection to Clo
 The roles of Speed, Efficiency, and Cost in the context of Cloud Native environments
 
 
+<hr></hr>
 
+<h1>Cloud Native Architecture Fundamentals</h1>
 
 
 
