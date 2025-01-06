@@ -742,8 +742,9 @@ In the context of Container Orchestration, what is the purpose of 'self-healing'
 - Automatically fixing or replacing containers when they fail.
 
 
-<h3>Important</h3>
+<h1>Kubernetes Architecture</h1> 
 
+<h3>Important</h3>
 Kubernetes Architecture - Study Tips
 For the KCNA Examination it is important to have a thorough understanding of the Kubernetes Architecture and the roles of specific components. When watching the next video pay particular attention to the following areas.
 
