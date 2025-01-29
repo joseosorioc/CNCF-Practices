@@ -6785,3 +6785,363 @@ Extensibilidad: Es altamente extensible y permite personalizar la gestión de ap
 
 
 Importante: Aunque en cierta medida ambas garantizan lo mismo. 
+
+
+<h1>Other good questions</h1>
+
+
+When creating containers using multistage builds in Docker, what technique can you employ to reduce the size of the final container image?
+- Minimise the number of environment variables used in the final stage
+- Merge multiple container images into a single image using the "docker combine" command
+- Use the "docker squash" command after building the container
+- Utilise multiple build stages to discard unnecessary build artifacts and dependencies (Correct)
+
+Explanation: 
+
+✅ Utilise multiple build stages to discard unnecessary build artifacts and dependencies.
+
+Multistage builds in Docker help reduce the size of the final image by using multiple stages in the Dockerfile. The idea is to use an initial stage to compile or build dependencies and then copy only the necessary artifacts into the final image, leaving out unnecessary files and tools.
+
+
+To achieve consistent DNS naming for pods managed by a StatefulSet in Kubernetes, what additional Kubernetes resource should you use?
+- ConfigMap
+- Ingress Controller
+- Headless Service (Correct)
+- Horizontal Pod Autoscaler
+
+
+
+In the context of Persistent Volume Claims (PVCs) in Kubernetes, what is the Manual Reclamation Policy typically recognised as?
+- Retain (Correct)
+- Recycle
+- Reclaim
+- Release
+
+The correct answer is:
+✅ Retain
+
+Explanation:
+In Kubernetes, Persistent Volume Claims (PVCs) are used by pods to request storage from Persistent Volumes (PVs). The Reclaim Policy of a PV determines what happens to the storage when a PVC is deleted.
+
+Reclamation Policies in Kubernetes:
+Retain (Manual Reclamation Policy) ✅
+
+The PV is not deleted when the PVC is removed.
+Data is preserved, but manual intervention is required to clean up the volume.
+Ideal for critical data that should not be automatically erased.
+Recycle (Deprecated) ❌
+
+The PV undergoes a basic cleanup (rm -rf /data), then becomes available again.
+This method is now deprecated and replaced by dynamic provisioning.
+Delete ❌
+
+The PV and its associated storage (e.g., cloud disk) are automatically deleted when the PVC is removed.
+Common for dynamically provisioned volumes in cloud environments.
+Release ❌
+
+This term is not a valid Kubernetes Reclaim Policy. However, when a PVC is deleted, the PV enters a Released state, meaning it is no longer bound but retains its data. It requires manual cleanup before reuse.
+Example of a PV with Retain Policy:
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain  # Manual reclamation
+  hostPath:
+    path: /mnt/data
+
+
+
+
+Which kubectl command is used to list all the API resources, such as Pods, Services, and Deployments, available in a Kubernetes cluster?
+- kubectl get all
+- kubectl api-resources (Correct)
+- kubectl describe resources
+- kubectl list-apis
+
+
+Which of the following are valid restart policies for containers in Kubernetes?
+- Always, Never, Sometimes
+- Always, Never, OnFailure (Correct)
+- Sometimes, Occasionally, OnFailure
+- OnDemand, Always, Never
+
+
+In Kubernetes, what is an Endpoint primarily used to represent?
+- The storage capacity available to a Pod
+- The network policies applied to a service
+- The IP addresses and ports of the Pods backing a Service (Correct) 
+- The URL of the Kubernetes API server
+
+
+The correct answer is:
+✅ The IP addresses and ports of the Pods backing a Service
+
+Explanation:
+In Kubernetes, an Endpoint is a resource that stores the IP addresses and ports of the Pods that are associated with a Service. This allows the Service to route traffic to the appropriate Pods.
+
+How Endpoints Work in Kubernetes:
+
+When you create a Service, Kubernetes automatically creates an associated Endpoints object.
+This Endpoints object contains a list of all healthy Pods that match the Service's selector.
+The Service uses this information to distribute traffic to the Pods.
+Example of an Endpoints Object
+Run the following command to see the Endpoints of a Service:
+
+
+kubectl get endpoints my-service
+Example output:
+
+
+NAME          ENDPOINTS             AGE
+my-service    10.244.1.2:80,10.244.1.3:80   10m
+This means that my-service is routing traffic to two Pods with IPs 10.244.1.2 and 10.244.1.3 on port 80.
+
+
+
+In the CI/CD pipeline, what does "Integration" in Continuous Integration (CI) particularly emphasise?
+- The combination and testing of code changes from multiple developers to a shared repository (Correct)
+- The connection of various stages of the pipeline for seamless software delivery
+- Integration of automated deployment tools into the software development process
+- Merging different application features into a final product for release
+
+
+The correct answer is:
+✅ The combination and testing of code changes from multiple developers to a shared repository
+
+Explanation:
+In Continuous Integration (CI), the focus is on frequently merging code changes from multiple developers into a shared repository (e.g., Git). After merging, the system automatically builds and tests the new code to catch issues early.
+
+This process ensures that:
+
+Developers integrate their code often, preventing "merge hell."
+Automated tests run on each change to detect bugs early.
+The application remains in a deployable state at all times.
+
+
+
+
+
+
+What are the primary modes of service discovery within a Kubernetes cluster?
+- Load Balancers and Ingress Controllers
+- Environment Variables and DNS
+- ConfigMaps and Secrets
+- Volumes and PersistentVolumeClaims
+
+
+The correct answer is:
+✅ Environment Variables and DNS
+
+Explanation:
+In Kubernetes, service discovery refers to how applications inside the cluster find and communicate with each other. Kubernetes provides two primary methods for service discovery:
+
+Environment Variables
+
+When a Pod starts, Kubernetes injects environment variables containing service details.
+Example: If you have a service named my-service, a Pod running in the same namespace will have environment variables like:
+
+
+MY_SERVICE_SERVICE_HOST=10.96.0.1
+MY_SERVICE_SERVICE_PORT=80
+Limitation: Pods must be restarted to detect service changes.
+DNS-Based Service Discovery
+
+Kubernetes has an internal DNS service that resolves service names to their corresponding ClusterIP.
+Example: A Pod can connect to my-service using:
+
+
+curl http://my-service.default.svc.cluster.local
+This method is more dynamic than environment variables and is the preferred approach.
+
+
+
+
+
+In Kubernetes, which authorization mode is known for offering detailed control over what specific actions can be performed on different resources within the cluster?
+- Role-Based Access Control (RBAC)   (Correct)
+- Attribute-Based Access Control (ABAC)  
+- Node Authorization (Node)
+- Webhook Mode Authorization (Webhook)
+
+
+The correct answer is:
+✅ Role-Based Access Control (RBAC)
+
+Explanation:
+Role-Based Access Control (RBAC) is the primary authorization mode in Kubernetes that provides fine-grained control over what actions users, groups, and service accounts can perform on different resources within the cluster.
+
+RBAC allows administrators to define:
+
+Roles: Define permissions (e.g., read/write access to Pods).
+RoleBindings: Assign roles to users, groups, or service accounts.
+ClusterRoles & ClusterRoleBindings: Apply permissions at the cluster level.
+Example RBAC Policy (YAML):
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-binding
+  namespace: default
+subjects:
+- kind: User
+  name: alice
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+This configuration grants the user "alice" permission to read pods in the default namespace.
+
+Why the Other Options Are Incorrect:
+❌ Attribute-Based Access Control (ABAC) → ABAC allows defining access rules based on user attributes, but it is less commonly used and deprecated in favor of RBAC.
+❌ Node Authorization (Node) → This mode is used only for kubelets (Kubernetes nodes) to restrict them to accessing their own assigned Pods and Secrets.
+❌ Webhook Mode Authorization (Webhook) → Webhook authorization calls an external service to make authorization decisions but does not provide built-in fine-grained control.
+
+
+
+
+
+
+What is the primary purpose of the Container Runtime Interface (CRI) in Kubernetes?
+- To provide a standard for implementing container runtimes compatible with Kubernetes (Correct)
+- To manage networking and communication between containers
+- To schedule and distribute containers across nodes in the cluster
+- To monitor and log container performance and resource usage
+
+
+What are the core features typically provided by a service mesh in a cloud-native environment?
+- Distributing and replicating data across multiple services (Correct)
+- Managing storage volumes and persistent data
+- Scheduling and running batch jobs
+- Monitoring and logging network traffic
+
+
+
+In Kubernetes, what does Service Discovery refer to?
+- A process for automatically scaling applications based on demand
+- A system that allows services to locate and communicate with each other on the network (Correct)
+- A tool for managing persistent storage for services
+- A strategy for distributing network traffic evenly among services
+
+
+
+
+<h1>Pendiente con esta tambien</h1>
+
+![image](https://github.com/user-attachments/assets/1332e13e-729e-420c-b245-c5571f0ed933)
+
+
+Which of the following is a valid example of semantic versioning?
+- 1.2.3 (Correct)
+- 1.2
+- VersionOne
+- 1.2-beta
+
+
+
+The correct answer is:
+✅ 1.2.3
+
+Explanation:
+Semantic Versioning (SemVer) follows the format:
+
+
+MAJOR.MINOR.PATCH
+Where:
+
+MAJOR: Increases when there are breaking changes.
+MINOR: Increases when new features are added in a backward-compatible way.
+PATCH: Increases when making backward-compatible bug fixes.
+Additionally, pre-release versions and metadata can be included:
+
+
+MAJOR.MINOR.PATCH[-PRERELEASE][+METADATA]
+For example:
+
+1.2.3-beta.1 (pre-release version)
+1.2.3+build20240128 (build metadata)
+Why the Other Options Are Incorrect:
+❌ "1.2" → Incomplete; PATCH version is missing. Must be in X.Y.Z format.
+❌ "VersionOne" → Semantic Versioning requires numeric values, not text-based names.
+❌ "1.2-beta" → Incorrect format; should be 1.2.0-beta to follow MAJOR.MINOR.PATCH rules.
+
+
+Which of the following container runtimes are recognized for providing enhanced security features, such as stronger isolation through virtualization?
+- Docker and containerd
+- rkt and LXC
+- Kata Containers and gVisor (Correct)
+- CRI-O and Docker Swarm
+
+
+
+
+The correct answer is:
+✅ Kata Containers and gVisor
+
+Explanation:
+Kata Containers and gVisor are container runtimes designed to provide enhanced security features, especially around isolation:
+
+Kata Containers
+
+Kata Containers use lightweight virtual machines (VMs) to provide stronger isolation between containers. This gives you the benefits of VMs (like improved security) while maintaining the speed and efficiency of containers.
+They are designed to be compatible with existing container orchestration systems (like Kubernetes) while adding an additional layer of security.
+gVisor
+
+gVisor provides an additional security layer by implementing a user-space kernel that intercepts system calls made by the container and controls access to the host OS. This approach provides stronger isolation and reduces the risk of container escapes.
+It's particularly useful when you're running untrusted workloads in a multi-tenant environment.
+Why the Other Options Are Incorrect:
+❌ Docker and containerd
+
+While Docker and containerd are widely used and support containerized environments, they do not provide enhanced isolation to the extent of Kata Containers and gVisor. Docker and containerd focus more on container management and performance than advanced isolation via virtualization.
+❌ rkt and LXC
+
+rkt (pronounced "rocket") was designed for security but is now deprecated, and LXC (Linux Containers) provides OS-level virtualization, which is not as strong as the isolation offered by Kata Containers or gVisor.
+❌ CRI-O and Docker Swarm
+
+CRI-O is a Kubernetes-native container runtime, and Docker Swarm is a container orchestration tool. Neither is specifically designed to enhance container isolation via virtualization in the same way as Kata Containers and gVisor.
+
+
+
+In Kubernetes, what are Service Endpoints primarily used for?
+Configuring load balancing and routing rules for ingress traffic
+Storing encrypted secrets and configuration data
+Tracking the IP addresses and ports of Pods associated with a Service (Correct)
+Scheduling automated backup and maintenance tasks
+
+
+During the phase when container images are being downloaded for a Pod in Kubernetes, what state is the Pod typically in?
+- Running
+- Pending (Correct)
+- Initializing
+- Completed
+
+What is the default update strategy used by Kubernetes Deployments for rolling out updates?
+
+- Recreate
+- RollingUpdate (Correct)
+- Blue/Green Deployment
+- Canary Deployment
+
+In the context of Kubernetes, what is a 'Sidecar' container?
+- A container that provides the main functionality of the Pod
+- A container running alongside the main application container to augment or enhance it (Correct)
+- A backup container that activates if the main container fails
+- A temporary container used for debugging purposes
